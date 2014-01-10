@@ -34,15 +34,5 @@
 abstract class Eresus_Client_Controller_Content_Abstract
     implements Eresus_Client_Controller_Content_Interface
 {
-    /**
-     * Возвращает разметку области контента
-     *
-     * @param Eresus_CMS_Request $request
-     * @param TClientUI          $page
-     *
-     * @return Eresus_HTTP_Response|string
-     * @since 3.01
-     */
-    abstract public function getHtml(Eresus_CMS_Request $request, TClientUI $page);
 }
 
