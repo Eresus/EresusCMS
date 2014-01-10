@@ -40,13 +40,6 @@
 class Eresus_Kernel
 {
     /**
-     * Резервный буфер для отлова ошибок переполнения памяти (в Кб)
-     *
-     * @var int
-     */
-    const MEMORY_OVERFLOW_BUFFER_SIZE = 64;
-
-    /**
      * Порог важности сообщений для записи в журнал
      * @var int
      * @since 3.01
