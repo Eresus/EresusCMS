@@ -35,6 +35,11 @@ ini_set('display_errors', true);
 
 ini_set('track_errors', true);
 
+mb_internal_encoding('utf-8');
+/* Предотвращает появление ошибок, связанных с неустановленной временной зоной */
+@$timezone = date_default_timezone_get();
+date_default_timezone_set($timezone);
+
 /**
  * Подключение автозагрузчика классов
  */
