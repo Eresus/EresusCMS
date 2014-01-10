@@ -671,25 +671,20 @@ function arg($arg, $filter = null)
 		switch ($filter)
 		{
 			case 'dbsafe':
-				$arg = Eresus_CMS::getLegacyKernel()->db->escape($arg);
-			break;
-
+			    break;
 			case 'int':
 			case 'integer':
-					$arg = intval($arg);
-			break;
-
+                $arg = intval($arg);
+			    break;
 			case 'float':
-					$arg = floatval($arg);
-			break;
-
+                $arg = floatval($arg);
+			    break;
 			case 'word':
-					$arg = preg_replace('/\W/', '', $arg);
-			break;
-
+                $arg = preg_replace('/\W/', '', $arg);
+			    break;
 			default:
 				$arg = preg_replace($filter, '', $arg);
-			break;
+			    break;
 		}
 	}
 	return $arg;
