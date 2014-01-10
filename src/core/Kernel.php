@@ -49,7 +49,7 @@ class Eresus_Kernel
     /**
      * Выполняемое приложение
      *
-     * @var object
+     * @var Eresus_CMS
      * @see exec(), app()
      */
     static private $app = null;
@@ -82,6 +82,7 @@ class Eresus_Kernel
      */
     public static function log($sender, $priority, $message)
     {
+        //TODO Рассмотреть вынос этого метода из этого класса
         if ($priority > self::$logLevel)
         {
             return;
@@ -146,6 +147,7 @@ class Eresus_Kernel
      */
     public static function logException($e)
     {
+        //TODO Рассмотреть вынос этого метода из этого класса
         $previous = $e->getPrevious();
         $trace = $e->getTraceAsString();
 
