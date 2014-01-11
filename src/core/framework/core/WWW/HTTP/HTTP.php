@@ -243,7 +243,7 @@ class HTTP
     {
         if (!self::$request)
         {
-            self::$request = new Eresus_HTTP_Request();
+            self::$request = Eresus_HTTP_Request::createFromGlobals();
         }
         return self::$request;
     }
