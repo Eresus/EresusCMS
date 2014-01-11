@@ -36,7 +36,7 @@
  */
 class Templates
 {
-    private $pattern = '/^<!--\s*(.+?)\s*-->.*$/s';
+    private $pattern = '/^\{\*(.*?)\*\}.*$/s';
 
     /**
      * Экземпляр-одиночка
@@ -90,10 +90,9 @@ class Templates
             {
                 $file = file_get_contents($filename);
                 $title = trim(mb_substr($file, 0, mb_strpos($file, "\n")));
-                if (preg_match('/^<!-- (.+) -->/', $title, $title))
+                if (preg_match('/^\{\*(.+)\*\}/', $title, $title))
                 {
-                    $file = trim(mb_substr($file, mb_strpos($file, "\n")));
-                    $title = $title[1];
+                    $title = trim($title[1]);
                 }
                 else
                 {
@@ -121,20 +120,7 @@ class Templates
      */
     public function get($name = '', $type = '', $array = false)
     {
-        if (empty($name))
-        {
-            $name = 'default';
-        }
-        $folder = Eresus_Kernel::app()->getFsRoot() . '/templates/';
-        if ($type)
-        {
-            $folder .= $type . '/';
-        }
-        $filename = $folder . $name . '.html';
-        if (!file_exists($filename) && 'default' != $name)
-        {
-            $filename = $folder . 'default.html';
-        }
+        $filename = $this->composeFilename($name, $type);
         if (!file_exists($filename))
         {
             return false;
@@ -145,7 +131,7 @@ class Templates
             $desc = preg_match($this->pattern, $result);
             $result = array(
                 'name' => $name,
-                'desc' => $desc ? preg_replace($this->pattern, '$1', $result) : ADM_NA,
+                'desc' => $desc ? trim(preg_replace($this->pattern, '$1', $result)) : ADM_NA,
                 'code' => $desc ? trim(mb_substr($result, mb_strpos($result, "\n"))) : $result,
             );
         }
@@ -176,13 +162,12 @@ class Templates
      */
     public function load($name = '', $type = '')
     {
-        $contents = $this->get($name, $type);
-        if (false === $contents)
+        $filename = $this->composeFilename($name, $type);
+        if (!file_exists($filename))
         {
             return null;
         }
-        $template = new Eresus_Template();
-        $template->setSource($contents);
+        $template = Eresus_Template::loadFromFile($filename);
         return $template;
     }
 
@@ -204,7 +189,7 @@ class Templates
             $filename .= "$type/";
         }
         $filename .= "$name.html";
-        $content = "<!-- $desc -->\n\n$code";
+        $content = "{* $desc *}\n$code";
         $result = file_put_contents($filename, $content) > 0;
         return $result;
     }
@@ -233,7 +218,7 @@ class Templates
         {
             $item['desc'] = $desc;
         }
-        $content = "<!-- {$item['desc']} -->\n\n{$item['code']}";
+        $content = "{* {$item['desc']} *}\n{$item['code']}";
         $result = file_put_contents($filename, $content) > 0;
         return $result;
     }
@@ -264,6 +249,35 @@ class Templates
      */
     private function __clone()
     {
+    }
+
+    /**
+     * Строит имя файла по правилам, описанным в {@link get()}
+     *
+     * @param string $name  имя шаблона
+     * @param string $type  тип шаблона
+     *
+     * @return string
+     *
+     * @since 3.01
+     */
+    private function composeFilename($name, $type)
+    {
+        if (empty($name))
+        {
+            $name = 'default';
+        }
+        $folder = Eresus_Kernel::app()->getFsRoot() . '/templates/';
+        if ($type)
+        {
+            $folder .= $type . '/';
+        }
+        $filename = $folder . $name . '.html';
+        if (!file_exists($filename) && 'default' != $name)
+        {
+            $filename = $folder . 'default.html';
+        }
+        return $filename;
     }
 }
 
