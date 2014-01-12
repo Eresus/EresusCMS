@@ -46,6 +46,8 @@ abstract class Eresus_Admin_ContentProvider_Abstract
     /**
      * Отрисовывает интерфейс модуля
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @throws LogicException
      * @throws RuntimeException
      *
@@ -53,7 +55,7 @@ abstract class Eresus_Admin_ContentProvider_Abstract
      *
      * @since 3.01
      */
-    public function adminRender()
+    public function adminRender(Eresus_CMS_Request $request)
     {
         if (!method_exists($this->getModule(), 'adminRender'))
         {
@@ -62,7 +64,7 @@ abstract class Eresus_Admin_ContentProvider_Abstract
         }
         try
         {
-            $html = $this->getModule()->adminRender();
+            $html = $this->getModule()->adminRender($request);
         }
         catch (Exception $e)
         {
@@ -76,6 +78,8 @@ abstract class Eresus_Admin_ContentProvider_Abstract
     /**
      * Отрисовывает область контента раздела
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string  HTML
      *
      * @throws LogicException
@@ -83,7 +87,7 @@ abstract class Eresus_Admin_ContentProvider_Abstract
      *
      * @since 3.01
      */
-    public function adminRenderContent()
+    public function adminRenderContent(Eresus_CMS_Request $request)
     {
         if (!method_exists($this->getModule(), 'adminRenderContent'))
         {
@@ -93,7 +97,7 @@ abstract class Eresus_Admin_ContentProvider_Abstract
         }
         try
         {
-            $html = $this->getModule()->adminRenderContent();
+            $html = $this->getModule()->adminRenderContent($request);
         }
         catch (Exception $e)
         {

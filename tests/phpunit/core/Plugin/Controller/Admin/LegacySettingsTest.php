@@ -66,7 +66,7 @@ class Eresus_Plugin_Controller_Admin_LegacySettingsTest extends Eresus_TestCase
             ->setMethods(array('settings'))->getMock();
         $plugin->expects($this->once())->method('settings');
         $controller = new Eresus_Plugin_Controller_Admin_LegacySettings($plugin);
-        $controller->getHtml();
+        $controller->getHtml(new Eresus_CMS_Request());
     }
 
     /**
@@ -75,16 +75,13 @@ class Eresus_Plugin_Controller_Admin_LegacySettingsTest extends Eresus_TestCase
      */
     public function testPost()
     {
-        $kernel = new stdClass();
-        $kernel->request = array('method' => 'POST');
-        $app = $this->getMock('stdClass', array('getLegacyKernel'));
-        $app->expects($this->any())->method('getLegacyKernel')->will($this->returnValue($kernel));
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $request = new Eresus_CMS_Request();
+        $request->setMethod('POST');
         $plugin = $this->getMockBuilder('Eresus_Plugin')->disableOriginalConstructor()
             ->setMethods(array('updateSettings'))->getMock();
         $plugin->expects($this->once())->method('updateSettings');
         $controller = new Eresus_Plugin_Controller_Admin_LegacySettings($plugin);
-        $controller->getHtml();
+        $controller->getHtml($request);
     }
 }
 

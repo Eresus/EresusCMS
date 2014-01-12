@@ -39,9 +39,11 @@ class TContent
     /**
      * Возвращает разметку интерфейса управления контентом текущего раздела
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string|Eresus_HTTP_Response  HTML
      */
-    public function adminRender()
+    public function adminRender(Eresus_CMS_Request $request)
     {
         if (!UserRights(EDITOR))
         {
@@ -107,7 +109,7 @@ class TContent
             if (isset($controller)
                 && $controller instanceof Eresus_Admin_Controller_Content_Interface)
             {
-                $result = $controller->getHtml();
+                $result = $controller->getHtml($request);
             }
         }
         else
@@ -121,7 +123,7 @@ class TContent
             }
             $page->module = $plugin;
             $provider = new Eresus_Admin_ContentProvider_Plugin($plugin);
-            $result = $provider->adminRenderContent();
+            $result = $provider->adminRenderContent($request);
         }
         return $result;
     }

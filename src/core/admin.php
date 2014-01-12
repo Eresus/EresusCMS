@@ -980,9 +980,13 @@ class TAdminUI extends Eresus_CMS_Page_Admin
     /**
      * Отрисовывает область контента страницы
      *
+     * @param Eresus_CMS_Request $request
+     *
+     * @throws Eresus_HTTP_Exception_NotFound
+     *
      * @return string
      */
-    private function renderContent()
+    private function renderContent(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
 
@@ -1015,7 +1019,7 @@ class TAdminUI extends Eresus_CMS_Page_Admin
 
             try
             {
-                $result = $provider->adminRender();
+                $result = $provider->adminRender($request);
             }
             catch (RuntimeException $e)
             {
@@ -1218,22 +1222,27 @@ class TAdminUI extends Eresus_CMS_Page_Admin
     /**
      * Отправляет созданную страницу пользователю
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return void
      */
-    public function render()
+    public function render(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
-        $this->renderUI();
+        $this->renderUI($request);
     }
 
     /**
      * Отрисовка интерфейса
+     *
+     * @param Eresus_CMS_Request $request
+     *
      * @return void
      */
-    private function renderUI()
+    private function renderUI(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
-        $response = $this->renderContent();
+        $response = $this->renderContent($request);
 
         if (!($response instanceof Eresus_HTTP_Response))
         {

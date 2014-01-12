@@ -49,6 +49,8 @@ class Eresus_Admin_ContentProvider_Plugin extends Eresus_Admin_ContentProvider_A
     /**
      * Отрисовывает интерфейс модуля
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @throws LogicException
      * @throws RuntimeException
      *
@@ -56,16 +58,18 @@ class Eresus_Admin_ContentProvider_Plugin extends Eresus_Admin_ContentProvider_A
      *
      * @since 3.01
      */
-    public function adminRender()
+    public function adminRender(Eresus_CMS_Request $request)
     {
         $this->linkAdminResources();
-        $html = parent::adminRender();
+        $html = parent::adminRender($request);
         return $html;
     }
 
     /**
      * Отрисовывает область контента раздела
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string  HTML
      *
      * @throws LogicException
@@ -73,10 +77,10 @@ class Eresus_Admin_ContentProvider_Plugin extends Eresus_Admin_ContentProvider_A
      *
      * @since 3.01
      */
-    public function adminRenderContent()
+    public function adminRenderContent(Eresus_CMS_Request $request)
     {
         $this->linkAdminResources();
-        $html = parent::adminRenderContent();
+        $html = parent::adminRenderContent($request);
         return $html;
     }
 
