@@ -256,7 +256,7 @@ class TPlgMgr
         switch (true)
         {
             case arg('update') !== null:
-                $result = $this->actionSettings(arg('update'));
+                $result = $this->actionSettings(arg('update'), $request);
                 break;
             case arg('toggle') !== null:
                 $this->toggle();
