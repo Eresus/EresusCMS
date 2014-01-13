@@ -50,11 +50,9 @@ class Eresus_Admin_FrontController extends Eresus_CMS_FrontController
         }
         else
         {
-            ob_start();
             /** @var TAdminUI|TClientUI $page */
             $page = $this->getPage();
-            $page->render($this->getRequest());
-            $response = new Eresus_HTTP_Response(ob_get_clean());
+            $response = $page->render($this->getRequest());
         }
         return $response;
     }

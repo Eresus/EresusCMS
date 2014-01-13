@@ -1224,12 +1224,12 @@ class TAdminUI extends Eresus_CMS_Page_Admin
      *
      * @param Eresus_CMS_Request $request
      *
-     * @return void
+     * @return Eresus_HTTP_Response
      */
     public function render(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
-        $this->renderUI($request);
+        return $this->renderUI($request);
     }
 
     /**
@@ -1237,7 +1237,7 @@ class TAdminUI extends Eresus_CMS_Page_Admin
      *
      * @param Eresus_CMS_Request $request
      *
-     * @return void
+     * @return Eresus_HTTP_Response
      */
     private function renderUI(Eresus_CMS_Request $request)
     {
@@ -1260,7 +1260,7 @@ class TAdminUI extends Eresus_CMS_Page_Admin
             $response = new Eresus_HTTP_Response($tmpl->compile($data), 200, $this->headers);
         }
 
-        $response->send();
+        return $response;
     }
 }
 
