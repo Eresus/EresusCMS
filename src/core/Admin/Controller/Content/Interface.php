@@ -37,9 +37,11 @@ interface Eresus_Admin_Controller_Content_Interface
     /**
      * Возвращает разметку области контента
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string
      * @since 3.01
      */
-    public function getHtml();
+    public function getHtml(Eresus_CMS_Request $request);
 }
 

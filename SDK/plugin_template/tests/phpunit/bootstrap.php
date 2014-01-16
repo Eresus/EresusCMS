@@ -24,6 +24,11 @@ if (file_exists($autoload))
 {
     /** @noinspection PhpIncludeInspection */
     $autoloader = include $autoload;
+    /** @var Composer\Autoload\ClassLoader $autoloader */
+    $autoloader->addClassMap(
+        array($pluginName => TESTS_SRC_DIR . '/' .strtolower($pluginName) . '.php')
+    );
+    $autoloader->add($pluginName . '_', TESTS_SRC_DIR . '/classes');
 }
 else
 /* Если Composer-а нет, используем свой автозагрузчик */

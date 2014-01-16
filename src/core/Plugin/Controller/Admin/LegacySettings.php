@@ -43,13 +43,14 @@ class Eresus_Plugin_Controller_Admin_LegacySettings extends Eresus_Plugin_Contro
     /**
      * Возвращает разметку области контента
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string
      * @since 3.01
      */
-    public function getHtml()
+    public function getHtml(Eresus_CMS_Request $request)
     {
-        $request = Eresus_Kernel::app()->getLegacyKernel()->request;
-        if ('POST' == $request['method'])
+        if ($request->getMethod() == 'POST')
         {
             return $this->call('updateSettings');
         }

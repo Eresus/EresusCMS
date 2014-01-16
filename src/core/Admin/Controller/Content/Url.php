@@ -36,17 +36,20 @@ class Eresus_Admin_Controller_Content_Url implements Eresus_Admin_Controller_Con
     /**
      * Возвращает разметку области контента
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string|Eresus_HTTP_Response
      * @since 3.01
      */
-    public function getHtml()
+    public function getHtml(Eresus_CMS_Request $request)
     {
         $legacyKernel = Eresus_Kernel::app()->getLegacyKernel();
         $sections = $legacyKernel->sections;
-        $item = $sections->get(arg('section', 'int'));
-        $response = arg('update')
+        $args = $request->getMethod() == 'GET' ? $request->query : $request->request;
+        $item = $sections->get($args->getInt('section'));
+        $response = $args->has('update') // TODO Использовать getMethod вметос 'update'
             ? $this->updateAction($item)
-            : $this->formAction($item);
+            : $this->formAction($item, $args);
         return $response;
     }
 
@@ -54,6 +57,7 @@ class Eresus_Admin_Controller_Content_Url implements Eresus_Admin_Controller_Con
      * Возвращает разметку диалога
      *
      * @param array $item
+     *
      * @return string
      * @since 3.01
      */
@@ -79,15 +83,16 @@ class Eresus_Admin_Controller_Content_Url implements Eresus_Admin_Controller_Con
     /**
      * Сохраняет изменения
      *
-     * @param array $item
+     * @param array                  $item
+     * @param Eresus_HTTP_Parameters $args
      *
      * @return Eresus_HTTP_Redirect
      */
-    private function updateAction(array $item)
+    private function updateAction(array $item, Eresus_HTTP_Parameters $args)
     {
-        $item['content'] = arg('url', 'dbsafe');
+        $item['content'] = $args->get('url');
         Eresus_Kernel::app()->getLegacyKernel()->sections->update($item);
-        return new Eresus_HTTP_Redirect(arg('submitURL'));
+        return new Eresus_HTTP_Redirect($args->get('submitURL'));
     }
 }
 

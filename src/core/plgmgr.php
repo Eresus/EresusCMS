@@ -88,13 +88,14 @@ class TPlgMgr implements ContainerAwareInterface
     /**
      * Настройки модуля
      *
-     * @param string $pluginName  имя модуля
+     * @param string             $pluginName  имя модуля
+     * @param Eresus_CMS_Request $request     запрос
      *
      * @return mixed
      *
      * @throws Eresus_CMS_Exception_NotFound
      */
-    private function actionSettings($pluginName)
+    private function actionSettings($pluginName, Eresus_CMS_Request $request)
     {
         /** @var Eresus_Plugin_Registry $plugins */
         $plugins = $this->container->get('plugins');
@@ -111,7 +112,7 @@ class TPlgMgr implements ContainerAwareInterface
             throw new Eresus_CMS_Exception_NotFound;
         }
 
-        $html = $controller->getHtml();
+        $html = $controller->getHtml($request);
 
         $request = Eresus_Kernel::app()->getLegacyKernel()->request;
         if ('POST' == $request['method'])
@@ -257,9 +258,11 @@ class TPlgMgr implements ContainerAwareInterface
     /**
      * Отрисовка контента модуля
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string
      */
-    public function adminRender()
+    public function adminRender(Eresus_CMS_Request $request)
     {
         if (!UserRights($this->access))
         {
@@ -276,7 +279,7 @@ class TPlgMgr implements ContainerAwareInterface
         switch (true)
         {
             case arg('update') !== null:
-                $result = $this->actionSettings(arg('update'));
+                $result = $this->actionSettings(arg('update'), $request);
                 break;
             case arg('toggle') !== null:
                 $this->toggle();
@@ -285,7 +288,7 @@ class TPlgMgr implements ContainerAwareInterface
                 $this->delete();
                 break;
             case arg('id') !== null:
-                $result = $this->actionSettings(arg('id'));
+                $result = $this->actionSettings(arg('id'), $request);
                 break;
             case arg('action') == 'add':
                 $result = $this->add();

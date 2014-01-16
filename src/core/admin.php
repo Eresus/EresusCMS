@@ -983,9 +983,13 @@ class TAdminUI extends Eresus_CMS_Page_Admin
     /**
      * Отрисовывает область контента страницы
      *
+     * @param Eresus_CMS_Request $request
+     *
+     * @throws Eresus_HTTP_Exception_NotFound
+     *
      * @return string
      */
-    private function renderContent()
+    private function renderContent(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
 
@@ -1026,12 +1030,19 @@ class TAdminUI extends Eresus_CMS_Page_Admin
 
             try
             {
-                $result = $provider->adminRender();
+                $result = $provider->adminRender($request);
             }
             catch (RuntimeException $e)
             {
-                Eresus_Kernel::logException($e);
-                $result = ErrorBox($e->getMessage());
+                if ($e instanceof Eresus_CMS_Exception_NotFound)
+                {
+                    $result = ErrorBox($e->getMessage() ?: 'Запрошенная страница не найдена.');
+                }
+                else
+                {
+                    Eresus_Kernel::logException($e);
+                    $result = ErrorBox($e->getMessage());
+                }
             }
         }
 
@@ -1229,22 +1240,27 @@ class TAdminUI extends Eresus_CMS_Page_Admin
     /**
      * Отправляет созданную страницу пользователю
      *
-     * @return void
+     * @param Eresus_CMS_Request $request
+     *
+     * @return Eresus_HTTP_Response
      */
-    public function render()
+    public function render(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
-        $this->renderUI();
+        return $this->renderUI($request);
     }
 
     /**
      * Отрисовка интерфейса
-     * @return void
+     *
+     * @param Eresus_CMS_Request $request
+     *
+     * @return Eresus_HTTP_Response
      */
-    private function renderUI()
+    private function renderUI(Eresus_CMS_Request $request)
     {
         Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '()');
-        $response = $this->renderContent();
+        $response = $this->renderContent($request);
 
         if (!($response instanceof Eresus_HTTP_Response))
         {
@@ -1262,7 +1278,7 @@ class TAdminUI extends Eresus_CMS_Page_Admin
             $response = new Eresus_HTTP_Response($tmpl->compile($data), 200, $this->headers);
         }
 
-        $response->send();
+        return $response;
     }
 }
 
