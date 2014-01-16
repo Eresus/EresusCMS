@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Вход - ${product.title}</title>
+	<link rel="stylesheet" href="{$site->webRoot}/admin/themes/default/theme.css">
+	<link rel="stylesheet" href="{$site->webRoot}/admin/themes/default/auth.css">
+</head>
+<body>
+
+	<table id="body">
+		<tr>
+			<td>
+
+				<div id="auth-dialog">
+					<form id="auth-form" action="{$site->webRoot}/admin.php" method="post">
+
+						<div class="title">Вход в панель управления</div>
+						<div class="content">
+							{if $errors}
+							{foreach $errors message}
+							<div class="box error">{$message}</div>
+							{/foreach}
+							{/if}
+							<div class="label"><label for="user">Пользователь:</label></div>
+							<div><input type="text" name="user" id="user" autofocus{if $user} value="{$user}"{/if}></div>
+							<div class="label"><label for="password">Пароль:</label></div>
+							<div><input type="password" name="password" id="password"></div>
+							<div class="checkbox">
+								<label for="autologin">
+									<input type="checkbox" name="autologin" id="autologin" value="1"{if $autologin} checked="checked"{/if}>
+									Запомнить
+								</label>
+							</div>
+						</div>
+						<div class="buttons">
+							<button type="submit">Войти</button>
+						</div>
+					</form>
+				</div>
+
+			</td>
+		</tr>
+	</table>
+
+</body>
+</html>

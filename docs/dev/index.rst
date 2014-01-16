@@ -7,8 +7,8 @@
    :maxdepth: 2
 
    intro
-   internals/index
    structure/index
    guide/index
    debug
+   internals/index
    appendix/index

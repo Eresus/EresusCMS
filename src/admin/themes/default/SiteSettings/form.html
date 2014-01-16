@@ -15,13 +15,15 @@
 					<table class="ui-grid ui-hlines">
 						<tr>
 							<td>
-								<label for="settigs-siteName">Название сайта</label><br />
-								<input type="text" name="siteName" value="{$siteName|escape}" size="20"
-									id="settigs-siteName" tabindex="1" fc:required="Укажите название сайта" />
+								<label for="settings-siteName">Название сайта</label><br />
+								<input type="text" name="siteName" value="{$siteName|escape}"
+                                    maxlength="30" size="20" id="settings-siteName" tabindex="1"
+                                    fc:required="Укажите название сайта" />
 							</td>
 							<td class="ui-minor">
-								Предназначено только для внутреннего использования, и не будет отображаться нигде,
-								кроме панели управления. Желательно чтобы название сайта было коротким.
+								Предназначено только для внутреннего использования, и не будет
+                                отображаться нигде, кроме панели управления. Желательно чтобы
+                                название сайта было коротким.
 							</td>
 						</tr>
 						<tr>
@@ -30,15 +32,16 @@
 								<textarea name="siteTitle" cols="50" rows="3" tabindex="2">{$siteTitle|escape}</textarea>
 							</td>
 							<td class="ui-minor">
-								Текст для тега &lt;title&gt;, общий для всех страниц. <em>Внимание!</em> Чтобы этот
-								текст подставлялся в заголовок, надо вставить макрос <b>$(siteTitle)</b> в нужные
-								<a href="admin.php?mod=themes">шаблоны страниц</a>.
+								Текст для тега &lt;title&gt;, общий для всех страниц. <em>Внимание!</em>
+                                Чтобы этот текст подставлялся в заголовок, надо вставить переменную
+                                <b>\{$site->title}</b> в нужные <a href="admin.php?mod=themes">шаблоны страниц</a>.
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<label>
-									<input type="checkbox" name="siteTitleReverse" value="1"{if $siteTitleReverse} checked="checked"{/if} tabindex="3" />
+									<input type="checkbox" name="siteTitleReverse" value="1"
+                                        {if $siteTitleReverse} checked="checked"{/if} tabindex="3" />
 									Обратный порядок разделов в $(sectionTitle)
 								</label>
 								<div class="ui-minor">
@@ -49,9 +52,10 @@
 								</div>
 							</td>
 							<td class="ui-minor">
-								Макрос <b>$(sectionTitle)</b> заменяется на название открытой страницы и списка всех
-								родительских страниц. Этот переключатель определяет в каком порядке будут выводиться
-								их названия: от открытой страницы к корню (по умолчанию) или наоборот.
+								Макрос <b>$(sectionTitle)</b> заменяется на название открытой
+                                страницы и списка всех родительских страниц. Этот переключатель
+                                определяет в каком порядке будут выводиться их названия: от открытой
+                                страницы к корню (по умолчанию) или наоборот.
 							</td>
 						</tr>
 						<tr>
@@ -78,9 +82,10 @@
 								<textarea name="siteKeywords" cols="50" rows="3" tabindex="5">{$siteKeywords|escape}</textarea>
 							</td>
 							<td class="ui-minor">
-								Ключевые слова для мета-тега <b>keywords</b>, общего для всех страниц. <em>Внимание!</em>
-								Чтобы эти слова подставлялись в мета-тег, надо вставить макрос <b>$(siteKeywords)</b>
-								в нужные <a href="admin.php?mod=themes">шаблоны страниц</a>.
+								Ключевые слова для мета-тега <b>keywords</b>, общего для всех страниц.
+                                <em>Внимание!</em> Чтобы эти слова подставлялись в мета-тег, надо
+                                вставить переменную <b>\{$site->keywords}</b> в нужные
+                                <a href="admin.php?mod=themes">шаблоны страниц</a>.
 							</td>
 						</tr>
 						<tr>
@@ -89,9 +94,10 @@
 								<textarea name="siteDescription" cols="50" rows="3" tabindex="6">{$siteDescription|escape}</textarea>
 							</td>
 							<td class="ui-minor">
-								Текст для мета-тега <b>description</b>, общего для всех страниц. <em>Внимание!</em>
-								Чтобы этот текст подставлялся в мета-тег, надо вставить макрос <b>$(siteDescription)</b>
-								в нужные <a href="admin.php?mod=themes">шаблоны страниц</a>.
+								Текст для мета-тега <b>description</b>, общего для всех страниц.
+                                <em>Внимание!</em> Чтобы этот текст подставлялся в мета-тег, надо
+                                вставить макрос <b>\{$site->description}</b> в нужные
+                                <a href="admin.php?mod=themes">шаблоны страниц</a>.
 							</td>
 						</tr>
 					</table>
@@ -113,7 +119,7 @@
 									<input type="text" name="mailFromName" value="{$mailFromName|escape}" size="20" tabindex="3" />
 									<div class="ui-minor nowrap">Пример: <em>Администрация</em></div>
 								</td>
-								<td style="width: 80%">
+								<td style="width: 80%;">
 									<label>Организация</label><br />
 									<input type="text" name="mailFromOrg" value="{$mailFromOrg|escape}" size="20" tabindex="4" />
 									<div class="ui-minor nowrap">Пример: <em>Рога и копыта</em></div>
@@ -202,8 +208,8 @@
 	</div>
 	
 	<script type="text/javascript">//<![CDATA[
-		$(document).ready(function () {
-
+		$(document).ready(function ()
+        {
 			$("#settingsForm input[name=siteTitleReverse]").click(function (){
 				var root = $("#settings-siteTitleReverse-example");
 				$("span", root).hide();
@@ -218,7 +224,12 @@
 				if (event.keyCode == 9)
 				{
 					$("#settingsFormTabs").tabs("select", 1);
-				 setTimeout(function()\{$("#settingsForm input[name=mailFromAddr]").focus();}, 10);
+				    setTimeout(
+                        function()
+                        {
+                            $("#settingsForm input[name=mailFromAddr]").focus();
+                        },
+                        10);
 				}
 			});
 
@@ -226,7 +237,12 @@
 				if (event.keyCode == 9)
 				{
 					$("#settingsFormTabs").tabs("select", 2);
-				 setTimeout(function()\{$("#settingsForm input[name=filesModeSetOnUpload]").focus();}, 10);
+				    setTimeout(
+                        function()
+                        {
+                            $("#settingsForm input[name=filesModeSetOnUpload]").focus();
+                        },
+                        10);
 				}
 			});
 
@@ -234,9 +250,12 @@
 				if (event.keyCode == 9)
 				{
 					$("#settingsFormTabs").tabs("select", 3);
-					//noinspection UnterminatedStatementJS
-				 setTimeout(function()\{$("#settingsForm select[name=contentTypeDefault]").focus();}, //noinspection UnterminatedStatementJS
-				 10);
+					setTimeout(
+                        function()
+                        {
+                            $("#settingsForm select[name=contentTypeDefault]").focus();
+                        },
+				        10);
 				}
 			});
 

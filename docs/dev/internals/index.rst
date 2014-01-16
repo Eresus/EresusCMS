@@ -1,8 +1,7 @@
-Устройство CMS
-==============
+Внутреннее устройство CMS
+=========================
 
 .. toctree::
    :maxdepth: 1
 
-   subsystems
-   request-processing
+   flows

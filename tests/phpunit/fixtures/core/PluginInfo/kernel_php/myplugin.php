@@ -1,6 +1,7 @@
 <?php
 
-class MyPlugin extends Plugin
+class MyPlugin extends Eresus_Plugin
 {
-	public $kernel = '3.00';
+    public $kernel = '3.00';
 }
+

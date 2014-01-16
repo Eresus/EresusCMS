@@ -26,8 +26,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -38,98 +36,96 @@
 class TContent
 {
 
-	/**
-	 * Возвращает разметку интерфейса управления контентом текущего раздела
-	 *
-	 * @return string  HTML
-	 */
-	public function adminRender()
-	{
-		if (!UserRights(EDITOR))
-		{
-			return '';
-		}
-		$result = '';
-		useLib('sections');
-		$sections = new Sections();
-		$item = $sections->get(arg('section', 'int'));
+    /**
+     * Возвращает разметку интерфейса управления контентом текущего раздела
+     *
+     * @param Eresus_CMS_Request $request
+     *
+     * @return string|Eresus_HTTP_Response  HTML
+     */
+    public function adminRender(Eresus_CMS_Request $request)
+    {
+        if (!UserRights(EDITOR))
+        {
+            return '';
+        }
 
-		Eresus_Kernel::app()->getPage()->id = $item['id'];
-		if (!array_key_exists($item['type'], Eresus_CMS::getLegacyKernel()->plugins->list))
-		{
-			switch ($item['type'])
-			{
-				case 'default':
-					$editor = new ContentPlugin();
-					if (arg('update'))
-					{
-						$editor->update();
-					}
-					else
-					{
-						$result = $editor->adminRenderContent();
-					}
-				break;
+        $legacyKernel = Eresus_CMS::getLegacyKernel();
+        $plugins = Eresus_Plugin_Registry::getInstance();
+        /** @var TAdminUI $page */
+        $page = Eresus_Kernel::app()->getPage();
 
-				case 'list':
-					if (arg('update'))
-					{
-						$item['content'] = arg('content', 'dbsafe');
-						Eresus_CMS::getLegacyKernel()->sections->update($item);
-						HTTP::redirect(arg('submitURL'));
-					}
-					else
-					{
-						$form = array(
-							'name' => 'editURL',
-							'caption' => ADM_EDIT,
-							'width' => '100%',
-							'fields' => array (
-								array('type'=>'hidden','name'=>'update', 'value'=>$item['id']),
-								array ('type' => 'html', 'name' => 'content', 'label' => admTemplListLabel, 'height' => '300px', 'value'=>isset($item['content'])?$item['content']:'$(items)'),
-							),
-							'buttons' => array('apply', 'cancel'),
-						);
-						$result = Eresus_Kernel::app()->getPage()->renderForm($form);
-					}
-				break;
+        $result = '';
+        $sections = Eresus_Kernel::app()->getLegacyKernel()->sections;
+        $item = $sections->get(arg('section', 'int'));
 
-				case 'url':
-					if (arg('update'))
-					{
-						$item['content'] = arg('url', 'dbsafe');
-						Eresus_CMS::getLegacyKernel()->sections->update($item);
-						HTTP::redirect(arg('submitURL'));
-					}
-					else
-					{
-						$form = array(
-							'name' => 'editURL',
-							'caption' => ADM_EDIT,
-							'width' => '100%',
-							'fields' => array (
-								array('type'=>'hidden','name'=>'update', 'value'=>$item['id']),
-								array ('type' => 'edit', 'name' => 'url', 'label' => 'URL:', 'width' => '100%', 'value'=>isset($item['content'])?$item['content']:''),
-							),
-							'buttons' => array('apply', 'cancel'),
-						);
-						$result = Eresus_Kernel::app()->getPage()->renderForm($form);
-					}
-				break;
+        $page->id = $item['id'];
+        if (!array_key_exists($item['type'], $plugins->list))
+        {
+            switch ($item['type'])
+            {
+                case 'default':
+                    $editor = new ContentPlugin();
+                    if (arg('update'))
+                    {
+                        $editor->update();
+                    }
+                    else
+                    {
+                        $result = $editor->adminRenderContent();
+                    }
+                    break;
 
-				default:
-					$result = Eresus_Kernel::app()->getPage()->
-						box(sprintf(errContentPluginNotFound, $item['type']), 'errorBox', errError);
-				break;
-			}
-		}
-		else
-		{
-			Eresus_CMS::getLegacyKernel()->plugins->load($item['type']);
-			Eresus_Kernel::app()->getPage()->module = Eresus_CMS::getLegacyKernel()->plugins->items[$item['type']];
-			$result = Eresus_CMS::getLegacyKernel()->plugins->items[$item['type']]->adminRenderContent();
-		}
-		return $result;
-	}
-	//-----------------------------------------------------------------------------
+                case 'list':
+                    if (arg('update'))
+                    {
+                        $item['content'] = arg('content', 'dbsafe');
+                        $legacyKernel->sections->update($item);
+                        HTTP::redirect(arg('submitURL'));
+                    }
+                    else
+                    {
+                        $form = array(
+                            'name' => 'editURL',
+                            'caption' => ADM_EDIT,
+                            'width' => '100%',
+                            'fields' => array (
+                                array('type'=>'hidden','name'=>'update', 'value'=>$item['id']),
+                                array ('type' => 'html', 'name' => 'content', 'label' => admTemplListLabel, 'height' => '300px', 'value'=>isset($item['content'])?$item['content']:'$(items)'),
+                            ),
+                            'buttons' => array('apply', 'cancel'),
+                        );
+                        $result = $page->renderForm($form);
+                    }
+                    break;
+                case 'url':
+                    $controller = new Eresus_Admin_Controller_Content_Url();
+                    break;
+                default:
+                    $result = $page->
+                        box(sprintf(errContentPluginNotFound, $item['type']), 'errorBox', errError);
+                    break;
+            }
+            if (isset($controller)
+                && $controller instanceof Eresus_Admin_Controller_Content_Interface)
+            {
+                $result = $controller->getHtml($request);
+            }
+        }
+        else
+        {
+            $plugin = $plugins->load($item['type']);
+            if (false === $plugin)
+            {
+                return ErrorBox(
+                    sprintf(_('Отсутствует модуль расширения для работы с разделами типа "%s"'),
+                        $item['type']));
+            }
+            $page->module = $plugin;
+            $provider = new Eresus_Admin_ContentProvider_Plugin($plugin);
+            $result = $provider->adminRenderContent($request);
+        }
+        return $result;
+    }
 }
+

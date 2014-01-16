@@ -1,13 +1,11 @@
 <?php
 /**
- * ${product.title} ${product.version}
+ * Сжатие страниц
  *
- * ${product.description}
- *
- * @copyright 2004-2007, Михаил Красильников <mihalych@vsepofigu.ru>
- * @copyright 2007-2008, Eresus Project, http://eresus.ru/
+ * @version ${product.version}
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -26,8 +24,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 error_reporting(0);
@@ -35,28 +31,29 @@ error_reporting(0);
 /**
  * Отправляет заголовок кода результата
  *
+ * @param int $code  код ошибки HTTP
  */
-function HttpError($code)
+function httpError($code)
 {
-	$message = array(
-		403 => '403 Access Not Alowed',
-		404 => '404 Not Found',
-	);
-	header('HTTP/'.$_SERVER['PROTOCOL_VERSION'].' '.$message[$code], true, $code);
-	die(
-		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n".
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n".
-		"<head>\n".
-		"  <title>".$message[$code]."</title>\n".
-		"</head>\n".
-		"<body>\n".
-		"	<h1>".$message[$code]."</h1>\n".
-		"	<address>{$_SERVER['REQUEST_URI']}</address>\n".
-		"	<hr />".
-		$_SERVER['SERVER_SIGNATURE'].
-		"</body>\n".
-	"</html>"
-	);
+    $message = array(
+        403 => '403 Access Not Alowed',
+        404 => '404 Not Found',
+    );
+    header('HTTP/'.$_SERVER['PROTOCOL_VERSION'].' '.$message[$code], true, $code);
+    die(
+        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n".
+            "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n".
+            "<head>\n".
+            "  <title>".$message[$code]."</title>\n".
+            "</head>\n".
+            "<body>\n".
+            "	<h1>".$message[$code]."</h1>\n".
+            "	<address>{$_SERVER['REQUEST_URI']}</address>\n".
+            "	<hr />".
+            $_SERVER['SERVER_SIGNATURE'].
+            "</body>\n".
+            "</html>"
+    );
 }
 
 /**
@@ -65,17 +62,22 @@ function HttpError($code)
  * @param string $content
  * @return string
  */
-function ContentLength($content)
+function contentLength($content)
 {
-	header("Content-Length: ".strlen($content));
-	return $content;
+    header("Content-Length: ".strlen($content));
+    return $content;
 }
 
 $filesRoot = __FILE__;
-$filesRoot = str_replace('\\','/',$filesRoot);
+$filesRoot = str_replace('\\', '/', $filesRoot);
 $filesRoot = substr($filesRoot, 0, strpos($filesRoot, '/core/')+1);
-$httpPath = substr($filesRoot, strpos($filesRoot, $_SERVER['DOCUMENT_ROOT'])+strlen($_SERVER['DOCUMENT_ROOT'])-($_SERVER['DOCUMENT_ROOT']{strlen($_SERVER['DOCUMENT_ROOT'])-1} == '/'?1:0));
-if ($filesRoot{1} == ':') $filesRoot = substr($filesRoot, 2);
+$httpPath = substr($filesRoot, strpos($filesRoot,
+    $_SERVER['DOCUMENT_ROOT']) + strlen($_SERVER['DOCUMENT_ROOT'])
+        - ($_SERVER['DOCUMENT_ROOT']{strlen($_SERVER['DOCUMENT_ROOT'])-1} == '/'?1:0));
+if ($filesRoot{1} == ':')
+{
+    $filesRoot = substr($filesRoot, 2);
+}
 $httpRoot = 'http://'.$_SERVER['HTTP_HOST'].$httpPath;
 $styleRoot = $httpRoot.'style/';
 $dataRoot = $httpRoot.'data/';
@@ -86,43 +88,44 @@ $file = isset($_REQUEST['file'])?$_REQUEST['file']:'';
 
 if (empty($file))
 {
-	HttpError(404);
+    httpError(404);
 }
 
-if (!preg_match('/\.(js|css|html)$/i',$file))
+if (!preg_match('/\.(js|css|html)$/i', $file))
 {
-	HttpError(403);
+    httpError(403);
 }
 
 $filename = addslashes($filesRoot . $file);
 
 if (is_file($filename))
 {
-	ob_start('ContentLength');
-	ob_start('ob_gzhandler');
-	header('Content-type: '.$type.(isset($_GET['charset'])?'; charset='.$_GET['charset']:''));
-	header('Cache-Control: '.(isset($_GET['cache'])?$_GET['cache']:'public'));
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($filename)) . ' GMT');
-	$text = file_get_contents($filename);
-	$text = str_replace(array(
-		'$(httpHost)',
-		'$(httpPath)',
-		'$(httpRoot)',
-		'$(styleRoot)',
-		'$(dataRoot)',
-		'$(dataFiles)',
-	), array(
-		$_SERVER['HTTP_HOST'],
-		$httpPath,
-		$httpRoot,
-		$styleRoot,
-		$dataRoot,
-		$dataFiles,
-	), $text);
-	echo $text;
-	ob_end_flush();
+    ob_start('contentLength');
+    ob_start('ob_gzhandler');
+    header('Content-type: '.$type.(isset($_GET['charset'])?'; charset='.$_GET['charset']:''));
+    header('Cache-Control: '.(isset($_GET['cache'])?$_GET['cache']:'public'));
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($filename)) . ' GMT');
+    $text = file_get_contents($filename);
+    $text = str_replace(array(
+        '$(httpHost)',
+        '$(httpPath)',
+        '$(httpRoot)',
+        '$(styleRoot)',
+        '$(dataRoot)',
+        '$(dataFiles)',
+    ), array(
+        $_SERVER['HTTP_HOST'],
+        $httpPath,
+        $httpRoot,
+        $styleRoot,
+        $dataRoot,
+        $dataFiles,
+    ), $text);
+    echo $text;
+    ob_end_flush();
 }
 else
 {
-	HttpError(404);
+    httpError(404);
 }
+

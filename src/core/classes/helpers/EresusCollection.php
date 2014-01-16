@@ -27,8 +27,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -40,176 +38,156 @@
  */
 class EresusCollection implements ArrayAccess, Countable, Serializable
 {
-	/**
-	 * Значение, возвращаемое, при обращении к несуществующему элементу коллекции
-	 *
-	 * @var mixed
-	 * @since 2.15
-	 */
-	protected $defaultValue = null;
+    /**
+     * Значение, возвращаемое, при обращении к несуществующему элементу коллекции
+     *
+     * @var mixed
+     * @since 2.15
+     */
+    protected $defaultValue = null;
 
-	/**
-	 * Данные коллекции
-	 *
-	 * @var array
-	 * @since 2.15
-	 */
-	private $data = array();
+    /**
+     * Данные коллекции
+     *
+     * @var array
+     * @since 2.15
+     */
+    private $data = array();
 
-	/**
-	 * Конструктор
-	 *
-	 * @param array $data
-	 *
-	 * @return EresusCollection
-	 *
-	 * @throws InvalidArgumentException если $data не массив
-	 * @since 2.15
-	 */
-	public function __construct($data = array())
-	{
-		if (!is_array($data))
-		{
-			throw new InvalidArgumentException(
-				'First argument of EresusCollection::__construct must be an array and not ' .
-				gettype($data));
-		}
-		$this->data = $data;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Конструктор
+     *
+     * @param array $data
+     *
+     * @return EresusCollection
+     *
+     * @throws Eresus_Exception_InvalidArgumentType  если $data не массив
+     * @since 2.15
+     */
+    public function __construct($data = array())
+    {
+        if (!is_array($data))
+        {
+            throw Eresus_Exception_InvalidArgumentType::factory(__METHOD__, 1, 'array', $data);
+        }
+        $this->data = $data;
+    }
 
-	/**
-	 * Устанавливает значение, возвращаемое при обращении к несуществующему элементу
-	 *
-	 * @param mixed $value
-	 *
-	 * @return void
-	 *
-	 * @since 2.15
-	 */
-	public function setDefaultValue($value)
-	{
-		$this->defaultValue = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает значение, возвращаемое при обращении к несуществующему элементу
+     *
+     * @param mixed $value
+     *
+     * @return void
+     *
+     * @since 2.15
+     */
+    public function setDefaultValue($value)
+    {
+        $this->defaultValue = $value;
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see ArrayAccess::offsetExists()
-	 */
-	public function offsetExists($offset)
-	{
-		$this->checkOffsetType($offset);
-		return isset($this->data[$offset]);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * @see ArrayAccess::offsetExists()
+     */
+    public function offsetExists($offset)
+    {
+        $this->checkOffsetType($offset);
+        return isset($this->data[$offset]);
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see ArrayAccess::offsetGet()
-	 */
-	public function offsetGet($offset)
-	{
-		$this->checkOffsetType($offset);
+    /**
+     * @see ArrayAccess::offsetGet()
+     */
+    public function offsetGet($offset)
+    {
+        $this->checkOffsetType($offset);
 
-		if (!$this->offsetExists($offset))
-		{
-			$this->offsetSet($offset, $this->defaultValue);
-		}
+        if (!$this->offsetExists($offset))
+        {
+            $this->offsetSet($offset, $this->defaultValue);
+        }
 
-		$value = $this->data[$offset];
+        $value = $this->data[$offset];
 
-		return $value;
-	}
-	//-----------------------------------------------------------------------------
+        return $value;
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see ArrayAccess::offsetSet()
-	 */
-	public function offsetSet($offset, $value)
-	{
-		if (is_array($value))
-		{
-			$value = new self($value);
-			$value->setDefaultValue($this->defaultValue);
-		}
+    /**
+     * @see ArrayAccess::offsetSet()
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_array($value))
+        {
+            $value = new self($value);
+            $value->setDefaultValue($this->defaultValue);
+        }
 
-		if (is_null($offset))
-		{
-			$this->data []= $value;
-		}
-		else
-		{
-			$this->checkOffsetType($offset);
-			$this->data[$offset] = $value;
-		}
-	}
-	//-----------------------------------------------------------------------------
+        if (is_null($offset))
+        {
+            $this->data []= $value;
+        }
+        else
+        {
+            $this->checkOffsetType($offset);
+            $this->data[$offset] = $value;
+        }
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see ArrayAccess::offsetUnset()
-	 */
-	public function offsetUnset($offset)
-	{
-		$this->checkOffsetType($offset);
+    /**
+     * @see ArrayAccess::offsetUnset()
+     */
+    public function offsetUnset($offset)
+    {
+        $this->checkOffsetType($offset);
 
-		if (isset($this->data[$offset]))
-		{
-			unset($this->data[$offset]);
-		}
-	}
-	//-----------------------------------------------------------------------------
+        if (isset($this->data[$offset]))
+        {
+            unset($this->data[$offset]);
+        }
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see Countable::count()
-	 */
-	public function count()
-	{
-		return count($this->data);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * @see Countable::count()
+     */
+    public function count()
+    {
+        return count($this->data);
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see Serializable::serialize()
-	 */
-	public function serialize()
-	{
-		return serialize($this->data);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * @see Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize($this->data);
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 * @see Serializable::unserialize()
-	 */
-	public function unserialize($serialized)
-	{
-		$this->data = unserialize($serialized);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * @see Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        $this->data = unserialize($serialized);
+    }
 
-	/**
-	 * Проверяет тип ключа
-	 *
-	 * @param mixed $offset
-	 *
-	 * @return void
-	 *
-	 * @throws InvalidArgumentException если у ключа не скалярное значение
-	 * @since 2.15
-	 */
-	protected function checkOffsetType($offset)
-	{
-		if (!is_scalar($offset))
-		{
-			throw new InvalidArgumentException('Index must be a scalar value and not ' .
-				gettype($offset));
-		}
-	}
-	//-----------------------------------------------------------------------------
-
+    /**
+     * Проверяет тип ключа
+     *
+     * @param mixed $offset
+     *
+     * @return void
+     *
+     * @throws Eresus_Exception_InvalidArgumentType  если у ключа не скалярное значение
+     * @since 2.15
+     */
+    protected function checkOffsetType($offset)
+    {
+        if (!is_scalar($offset))
+        {
+            throw Eresus_Exception_InvalidArgumentType::factory(__METHOD__, 1, 'scalar', $offset);
+        }
+    }
 }
+

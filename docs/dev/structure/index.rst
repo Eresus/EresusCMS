@@ -7,3 +7,4 @@
    skeleton
    plugin.xml
    classes
+   resources

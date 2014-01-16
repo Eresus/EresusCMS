@@ -1,13 +1,11 @@
 <?php
 /**
- * ${product.title} ${product.version}
+ * Старое ядро
  *
- * ${product.description}
- *
- * @copyright 2004, Михаил Красильников <mihalych@vsepofigu.ru>
- * @copyright 2007, Eresus Project, http://eresus.ru/
+ * @version ${product.version}
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -26,27 +24,73 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
+
 
 /**
  * Название системы
  * @var string
+ * @deprecated с 3.01 используйте {@link Eresus_CMS::$name}
  */
 define('CMSNAME', 'Eresus');
-define('CMSVERSION', '${product.version}'); # Версия системы
-define('CMSLINK', 'http://eresus.ru/'); # Веб-сайт
 
-define('KERNELNAME', 'ERESUS'); # Имя ядра
-define('KERNELDATE', '${build.date}'); # Дата обновления ядра
+/**
+ * Версия системы
+ *
+ * @deprecated с 3.01 используйте {@link Eresus_CMS::$version}
+ */
+define('CMSVERSION', '${product.version}');
 
-# Уровни доступа
-define('ROOT',   1); # Главный администратор
-define('ADMIN',  2); # Администратор
-define('EDITOR', 3); # Редактор
-define('USER',   4); # Пользователь
-define('GUEST',  5); # Гость (не зарегистрирован)
+/**
+ * Веб-сайт
+ *
+ * @deprecated с 3.01
+ */
+define('CMSLINK', 'http://eresus.ru/');
+
+/**
+ * Имя ядра
+ *
+ * @deprecated с 3.01
+ */
+define('KERNELNAME', 'ERESUS');
+
+/**
+ * Дата обновления ядра
+ *
+ * @deprecated с 3.01
+ */
+define('KERNELDATE', '${build.date}');
+
+/**
+ * Уровень доступа «Главный администратор»
+ * @var int
+ */
+define('ROOT',   1);
+
+/**
+ * Уровень доступа «Администратор»
+ * @var int
+ */
+define('ADMIN',  2);
+
+/**
+ * Уровень доступа «Редактор»
+ * @var int
+ */
+define('EDITOR', 3);
+
+/**
+ * Уровень доступа «Пользователь»
+ * @var int
+ */
+define('USER',   4);
+
+/**
+ * Уровень доступа «Гость (не зарегистрирован)»
+ * @var int
+ */
+define('GUEST',  5);
 
 
 
@@ -58,10 +102,11 @@ define('GUEST',  5); # Гость (не зарегистрирован)
  * @return mixed
  *
  * @since 2.14
+ * @deprecated с 3.01
  */
 function __macroConst(array $matches)
 {
-	return constant($matches[1]);
+    return constant($matches[1]);
 }
 
 /**
@@ -72,15 +117,16 @@ function __macroConst(array $matches)
  * @return mixed
  *
  * @since 2.14
+ * @deprecated с 3.01
  */
 function __macroVar(array $matches)
 {
-	$result = $GLOBALS[$matches[2]];
-	if (!empty($matches[3]))
-	{
-		@eval('$result = $result'.$matches[3].';');
-	}
-	return $result;
+    $result = $GLOBALS[$matches[2]];
+    if (!empty($matches[3]))
+    {
+        @eval('$result = $result'.$matches[3].';');
+    }
+    return $result;
 }
 
 /**
@@ -89,44 +135,45 @@ function __macroVar(array $matches)
  * @param string $msg  Текст сообщения
  *
  * @since 2.00
+ * @deprecated с 3.01 используйте исключения
  */
 function FatalError($msg)
 {
-	if (PHP_SAPI == 'cli')
-	{
-		$result = strip_tags(preg_replace('!<br(\s/)?>!i', "\n", $msg))."\n";
-	}
-	else
-	{
-		$result =
-			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n\n".
-			"<html>\n".
-			"<head>\n".
-			"  <title>".errError."</title>\n".
-			"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=".CHARSET."\">\n".
-			"</head>\n\n".
-			"<body>\n".
-			"  <div align=\"center\" style=\"font-family: Arial, Helvetica, sans-serif;\">\n".
-			"    <table cellspacing=\"0\" style=\"border-style: solid; " .
-				"border-color: #e88 #800 #800 #e88; min-width: 500px;\">\n".
-			"      <tr><td style=\"border-style: solid; border-width: 2px; " .
-				"border-color: #800 #e88 #e88 #800; background-color: black; color: yellow; " .
-				"font-weight: bold; text-align: center; font-size: 10pt;\">".errError."</td></tr>\n".
-			"      <tr><td style=\"border-style: solid; border-width: 2px; " .
-				"border-color: #800 #e88 #e88 #800; background-color: #c00; padding: 10; color: white; " .
-				"font-weight: bold; font-family: verdana, tahoma, Geneva, sans-serif; font-size: 8pt;\">\n".
-			"        <p style=\"text-align: center\">".$msg."</p>\n".
-			"        <div align=\"center\"><br /><a href=\"javascript:history.back()\" " .
-				"style=\"font-weight: bold; color: black; text-decoration: none; font-size: 10pt; " .
-				"height: 20px; background-color: #aaa; border-style: solid; border-width: 1px; " .
-				"border-color: #ccc #000 #000 #ccc; padding: 0 2em;\">".strReturn."</a></div>\n".
-			"      </td></tr>\n".
-			"    </table>\n".
-			"  </div>\n".
-			"</body>\n".
-			"</html>";
-	}
-	die($result);
+    if (PHP_SAPI == 'cli')
+    {
+        $result = strip_tags(preg_replace('!<br(\s/)?>!i', "\n", $msg))."\n";
+    }
+    else
+    {
+        $result =
+            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n\n".
+            "<html>\n".
+            "<head>\n".
+            "  <title>".errError."</title>\n".
+            "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=".CHARSET."\">\n".
+            "</head>\n\n".
+            "<body>\n".
+            "  <div align=\"center\" style=\"font-family: Arial, Helvetica, sans-serif;\">\n".
+            "    <table cellspacing=\"0\" style=\"border-style: solid; " .
+            "border-color: #e88 #800 #800 #e88; min-width: 500px;\">\n".
+            "      <tr><td style=\"border-style: solid; border-width: 2px; " .
+            "border-color: #800 #e88 #e88 #800; background-color: black; color: yellow; " .
+            "font-weight: bold; text-align: center; font-size: 10pt;\">".errError."</td></tr>\n".
+            "      <tr><td style=\"border-style: solid; border-width: 2px; " .
+            "border-color: #800 #e88 #e88 #800; background-color: #c00; padding: 10; color: white; " .
+            "font-weight: bold; font-family: verdana, tahoma, Geneva, sans-serif; font-size: 8pt;\">\n".
+            "        <p style=\"text-align: center\">".$msg."</p>\n".
+            "        <div align=\"center\"><br /><a href=\"javascript:history.back()\" " .
+            "style=\"font-weight: bold; color: black; text-decoration: none; font-size: 10pt; " .
+            "height: 20px; background-color: #aaa; border-style: solid; border-width: 1px; " .
+            "border-color: #ccc #000 #000 #ccc; padding: 0 2em;\">".strReturn."</a></div>\n".
+            "      </td></tr>\n".
+            "    </table>\n".
+            "  </div>\n".
+            "</body>\n".
+            "</html>";
+    }
+    die($result);
 }
 
 /**
@@ -140,6 +187,7 @@ function FatalError($msg)
  * @see InfoBox()
  * @see ErrorMessage()
  * @since 2.00
+ * @deprecated с 3.01
  */
 function ErrorBox($text, $caption = errError)
 {
@@ -162,6 +210,7 @@ function ErrorBox($text, $caption = errError)
  * @see ErrorBox()
  * @see InfoMessage()
  * @since 2.00
+ * @deprecated с 3.01
  */
 function InfoBox($text, $caption=strInformation)
 {
@@ -173,11 +222,25 @@ function InfoBox($text, $caption=strInformation)
 	return $result;
 }
 
+/**
+ * Добавляет на страницу сообщение об ошибке
+ *
+ * @param string $message
+ *
+ * @deprecated с 3.01 используйте Eresus_Kernel::app()->getPage()->addErrorMessage()
+ */
 function ErrorMessage($message)
 {
-	Eresus_CMS::getLegacyKernel()->session['msg']['errors'][] = $message;
+    Eresus_Kernel::app()->getPage()->addErrorMessage($message);
 }
 
+/**
+ * Добавляет на страницу информационное сообщение
+ *
+ * @param string $message
+ *
+ * @deprecated с 3.01
+ */
 function InfoMessage($message)
 {
 	Eresus_CMS::getLegacyKernel()->session['msg']['information'][] = $message;
@@ -201,48 +264,6 @@ function UserRights($level)
 		) ||
 		($level == GUEST)
 	);
-}
-
-/**
- * Подключает библиотеку
- *
- * Доступные библиотеки:
- *
- * - admin/lists — списки для АИ
- * - accounts — работа с учётными записями пользователей
- * - forms — работа с веб-формами
- * - glib — работа с изображениями
- * - mysql — работа с MySQL
- * - sections — работа с разделами сайта
- * - templates — работа с шаблонами (эта библиотека больше не требует подключения!)
- *
- * @param string $library  имя библиотеки
- *
- * @return bool  true, если библиотека успешно подключена
- *
- * @since 2.10
- *
- * @deprecated
- */
-function useLib($library)
-{
-	$result = false;
-	if (DIRECTORY_SEPARATOR != '/')
-	{
-		$library = str_replace('/', DIRECTORY_SEPARATOR, $library);
-	}
-	$filename = DIRECTORY_SEPARATOR . $library . '.php';
-	$dirs = explode(PATH_SEPARATOR, get_include_path());
-	foreach ($dirs as $path)
-	{
-		if (is_file($path.$filename))
-		{
-			include_once($path . $filename);
-			$result = true;
-			break;
-		}
-	}
-	return $result;
 }
 
 /**
@@ -714,53 +735,6 @@ function dbReorderItems($table, $condition='', $id='id')
 }
 
 /**
- * Чтение файла
- *
- * @param string $filename  имя файла
- *
- * @return mixed  содержимое файла или false
- *
- * @since 2.10
- * @deprecated
- */
-function fileread($filename)
-{
-	$result = false;
-	if (is_file($filename))
-	{
-		if (is_readable($filename))
-		{
-			$result = file_get_contents($filename);
-		}
-	}
-	return $result;
-}
-
-/**
- * Запись в файл
- *
- * @param string $filename Имя файла
- * @param string $content  Содержимое
- * @param int    $flags    Флаги
- *
- * @return bool Результат выполнения
- *
- * @since 2.10
- * @deprecated
- */
-function filewrite($filename, $content, $flags = 0)
-{
-	$result = false;
-	@$fp = fopen($filename, ($flags && FILE_APPEND)?'ab':'wb');
-	if ($fp)
-	{
-		$result = fwrite($fp, $content) == strlen($content);
-		fclose($fp);
-	}
-	return $result;
-}
-
-/**
  * Удаляет файл
  *
  * @param string $filename Имя файла
@@ -860,23 +834,28 @@ function upload($name, $filename, $overwrite = true)
 				}
 				else
 				{
-					ErrorMessage(sprintf(errFileMove, $_FILES[$name]['name'], $filename));
+                    Eresus_Kernel::app()->getPage()->addErrorMessage(
+                        sprintf(errFileMove, $_FILES[$name]['name'], $filename));
 				}
 			}
 		break;
 		case UPLOAD_ERR_INI_SIZE:
-			ErrorMessage(sprintf(errUploadSizeINI, $_FILES[$name]['name']));
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                sprintf(errUploadSizeINI, $_FILES[$name]['name']));
 		break;
 		case UPLOAD_ERR_FORM_SIZE:
-			ErrorMessage(sprintf(errUploadSizeFORM, $_FILES[$name]['name']));
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                sprintf(errUploadSizeFORM, $_FILES[$name]['name']));
 		break;
 		case UPLOAD_ERR_PARTIAL:
-			ErrorMessage(sprintf(errUploadPartial, $_FILES[$name]['name']));
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                sprintf(errUploadPartial, $_FILES[$name]['name']));
 		break;
 		case UPLOAD_ERR_NO_FILE:
 			if (strlen($_FILES[$name]['name']))
 			{
-				ErrorMessage(sprintf(errUploadNoFile, $_FILES[$name]['name']));
+                Eresus_Kernel::app()->getPage()->addErrorMessage(
+                    sprintf(errUploadNoFile, $_FILES[$name]['name']));
 			}
 		break;
 	}
@@ -946,11 +925,11 @@ function option($name)
  * function img($imagename, $alt='', $title='', $width=0, $height=0, $style='')
  * function img($imagename, $params=array())
  *
- * @param string $imagename
+ * @param string $imageName
  *
  * @return string
  */
-function img($imagename)
+function img($imageName)
 {
 	$argc = func_num_args();
 	$argv = func_get_args();
@@ -1010,23 +989,24 @@ function img($imagename)
 		$p['autosize'] = true;
 	}
 
-	if (strpos($imagename, httpRoot) !== false)
+    $legacyKernel = Eresus_Kernel::app()->getLegacyKernel();
+	if (strpos($imageName, $legacyKernel->root) !== false)
 	{
-		$imagename = str_replace(httpRoot, '', $imagename);
+		$imageName = str_replace($legacyKernel->root, '', $imageName);
 	}
-	if (strpos($imagename, filesRoot) !== false)
+	if (strpos($imageName, $legacyKernel->froot) !== false)
 	{
-		$imagename = str_replace(filesRoot, '', $imagename);
+		$imageName = str_replace($legacyKernel->froot, '', $imageName);
 	}
-	if (strpos($imagename, '://') === false)
+	if (strpos($imageName, '://') === false)
 	{
-		$imagename = httpRoot . $imagename;
+		$imageName = $legacyKernel->root . $imageName;
 	}
-	$local = (strpos($imagename, httpRoot) === 0);
+	$local = (strpos($imageName, $legacyKernel->root) === 0);
 
 	if ($p['autosize'] && $local && empty($p['width']) && empty($p['height']))
 	{
-		$filename = str_replace(httpRoot, filesRoot, $imagename);
+		$filename = str_replace($legacyKernel->root, $legacyKernel->froot, $imageName);
 		if (is_file($filename))
 		{
 			$info = getimagesize($filename);
@@ -1038,7 +1018,7 @@ function img($imagename)
 		$p['height'] = $info[1];
 	};
 
-	$result = '<img src="'.$imagename.'" alt="'.$p['alt'].'"'.
+	$result = '<img src="'.$imageName.'" alt="'.$p['alt'].'"'.
 		(empty($p['width'])?'':' width="'.$p['width'].'"').
 		(empty($p['height'])?'':' height="'.$p['height'].'"').
 		(empty($p['title'])?'':' title="'.$p['title'].'"').
@@ -1100,13 +1080,6 @@ function __clearargs($args)
 			}
 			else
 			{
-				if ( ! PHP::checkVersion('5.3') )
-				{
-					if (get_magic_quotes_gpc())
-					{
-						$value = StripSlashes($value);
-					}
-				}
 				if (strpos($key, 'wyswyg_') === 0)
 				{
 					unset($args[$key]);
@@ -1173,6 +1146,163 @@ function __property($object, $property)
 			''
 		);
 }
+
+/**
+ * @deprecated с 3.01 используйте {@link Eresus_Kernel::log()}
+ */
+function eresus_log()
+{
+    call_user_func_array(array('Eresus_Kernel', 'log'), func_get_args());
+}
+
+/**
+ * Создание изображения из файла
+ *
+ * @param string $filename Имя файла
+ * @return mixed Дескриптор или false
+ */
+function imageCreateFromFile($filename)
+{
+    $type = getimagesize($filename);
+    switch ($type[2])
+    {
+        case IMAGETYPE_GIF:
+            $result = imageCreateFromGIF($filename);
+            break;
+        case IMAGETYPE_JPEG:
+        case IMAGETYPE_JPEG2000:
+            $result = imageCreateFromJPEG($filename);
+            break;
+        case IMAGETYPE_PNG:
+            $result = imageCreateFromPNG($filename);
+            break;
+        default:
+            switch (substr($type['mime'], 6))
+            {
+                case 'gif':
+                    $result = imageCreateFromGIF($filename);
+                    break;
+                case 'jpeg':
+                    $result = imageCreateFromJPEG($filename);
+                    break;
+                case 'png':
+                    $result = imageCreateFromPNG($filename);
+                    break;
+                default:
+                    $result = false;
+            }
+    }
+    return $result;
+}
+
+/**
+ * Сохранение изображения в файл заданного формата
+ *
+ * @param resource $image     Изображение
+ * @param string $filename  Имя файла
+ * @param int $format         Формат файла
+ * @return mixed Дескриптор или false
+ */
+function imageSaveToFile($image, $filename, $format)
+{
+    $result = false;
+    switch ($format)
+    {
+        case IMAGETYPE_GIF:
+            $result = imageGIF($image, $filename);
+            break;
+        case IMAGETYPE_JPEG:
+        case IMAGETYPE_JPEG2000:
+            $quality = func_num_args() > 3 ? func_get_arg(3) : 80;
+            $result = imageJPEG($image, $filename, $quality);
+            break;
+        case IMAGETYPE_PNG:
+            $quality = func_num_args() > 3 ? func_get_arg(3) : 7;
+            $filters = func_num_args() > 4 ? func_get_arg(4) : 0;
+            $result = imagePNG($image, $filename, $quality, $filters);
+            break;
+    }
+    return $result;
+}
+
+
+/**
+ * Создание миниатюры
+ *
+ * @param string $srcFile  Исходный файл
+ * @param string $dstFile  Файл миниатюры
+ * @param int    $width    Ширина миниатюры
+ * @param int    $height   Высота миниатюры
+ * @param mixed  $fill     Заполнение фона
+ * @param int    $quality  качество
+ *
+ * @return bool Результат
+ */
+function thumbnail($srcFile, $dstFile, $width, $height, $fill = null, $quality = 80)
+{
+    $result = false;
+    $src = imageCreateFromFile($srcFile);
+    if ($src)
+    {
+        $sW = imageSX($src);
+        $sH = imageSY($src);
+        $resizer = ($sW / $width > $sH / $height) ? ($sW / $width) : ($sH / $height);
+        $dW = floor($sW / $resizer);
+        $dH = floor($sH / $resizer);
+        if (is_null($fill))
+        {
+            $dst = imageCreateTrueColor($dW, $dH);
+            imageCopyResampled($dst, $src, 0, 0, 0, 0, $dW, $dH, $sW, $sH);
+        }
+        else
+        {
+            $dst = imageCreateTrueColor($width, $height);
+            if ($fill[0] == '#')
+            {
+                $R = hexdec(substr($fill, 1, 2));
+                $G = hexdec(substr($fill, 3, 2));
+                $B = hexdec(substr($fill, 5, 2));
+            }
+            else
+            {
+                $fill = explode(',', $fill);
+                $R = trim($fill[0]);
+                $G = trim($fill[1]);
+                $B = trim($fill[2]);
+            }
+            imagefill($dst, 0, 0, imagecolorallocate($dst, $R, $G, $B));
+            imageCopyResampled($dst, $src, round(($width - $dW) / 2), round(($height - $dH) / 2), 0, 0, $dW, $dH, $sW, $sH);
+        }
+        $result = ImageJPEG($dst, $dstFile, $quality);
+        ImageDestroy($src);
+        ImageDestroy($dst);
+    }
+    return $result;
+}
+
+/**
+ * Изменение формата изображения
+ *
+ * @param string $srcFile  Имя исходного файла
+ * @param string $dstFile  Имя файла назначения
+ * @param int    $format   Формат файла назначения
+ *
+ * @return bool  Результат выполнения
+ */
+function imageConvert($srcFile, $dstFile, $format = IMG_JPG)
+{
+    $src = imageCreateFromFile($srcFile);
+    if ($src)
+    {
+        $result = imageSaveToFile($src, $dstFile, $format);
+    }
+    else
+    {
+        $result = false;
+    }
+    return $result;
+}
+
 
 /**
  * Основной класс приложения
@@ -1245,7 +1375,8 @@ class Eresus
 
 	/**
 	 * Плагины
-	 * @var Plugins
+	 * @var Eresus_Plugin_Registry
+     * @deprecated с 3.01 используйте {@link Eresus_Plugin_Registry::getInstance()}
 	 */
 	public $plugins;
 
@@ -1256,15 +1387,6 @@ class Eresus
 	 * @since 2.10
 	 */
 	public $user;
-
-	/**
-	 * Хост сайта
-	 *
-	 * @var string
-	 * @since 2.10
-	 * @deprecated с 3.00, используйте Eresus::$request
-	 */
-	public $host;
 
 	/**
 	 * Относительный URL сайта относительно корня сервера
@@ -1328,22 +1450,24 @@ class Eresus
 	/**
 	 * Запрос HTTP
 	 *
-	 * Это свойство представляет собой ассоциативный массив, хранящий параметры текущего HTTP-запроса:
+	 * Это свойство представляет собой ассоциативный массив, хранящий параметры текущего запроса
+     * HTTP:
 	 *
-	 * - method (string) — HTTP-метод — GET или POST
-	 * - scheme (string) — HTTP-схема: HTTP или HTTPS
-	 * - url (string) — Полный URL запроса, за исключением идентификатора сессии (если он присутствует
-	 *   в URL)
-	 * - link (string) Заготовка для создания URL с параметрами GET. Пример:
-	 *   <code>$url = $Eresus->request['link'].'type=monitor&diag=17';</code> В $url будет нечто
-	 *   вроде 'http://example.org/exec.php?type=monitor&diag=17'
-	 * - referer (string) — URL, откуда был совершён переход
-	 * - arg (array) — Ассоциативный массив аргументов запроса (GET + POST)
-	 * - path (string) — Строка, содержащая путь к текущей виртуальной директории. Например, для
-	 *   запроса 'http://example.org/virt/dir/exec.php?id=1' path будет 'http://example.org/virt/dir/'
-	 * - file (string) — Имя запрошенного файла. Например «exec.php» для вышеприведённого адреса
-	 * - params (array) — Массив, представляющий собой набор всех виртуальных директорий URL, после
-	 *   корневого URL сайта
+	 * - <b>method</b> (string) — HTTP-метод — GET или POST
+	 * - <b>scheme</b> (string) — HTTP-схема: HTTP или HTTPS
+	 * - <b>url</b> (string) — Полный URL запроса, за исключением идентификатора сессии (если он
+     *   присутствует в URL)
+	 * - <b>link</b> (string) — Заготовка для создания URL с параметрами GET. Всегда заканчивается
+     *   либо символом «?», либо «&»
+	 * - <b>referer</b> (string) — URL, откуда был совершён переход
+	 * - <b>arg</b> (array) — Ассоциативный массив аргументов запроса (GET + POST)
+	 * - <b>path</b> (string) — Строка, содержащая путь к текущей виртуальной директории. Например,
+     *   для запроса 'http://example.org/virt/dir/exec.php?id=1' path будет
+     *   'http://example.org/virt/dir/'
+	 * - <b>file</b> (string) — Имя запрошенного файла. Например «exec.php» для вышеприведённого
+     *   адреса
+	 * - <b>params</b> (array) — Массив, представляющий собой набор всех виртуальных директорий URL,
+     *   после корневого URL сайта
 	 *
 	 * @var array
 	 * @since 2.10
@@ -1387,7 +1511,7 @@ class Eresus
 	{
 		if (is_null($this->froot))
 		{
-			$this->froot = FS::nativeForm(Eresus_Kernel::app()->getFsRoot() . '/');
+			$this->froot = Eresus_Kernel::app()->getFsRoot() . '/';
 		}
 
 		$this->fdata = $this->froot . 'data' . DIRECTORY_SEPARATOR;
@@ -1395,9 +1519,7 @@ class Eresus
 
 		if (is_null($this->path))
 		{
-			$s = $this->froot;
 			$s = substr(dirname($_SERVER['SCRIPT_FILENAME']), strlen($_SERVER['DOCUMENT_ROOT']));
-			$s = FS::canonicalForm($s);
 			if (strlen($s) == 0 || substr($s, -1) != '/')
 			{
 				$s .= '/';
@@ -1408,46 +1530,32 @@ class Eresus
 			}
 			$this->path = $s;
 		}
-
-		/**
-		 * Обратная совместимость
-		 * @var string
-		 * @deprecated since 2.14
-		 */
-		define('filesRoot', $this->froot);
-
-		/**
-		 * Обратная совместимость
-		 * @var string
-		 * @deprecated since 2.14
-		 */
-		define('dataFiles', $this->fdata);
 	}
 
 	/**
 	 * Читает настройки
-	 *
-	 * @access  private
+     *
+     * @throws Eresus_Exception_ComponentCorrupted
 	 */
-	function init_settings()
+	private function initSettings()
 	{
-		$filename = $this->froot.'cfg/settings.php';
+		$filename = $this->froot . 'cfg/settings.php';
 		if (is_file($filename))
 		{
-			include_once($filename);
+            /** @noinspection PhpIncludeInspection */
+            include_once $filename;
 		}
 		else
 		{
-			FatalError("Settings file '$filename' not found!");
+			throw new Eresus_Exception_ComponentCorrupted(
+                sprintf('Settings file "%s" not found!', $filename));
 		}
 	}
 
 	/**
 	 * Первичный разбор запроса
-	 *
-	 * @access  private
 	 */
-	function init_request()
+	private function init_request()
 	{
 		global $request;
 
@@ -1455,13 +1563,13 @@ class Eresus
 		$request = array(
 			'method' => $_SERVER['REQUEST_METHOD'],
 			'scheme' => isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http',
-			'host' => strtolower(is_null($this->host) ? $_SERVER['HTTP_HOST'] : $this->host),
+			'host' => strtolower($_SERVER['HTTP_HOST']),
 			'port' => '',
 			'user' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '',
 			'pass' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '',
 			'path' => '',
 			'query' => '',
-			'fragment' => '', # TODO: Можно ли узнать значение этого компонента?
+			'fragment' => '',
 			'referer' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
 		);
 
@@ -1493,7 +1601,7 @@ class Eresus
 		{
 			$s = $this->froot;
 			$s = substr($s,
-				strlen(realpath($_SERVER['DOCUMENT_ROOT'])) - (System::isWindows() ? 2 : 0));
+				strlen(realpath($_SERVER['DOCUMENT_ROOT'])) - (Eresus_Kernel::isWindows() ? 2 : 0));
 			if (!strlen($s) || substr($s, -1) != '/')
 			{
 				$s .= '/';
@@ -1507,7 +1615,6 @@ class Eresus
 		 */
 		$root = $request['scheme'] . '://' . $request['host'] .
 			($request['port'] ? ':'.$request['port'] : '');
-		$this->host = $request['host'];
 		$this->root = $root.$this->path;
 		$this->data = $this->root.'data/';
 		$this->style = $this->root.'style/';
@@ -1524,21 +1631,42 @@ class Eresus
 		# Обратная совместимость
 		# <= 2.9
 		$this->request = &$request;
+        /**
+         * @deprecated с 3.01
+         */
 		define('httpPath', $this->path);
-		define('httpHost', $this->host);
-		define('httpRoot', $this->root);
+        /**
+         * @deprecated с 3.01
+         */
+		define('httpHost', $this->request['host']);
+        /**
+         * @deprecated с 3.01
+         */
+        define('httpRoot', $this->root);
+        /**
+         * @deprecated с 3.01
+         */
 		define('styleRoot', $this->style);
+        /**
+         * @deprecated с 3.01
+         */
 		define('dataRoot', $this->data);
-		define('cookieHost', $this->host);
+        /**
+         * @deprecated с 3.01
+         */
+		define('cookieHost', $this->request['host']);
+        /**
+         * @deprecated с 3.01
+         */
 		define('cookiePath', $this->path);
 	}
 
 	/**
 	 * Инициализация локали
-	 *
-	 * @access private
+     *
+     * @throws Eresus_Exception_ComponentCorrupted
 	 */
-	function init_locale()
+	private function initLocale()
 	{
 		global $locale;
 
@@ -1549,42 +1677,33 @@ class Eresus
 		$filename = $this->froot.'lang/'.$locale['lang'].'.php';
 		if (is_file($filename))
 		{
-			include_once($filename);
+            /** @noinspection PhpIncludeInspection */
+            include_once $filename;
 		}
 		else
 		{
-			FatalError("Locale file '$filename' not found!");
+            throw new Eresus_Exception_ComponentCorrupted(
+                sprintf('Locale file "%s" not found!', $filename));
 		}
 	}
 
 	/**
 	 * Подключение базовых классов
-	 *
-	 * @access private
+     *
+     * @throws Eresus_Exception_ComponentCorrupted
 	 */
-	function init_classes()
+	private function initClasses()
 	{
-		# Подключение строковых данных
 		$filename = $this->froot.'core/classes.php';
 		if (is_file($filename))
 		{
-			include_once($filename);
+            /** @noinspection PhpIncludeInspection */
+            include_once $filename;
 		}
 		else
 		{
-			FatalError("Classes file '$filename' not found!");
-		}
-		if ($this->conf['backward']['TListContentPlugin'])
-		{
-			useClass('backward/TListContentPlugin');
-		}
-		elseif ($this->conf['backward']['TContentPlugin'])
-		{
-			useClass('backward/TContentPlugin');
-		}
-		elseif ($this->conf['backward']['TPlugin'])
-		{
-			useClass('backward/TPlugin');
+            throw new Eresus_Exception_ComponentCorrupted(
+                sprintf('Classes file "%s" not found!', $filename));
 		}
 	}
 
@@ -1604,48 +1723,30 @@ class Eresus
 
 	/**
 	 * Подключение к источнику данных
-	 *
-	 * @access private
+     *
+     * @throws Eresus_Exception_ComponentCorrupted
 	 */
-	function init_datasource()
+	private function initDataSource()
 	{
-		if (useLib($this->conf['db']['engine']))
+        $className = $this->conf['db']['engine'];
+		if (class_exists($className))
 		{
-			$className = $this->conf['db']['engine'];
 			$this->db = new $className;
 			$this->db->init($this->conf['db']['host'], $this->conf['db']['user'],
-				$this->conf['db']['password'], $this->conf['db']['name'], $this->conf['db']['prefix']);
+				$this->conf['db']['password'], $this->conf['db']['name'],
+                $this->conf['db']['prefix']);
 		}
 		else
 		{
-			FatalError(sprintf(errLibNotFound, $this->conf['db']['engine']));
+            throw new Eresus_Exception_ComponentCorrupted(
+                sprintf('Library "%s" not found!', $this->conf['db']['engine']));
 		}
-	}
-
-	/**
-	 * Инициализация механизма плагинов
-	 */
-	function init_plugins()
-	{
-		$this->plugins = new Plugins;
-		$this->plugins->init();
-	}
-
-	/**
-	 * Инициализация учётной записи пользователя
-	 *
-	 */
-	function init_user()
-	{
-		useLib('accounts');
 	}
 
 	/**
 	 * Проверка сессии
-	 *
-	 * @access private
 	 */
-	function check_session()
+	private function check_session()
 	{
 		if (isset($this->session['time']))
 		{
@@ -1718,7 +1819,8 @@ class Eresus
 				}
 				else
 				{
-					ErrorMessage(sprintf(ERR_ACCOUNT_NOT_ACTIVE, $item['login']));
+                    Eresus_Kernel::app()->getPage()->addErrorMessage(
+                        sprintf(ERR_ACCOUNT_NOT_ACTIVE, $item['login']));
 					$this->logout();
 				}
 			}
@@ -1738,11 +1840,6 @@ class Eresus
 	 */
 	public function init()
 	{
-		// Отключение закавычивания передаваемых данных
-		if (!PHP::checkVersion('5.3'))
-		{
-			set_magic_quotes_runtime(0);
-		}
 		if ($this->conf['timezone'])
 		{
 			date_default_timezone_set($this->conf['timezone']);
@@ -1754,21 +1851,19 @@ class Eresus
 		# Изменяем путь поиска подключаемых файлов
 		set_include_path(dirname(__FILE__) . '/lib' . PATH_SEPARATOR . get_include_path());
 		# Читаем настройки
-		$this->init_settings();
+		$this->initSettings();
 		# Первичный разбор запроса
 		$this->init_request();
 		# Настройка локали
-		$this->init_locale();
+		$this->initLocale();
 		# Подключение базовых классов
-		$this->init_classes();
+		$this->initClasses();
 		# Инициализация расширений
 		$this->init_extensions();
 		# Подключение к источнику данных
-		$this->init_datasource();
-		# Инициализация механизма плагинов
-		$this->init_plugins();
-		# Инициализация учётной записи пользователя
-		$this->init_user();
+		$this->initDataSource();
+        $this->plugins = Eresus_Plugin_Registry::getInstance();
+        $this->plugins->init();
 		# Проверка сессии
 		$this->check_session();
 		# Проверка логина/логаута
@@ -1777,8 +1872,6 @@ class Eresus
 		$this->check_cookies();
 		# Обновление данных о пользователе
 		$this->reset_login();
-		# Подключение работы с разделами сайта
-		useLib('sections');
 		$this->sections = new Sections;
 		$GLOBALS['KERNEL']['loaded'] = true; # Флаг загрузки ядра
 	}
@@ -1830,7 +1923,7 @@ class Eresus
 	 * @param bool   $cookie       Авторизация при помощи cookie
 	 * @return bool Результат
 	 */
-	function login($unsafeLogin, $key, $auto = false, $cookie = false)
+	public function login($unsafeLogin, $key, $auto = false, $cookie = false)
 	{
 		$result = false;
 
@@ -1838,7 +1931,7 @@ class Eresus
 
 		if ($login != $unsafeLogin)
 		{
-			ErrorMessage(ERR_PASSWORD_INVALID);
+            Eresus_Kernel::app()->getPage()->addErrorMessage(ERR_PASSWORD_INVALID);
 			return false;
 		}
 
@@ -1884,7 +1977,7 @@ class Eresus
 						// Если пароль не верен...
 						if (!$cookie)
 						{
-							ErrorMessage(ERR_PASSWORD_INVALID);
+                            Eresus_Kernel::app()->getPage()->addErrorMessage(ERR_PASSWORD_INVALID);
 							$item['lastLoginTime'] = time();
 							$item['loginErrors']++;
 							$this->db->updateItem('users', $item,"`id`='".$item['id']."'");
@@ -1894,19 +1987,22 @@ class Eresus
 				else
 				{
 					// Если авторизация проведена слишком рано
-					ErrorMessage(sprintf(ERR_LOGIN_FAILED_TOO_EARLY, $item['loginErrors']));
+                    Eresus_Kernel::app()->getPage()->addErrorMessage(
+                        sprintf(ERR_LOGIN_FAILED_TOO_EARLY, $item['loginErrors']));
 					$item['lastLoginTime'] = time();
 					$this->db->updateItem('users', $item,"`id`='".$item['id']."'");
 				}
 			}
 			else
 			{
-				ErrorMessage(sprintf(ERR_ACCOUNT_NOT_ACTIVE, $login));
+                Eresus_Kernel::app()->getPage()->addErrorMessage(
+                    sprintf(ERR_ACCOUNT_NOT_ACTIVE, $login));
 			}
 		}
 		else
 		{
-			ErrorMessage(ERR_PASSWORD_INVALID);
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                ERR_PASSWORD_INVALID);
 		}
 		return $result;
 	}

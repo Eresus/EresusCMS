@@ -14,7 +14,7 @@ if (typeof(SWFUpload) === "function") {
 				oldInitSettings.call(this);
 			}
 			
-			this.refreshCookies(false);	// The false parameter must be sent since SWFUpload has not initialzed at this point
+			this.refreshCookies(false);	// The false parameter must be sent since SWFUpload has not initialized at this point
 		};
 	}(SWFUpload.prototype.initSettings);
 	

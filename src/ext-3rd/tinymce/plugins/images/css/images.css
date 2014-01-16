@@ -235,7 +235,7 @@ body
 				cursor: pointer;
 				font-size: 12px;
 				height: 17px;
-				margin:0px 7px;
+				margin:0 7px;
 				padding: 3px 5px 0 25px;
 				white-space: nowrap;
 			}
@@ -246,7 +246,7 @@ body
 				cursor: pointer;
 				font-size: 12px;
 				height: 17px;
-				margin:0px 7px;
+				margin:0 7px;
 				padding: 3px 5px 0 25px;
 				white-space: nowrap;
 			}
@@ -257,7 +257,7 @@ body
 				background: transparent url(../img/folder.png) 4px center no-repeat;
 				font-size: 12px;
 				height: 17px;
-				margin: 0px 7px;
+				margin: 0 7px;
 				padding: 3px 5px 0 25px;
 				white-space: nowrap;
 			}
@@ -268,7 +268,7 @@ body
 				cursor: pointer;
 				font-size: 12px;
 				height: 17px;
-				margin: 0px 7px;
+				margin: 0 7px;
 				padding: 3px 5px 0 25px;
 				white-space: nowrap;
 			}
@@ -279,7 +279,7 @@ body
 				cursor: pointer;
 				font-size: 12px;
 				height: 17px;
-				margin: 0px 7px;
+				margin: 0 7px;
 				padding: 3px 5px 0 25px;
 				white-space: nowrap;
 			}
@@ -326,7 +326,7 @@ body
 		background: transparent url(../img/folder_arrow.png) 4px center no-repeat;
 		display: none;
 		height: 17px;
-		margin:0px 7px 0 22px;
+		margin:0 7px 0 22px;
 		padding: 3px 5px 0 25px;
 		white-space: nowrap;		
 	}
@@ -387,7 +387,7 @@ body
 		}
 		
 		.imageBlock1 {
-			bottom: 0px;
+			bottom: 0;
 			width: 110px;
 			text-align: center;
 			overflow: hidden;

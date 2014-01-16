@@ -6,8 +6,10 @@
 
    install
    uninstall
+   responses
    providing_content_type
    events
+   templates
    settings
    link-js-css
    sending-mail

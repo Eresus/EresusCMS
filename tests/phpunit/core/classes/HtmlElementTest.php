@@ -29,7 +29,7 @@
  * $Id$
  */
 
-require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @package EresusCMS
@@ -37,71 +37,71 @@ require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
  */
 class HtmlElementTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Проверяем простую конструкцию
-	 *
-	 * @covers HtmlElement::__construct
-	 * @covers HtmlElement::getHTML
-	 */
-	public function test_simple()
-	{
-		$test = new HtmlElement('a');
-		$this->assertEquals('<a>', $test->getHTML());
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Проверяем простую конструкцию
+     *
+     * @covers HtmlElement::__construct
+     * @covers HtmlElement::getHTML
+     */
+    public function test_simple()
+    {
+        $test = new HtmlElement('a');
+        $this->assertEquals('<a>', $test->getHTML());
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Проверяем установку атрибутов
-	 *
-	 * @covers HtmlElement::setAttribute
-	 * @covers HtmlElement::getHTML
-	 */
-	public function test_setAttribute()
-	{
-		$test = new HtmlElement('a');
+    /**
+     * Проверяем установку атрибутов
+     *
+     * @covers HtmlElement::setAttribute
+     * @covers HtmlElement::getHTML
+     */
+    public function test_setAttribute()
+    {
+        $test = new HtmlElement('a');
 
-		$test->setAttribute('href', '#');
-		$this->assertEquals('<a href="#">', $test->getHTML());
+        $test->setAttribute('href', '#');
+        $this->assertEquals('<a href="#">', $test->getHTML());
 
-		$test->setAttribute('boolean');
-		$this->assertEquals('<a href="#" boolean>', $test->getHTML());
+        $test->setAttribute('boolean');
+        $this->assertEquals('<a href="#" boolean>', $test->getHTML());
 
-		$test->setAttribute('href', 'http://example.org/');
-		$test->setAttribute('class', 'external');
-		$this->assertEquals('<a href="http://example.org/" boolean class="external">', $test->getHTML());
-	}
-	//-----------------------------------------------------------------------------
+        $test->setAttribute('href', 'http://example.org/');
+        $test->setAttribute('class', 'external');
+        $this->assertEquals('<a href="http://example.org/" boolean class="external">', $test->getHTML());
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Проверяем чтение атрибутов
-	 *
-	 * @covers HtmlElement::getAttribute
-	 */
-	public function test_getAttribute()
-	{
-		$test = new HtmlElement('a');
+    /**
+     * Проверяем чтение атрибутов
+     *
+     * @covers HtmlElement::getAttribute
+     */
+    public function test_getAttribute()
+    {
+        $test = new HtmlElement('a');
 
-		$test->setAttribute('href', '#');
-		$this->assertEquals('#', $test->getAttribute('href'));
+        $test->setAttribute('href', '#');
+        $this->assertEquals('#', $test->getAttribute('href'));
 
-		$this->assertNull($test->getAttribute('b'));
-	}
-	//-----------------------------------------------------------------------------
+        $this->assertNull($test->getAttribute('b'));
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Проверяем установку содержимого
-	 *
-	 * @covers HtmlElement::setContents
-	 * @covers HtmlElement::getHTML
-	 */
-	public function test_setContents()
-	{
-		$test = new HtmlElement('a');
+    /**
+     * Проверяем установку содержимого
+     *
+     * @covers HtmlElement::setContents
+     * @covers HtmlElement::getHTML
+     */
+    public function test_setContents()
+    {
+        $test = new HtmlElement('a');
 
-		$test->setContents('some text');
-		$this->assertEquals('<a>some text</a>', $test->getHTML());
-	}
-	//-----------------------------------------------------------------------------
+        $test->setContents('some text');
+        $this->assertEquals('<a>some text</a>', $test->getHTML());
+    }
+    //-----------------------------------------------------------------------------
 
-	/* */
+    /* */
 }

@@ -10,38 +10,39 @@
             "email": "m.krasilnikov@yandex.ru"
         }
     ],
+<<<<<<< HEAD
 	"require":
+=======
+    "config":
+    {
+        "component-dir": "vendor/components"
+    },
+    "require":
+>>>>>>> release/3.01
 	{
-		"mekras/botobor" : "0.3.*",
-		"carhartl/jquery-cookie" : "1.1"
+		"mekras/botobor" : "0.4.0",
+        "components/jquery": "1.10.2",
+        "components/jqueryui": "1.10.3",
+        "carhartl/jquery-cookie" : "1.4.0"
+    },
+    "require-dev":
+    {
+        "mekras/test-doubles": "v0.1.0",
+        "mikey179/vfsStream": "v1.2.0"
 	},
 	"repositories":
 	[
-        {
-            "type": "package",
-            "package":
-            {
-                "name": "mekras/botobor",
-                "version": "0.3.0",
-                "source":
-                {
-                    "type": "git",
-                    "url": "https://github.com/mekras/botobor",
-                    "reference": "v0.3.0"
-                }
-            }
-        },
 		{
 			"type": "package",
 			"package":
 			{
 				"name": "carhartl/jquery-cookie",
-				"version": "1.1",
+				"version": "1.4.0",
 				"source":
 				{
 					"type": "git",
 					"url": "https://github.com/carhartl/jquery-cookie",
-					"reference": "v1.1"
+					"reference": "v1.4.0"
 				}
 			}
 		}

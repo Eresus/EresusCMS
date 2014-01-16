@@ -26,8 +26,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -355,7 +353,7 @@
  *  $profile->orgName = $form->getValue('orgName');
  * </code>
  *
- * @see Template
+ * @see Eresus_Template
  *
  * @package Eresus
  */
@@ -409,7 +407,7 @@ class EresusForm
 	/**
 	 * Имя шаблона формы
 	 *
-	 * @var Template
+	 * @var Eresus_Template
 	 */
 	protected $template;
 
@@ -518,13 +516,14 @@ class EresusForm
 		$this->sessionRestore();
 		$this->detectAutoValidate();
 
-		$GLOBALS['page']->linkScripts($GLOBALS['Eresus']->root . 'core/EresusForm.js');
+        /** @var TAdminUI $page */
+        $page = Eresus_Kernel::app()->getPage();
+        $page->linkScripts(Eresus_Kernel::app()->getLegacyKernel()->root . 'core/EresusForm.js');
 
 		$html = $this->parseExtended();
 
 		return $html;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Установить значение переменной
@@ -584,7 +583,7 @@ class EresusForm
 		/*
 		 * Обработка тегов:
 		 * 1. Удаление расширенных атрибутов
-		 * 2. Предовтращение схлопывания пустых тегов
+		 * 2. Предотвращение схлопывания пустых тегов
 		 */
 		$tags = $this->xml->getElementsByTagName('*');
 		$collapsable = array('br', 'hr', 'input');
@@ -779,7 +778,7 @@ class EresusForm
 		}
 		else
 		{
-			eresus_log(__METHOD__, LOG_WARNING, 'Unsupported EresusForm tag "%s"', $node->localName);
+            Eresus_Kernel::log(__METHOD__, LOG_WARNING, 'Unsupported EresusForm tag "%s"', $node->localName);
 			return $node;
 		}
 	}
@@ -1008,7 +1007,7 @@ class EresusForm
 		}
 		else
 		{
-			eresus_log(__METHOD__, LOG_WARNING, 'Unsupported EresusForm attribute "%s"', $attr->name);
+            Eresus_Kernel::log(__METHOD__, LOG_WARNING, 'Unsupported EresusForm attribute "%s"', $attr->name);
 		}
 
 		$node->removeAttributeNode($attr);
@@ -1299,7 +1298,7 @@ class EresusForm
 	 */
 	protected function loadXML()
 	{
-		$tmpl = new Template($this->template);
+		$tmpl = new Eresus_Template($this->template);
 		$html = $tmpl->compile($this->values);
 
 		$imp = new DOMImplementation;
@@ -1315,7 +1314,6 @@ class EresusForm
 		$this->xml->encoding = 'utf-8';
 		$this->xml->normalize();
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Получить дочерние узлы в виде списка

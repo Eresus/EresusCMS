@@ -27,8 +27,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -39,425 +37,425 @@
  * @since 2.14
  */
 class PaginationHelper
-implements Iterator, Countable
+    implements Iterator, Countable
 {
-	/**
-	 * Общее количество страниц
-	 *
-	 * @var int
-	 * @since 2.14
-	 */
-	private $total;
+    /**
+     * Общее количество страниц
+     *
+     * @var int
+     * @since 2.14
+     */
+    private $total;
 
-	/**
-	 * Номер текущей страницы
-	 *
-	 * @var int
-	 * @since 2.14
-	 */
-	private $current;
+    /**
+     * Номер текущей страницы
+     *
+     * @var int
+     * @since 2.14
+     */
+    private $current;
 
-	/**
-	 * Шаблон URL для ссылок
-	 *
-	 * @var string
-	 * @since 2.14
-	 */
-	private $urlTemplate;
+    /**
+     * Шаблон URL для ссылок
+     *
+     * @var string
+     * @since 2.14
+     */
+    private $urlTemplate;
 
-	/**
-	 * Путь к шаблону
-	 *
-	 * @var string
-	 * @since 2.14
-	 */
-	private $templatePath = 'templates/std/pagination.html';
+    /**
+     * Путь к шаблону
+     *
+     * @var string
+     * @since 2.14
+     */
+    private $templatePath = 'templates/std/pagination.html';
 
-	/**
-	 * Размер переключателя в количестве выводимых страниц
-	 *
-	 * @var int
-	 * @since 2.14
-	 */
-	private $size = 10;
+    /**
+     * Размер переключателя в количестве выводимых страниц
+     *
+     * @var int
+     * @since 2.14
+     */
+    private $size = 10;
 
-	/**
-	 * Номер итерации
-	 *
-	 * Часть реализации интерфейса Iterator
-	 *
-	 * @var int
-	 * @since 2.14
-	 */
-	private $iteration = 0;
+    /**
+     * Номер итерации
+     *
+     * Часть реализации интерфейса Iterator
+     *
+     * @var int
+     * @since 2.14
+     */
+    private $iteration = 0;
 
-	/**
-	 * Элементы нумерации
-	 *
-	 * @var array
-	 * @since 2.14
-	 */
-	private $items = array();
+    /**
+     * Элементы нумерации
+     *
+     * @var array
+     * @since 2.14
+     */
+    private $items = array();
 
-	/**
-	 * Создаёт нового помощника
-	 *
-	 * Принимаемые параметры можно указать и позднее, при помощи соответствующих методов setXXX.
-	 *
-	 * @param int    $total        Общее количество страниц.
-	 * @param int    $current      Номер текущей страницы. По умолчанию 1.
-	 * @param string $urlTemplate  Шаблон URL. Используйте "%d" для подстановки страницы
-	 *
-	 * @return PaginationHelper
-	 *
-	 * @since 2.14
-	 */
-	public function __construct($total = null, $current = 1, $urlTemplate = null)
-	{
-		$this->setTotal($total);
-		$this->setCurrent($current);
-		if ($urlTemplate)
-		{
-			$this->urlTemplate = $urlTemplate;
-		}
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Создаёт нового помощника
+     *
+     * Принимаемые параметры можно указать и позднее, при помощи соответствующих методов setXXX.
+     *
+     * @param int    $total        Общее количество страниц.
+     * @param int    $current      Номер текущей страницы. По умолчанию 1.
+     * @param string $urlTemplate  Шаблон URL. Используйте "%d" для подстановки страницы
+     *
+     * @return PaginationHelper
+     *
+     * @since 2.14
+     */
+    public function __construct($total = null, $current = 1, $urlTemplate = null)
+    {
+        $this->setTotal($total);
+        $this->setCurrent($current);
+        if ($urlTemplate)
+        {
+            $this->urlTemplate = $urlTemplate;
+        }
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Устанавливает общее количество страниц
-	 *
-	 * @param int $value
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	public function setTotal($value)
-	{
-		$this->total = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает общее количество страниц
+     *
+     * @param int $value
+     * @return void
+     *
+     * @since 2.14
+     */
+    public function setTotal($value)
+    {
+        $this->total = $value;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает общее количество страниц
-	 *
-	 * @return int
-	 *
-	 * @since 2.14
-	 */
-	public function getTotal()
-	{
-		return $this->total;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает общее количество страниц
+     *
+     * @return int
+     *
+     * @since 2.14
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Устанавливает номер текущей страницы
-	 *
-	 * @param int $value
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	public function setCurrent($value)
-	{
-		$this->current = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает номер текущей страницы
+     *
+     * @param int $value
+     * @return void
+     *
+     * @since 2.14
+     */
+    public function setCurrent($value)
+    {
+        $this->current = $value;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает номер текущей страницы
-	 *
-	 * @return int
-	 *
-	 * @since 2.14
-	 */
-	public function getCurrent()
-	{
-		return $this->current;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает номер текущей страницы
+     *
+     * @return int
+     *
+     * @since 2.14
+     */
+    public function getCurrent()
+    {
+        return $this->current;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Устанавливает шаблон URL
-	 *
-	 * @param string $value
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	public function setUrlTemplate($value)
-	{
-		$this->urlTemplate = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает шаблон URL
+     *
+     * @param string $value
+     * @return void
+     *
+     * @since 2.14
+     */
+    public function setUrlTemplate($value)
+    {
+        $this->urlTemplate = $value;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает шаблон URL
-	 *
-	 * @return string
-	 *
-	 * @since 2.14
-	 */
-	public function getUrlTemplate()
-	{
-		return $this->urlTemplate;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает шаблон URL
+     *
+     * @return string
+     *
+     * @since 2.14
+     */
+    public function getUrlTemplate()
+    {
+        return $this->urlTemplate;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Устанавливает путь к шаблону
-	 *
-	 * @param string $value
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	public function setTemplate($value)
-	{
-		$this->templatePath = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает путь к шаблону
+     *
+     * @param string $value
+     * @return void
+     *
+     * @since 2.14
+     */
+    public function setTemplate($value)
+    {
+        $this->templatePath = $value;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает путь к шаблону
-	 *
-	 * @return string
-	 *
-	 * @since 2.14
-	 */
-	public function getTemplate()
-	{
-		return $this->templatePath;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает путь к шаблону
+     *
+     * @return string
+     *
+     * @since 2.14
+     */
+    public function getTemplate()
+    {
+        return $this->templatePath;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Устанавливает максимальное количество отображаемых страниц
-	 *
-	 * @param int $value
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	public function setSize($value)
-	{
-		$this->size = $value;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Устанавливает максимальное количество отображаемых страниц
+     *
+     * @param int $value
+     * @return void
+     *
+     * @since 2.14
+     */
+    public function setSize($value)
+    {
+        $this->size = $value;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает максимальное количество отображаемых страниц
-	 *
-	 * @return int
-	 *
-	 * @since 2.14
-	 */
-	public function getSize()
-	{
-		return $this->size;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает максимальное количество отображаемых страниц
+     *
+     * @return int
+     *
+     * @since 2.14
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает текущий элемент списка страниц
-	 *
-	 * @return array
-	 *
-	 * @since 2.14
-	 * @see Iterator::current()
-	 * @internal
-	 */
-	public function current()
-	{
-		return $this->items[$this->iteration - 1];
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает текущий элемент списка страниц
+     *
+     * @return array
+     *
+     * @since 2.14
+     * @see Iterator::current()
+     * @internal
+     */
+    public function current()
+    {
+        return $this->items[$this->iteration - 1];
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Возвращает номер итерации
-	 *
-	 * @return int
-	 *
-	 * @since 2.14
-	 * @see Iterator::key()
-	 * @internal
-	 */
-	public function key()
-	{
-		return $this->iteration;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Возвращает номер итерации
+     *
+     * @return int
+     *
+     * @since 2.14
+     * @see Iterator::key()
+     * @internal
+     */
+    public function key()
+    {
+        return $this->iteration;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @return void
-	 *
-	 * @since 2.14
-	 * @see Iterator::next()
-	 * @internal
-	 */
-	public function next()
-	{
-		$this->iteration++;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * (non-PHPdoc)
+     *
+     * @return void
+     *
+     * @since 2.14
+     * @see Iterator::next()
+     * @internal
+     */
+    public function next()
+    {
+        $this->iteration++;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Подготовливает объект к первой итерации
-	 *
-	 * @return void
-	 *
-	 * @since 2.14
-	 * @see Iterator::rewind()
-	 * @internal
-	 */
-	public function rewind()
-	{
-		$this->items = array();
+    /**
+     * Подготовливает объект к первой итерации
+     *
+     * @return void
+     *
+     * @since 2.14
+     * @see Iterator::rewind()
+     * @internal
+     */
+    public function rewind()
+    {
+        $this->items = array();
 
-		$this->prepareUrlTemplate();
+        $this->prepareUrlTemplate();
 
-		/*
-		 * Если страниц больше чем задано показывать за один раз, то будем показывать только часть
-		 * страниц, наиболее близких к текущей.
-		 */
-		if ($this->total > $this->size)
-		{
-			// Начинаем показ с текущей, минус половину видимых
-			$first = (int) floor($this->current - $this->size / 2);
-			if ($first < 1)
-			{
-				// Страниц меньше 1-й не существует
-				$first = 1;
-			}
+        /*
+         * Если страниц больше чем задано показывать за один раз, то будем показывать только часть
+         * страниц, наиболее близких к текущей.
+         */
+        if ($this->total > $this->size)
+        {
+            // Начинаем показ с текущей, минус половину видимых
+            $first = (int) floor($this->current - $this->size / 2);
+            if ($first < 1)
+            {
+                // Страниц меньше 1-й не существует
+                $first = 1;
+            }
 
-			$last = $first + $this->size - 1;
-			if ($last > $this->total)
-			{
-				// Но если это больше чем страниц всего, вносим исправления
-				$last = $this->total;
-				$first = $last - $this->size + 1;
-			}
-		}
-		else
-		{
-			$first = 1;
-			$last = $this->total;
-		}
+            $last = $first + $this->size - 1;
+            if ($last > $this->total)
+            {
+                // Но если это больше чем страниц всего, вносим исправления
+                $last = $this->total;
+                $first = $last - $this->size + 1;
+            }
+        }
+        else
+        {
+            $first = 1;
+            $last = $this->total;
+        }
 
 
-		if ($first > 1)
-		{
-			$pageNumber = $this->current - $this->size;
-			if ($pageNumber < 1)
-			{
-				$pageNumber = 1;
-			}
-			$this->items []= $this->itemFactory($pageNumber, '&larr;');
-		}
+        if ($first > 1)
+        {
+            $pageNumber = $this->current - $this->size;
+            if ($pageNumber < 1)
+            {
+                $pageNumber = 1;
+            }
+            $this->items []= $this->itemFactory($pageNumber, '&larr;');
+        }
 
-		for ($pageNumber = $first; $pageNumber <= $last; $pageNumber++)
-		{
-			$item = $this->itemFactory($pageNumber);
-			$item['current'] = $pageNumber == $this->current;
-			$this->items []= $item;
-		}
+        for ($pageNumber = $first; $pageNumber <= $last; $pageNumber++)
+        {
+            $item = $this->itemFactory($pageNumber);
+            $item['current'] = $pageNumber == $this->current;
+            $this->items []= $item;
+        }
 
-		if ($last < $this->total)
-		{
-			$pageNumber = $this->current + $this->size;
-			if ($pageNumber > $this->total)
-			{
-				$pageNumber = $this->total;
-			}
-			$this->items []= $this->itemFactory($pageNumber, '&rarr;');
-		}
+        if ($last < $this->total)
+        {
+            $pageNumber = $this->current + $this->size;
+            if ($pageNumber > $this->total)
+            {
+                $pageNumber = $this->total;
+            }
+            $this->items []= $this->itemFactory($pageNumber, '&rarr;');
+        }
 
-		$this->iteration = 1;
-	}
-	//-----------------------------------------------------------------------------
+        $this->iteration = 1;
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @return bool
-	 *
-	 * @since 2.14
-	 * @see Iterator::valid()
-	 * @internal
-	 */
-	public function valid()
-	{
-		return $this->iteration - 1 < count($this->items);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * (non-PHPdoc)
+     *
+     * @return bool
+     *
+     * @since 2.14
+     * @see Iterator::valid()
+     * @internal
+     */
+    public function valid()
+    {
+        return $this->iteration - 1 < count($this->items);
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @return int
-	 *
-	 * @since 2.14
-	 * @see Countable::count()
-	 * @internal
-	 */
-	public function count()
-	{
-		return count($this->items);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * (non-PHPdoc)
+     *
+     * @return int
+     *
+     * @since 2.14
+     * @see Countable::count()
+     * @internal
+     */
+    public function count()
+    {
+        return count($this->items);
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Создаёт разметку переключателя страниц
-	 *
-	 * @return string  HTML
-	 *
-	 * @since 2.14
-	 */
-	public function render()
-	{
-		$tmpl = new Template($this->getTemplate());
+    /**
+     * Создаёт разметку переключателя страниц
+     *
+     * @return string  HTML
+     *
+     * @since 2.14
+     */
+    public function render()
+    {
+        $tmpl = new Eresus_Template($this->getTemplate());
 
-		$data = array('pagination' => $this);
+        $data = array('pagination' => $this);
 
-		return $tmpl->compile($data);
-	}
-	//-----------------------------------------------------------------------------
+        return $tmpl->compile($data);
+    }
 
-	/**
-	 * Подготавливает свойство $urlTemplate для использования
-	 *
-	 * @return void
-	 *
-	 * @since 2.14
-	 */
-	private function prepareUrlTemplate()
-	{
-		if (!$this->urlTemplate)
-		{
-			$this->urlTemplate = Eresus_CMS::getLegacyKernel()->request['path'] . 'p%d/';
-		}
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Подготавливает свойство $urlTemplate для использования
+     *
+     * @return void
+     *
+     * @since 2.14
+     */
+    private function prepareUrlTemplate()
+    {
+        if (!$this->urlTemplate)
+        {
+            $this->urlTemplate = Eresus_CMS::getLegacyKernel()->request['path'] . 'p%d/';
+        }
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Создаёт элемент нумерации
-	 *
-	 * @param int    $pageNumber       Номер страницы
-	 * @param string $title[optional]  Название страницы
-	 *
-	 * @return array
-	 *
-	 * @since 2.14
-	 */
-	private function itemFactory($pageNumber, $title = null)
-	{
-		return array(
-			'url' => sprintf($this->urlTemplate, $pageNumber),
-			'title' => $title ? $title : $pageNumber,
-			'current' => false
-		);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Создаёт элемент нумерации
+     *
+     * @param int    $pageNumber       Номер страницы
+     * @param string $title[optional]  Название страницы
+     *
+     * @return array
+     *
+     * @since 2.14
+     */
+    private function itemFactory($pageNumber, $title = null)
+    {
+        return array(
+            'url' => sprintf($this->urlTemplate, $pageNumber),
+            'title' => $title ? $title : $pageNumber,
+            'current' => false
+        );
+    }
+    //-----------------------------------------------------------------------------
 }
+

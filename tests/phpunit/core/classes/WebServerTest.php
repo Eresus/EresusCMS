@@ -29,7 +29,7 @@
  * $Id$
  */
 
-require_once TESTS_SRC_DIR . '/core/classes/WebServer.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @package EresusCMS
@@ -37,49 +37,49 @@ require_once TESTS_SRC_DIR . '/core/classes/WebServer.php';
  */
 class WebServerTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * @see PHPUnit_Framework_TestCase::setUp()
-	 */
-	protected function setUp()
-	{
-		parent::setUp();
+    /**
+     * @see PHPUnit_Framework_TestCase::setUp()
+     */
+    protected function setUp()
+    {
+        parent::setUp();
 
-		$instance = new ReflectionProperty('WebServer', 'instance');
-		$instance->setAccessible(true);
-		$instance->setValue('WebServer', null);
-	}
-	//-----------------------------------------------------------------------------
+        $instance = new ReflectionProperty('WebServer', 'instance');
+        $instance->setAccessible(true);
+        $instance->setValue('WebServer', null);
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * @see PHPUnit_Framework_TestCase::tearDown()
-	 */
-	protected function tearDown()
-	{
-		parent::tearDown();
+    /**
+     * @see PHPUnit_Framework_TestCase::tearDown()
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
 
-		$instance = new ReflectionProperty('WebServer', 'instance');
-		$instance->setAccessible(true);
-		$instance->setValue('WebServer', null);
-	}
-	//-----------------------------------------------------------------------------
+        $instance = new ReflectionProperty('WebServer', 'instance');
+        $instance->setAccessible(true);
+        $instance->setValue('WebServer', null);
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * @covers WebServer::__construct
-	 * @covers WebServer::getInstance
-	 * @covers WebServer::getDocumentRoot
-	 */
-	public function test_getDocumentRoot()
-	{
-		$dir = dirname(__FILE__);
-		$_SERVER['DOCUMENT_ROOT'] = $dir;
-		$server = WebServer::getInstance();
-		$docRoot = $server->getDocumentRoot();
-		// Проверяем наличие прямых слэшей
-		$this->assertRegExp('/^.*\/.*$/', $docRoot);
-		// realpath необходим под Windows для приведения пути к системному виду
-		$this->assertEquals($dir, realpath($docRoot));
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * @covers WebServer::__construct
+     * @covers WebServer::getInstance
+     * @covers WebServer::getDocumentRoot
+     */
+    public function test_getDocumentRoot()
+    {
+        $dir = __DIR__;
+        $_SERVER['DOCUMENT_ROOT'] = $dir;
+        $server = WebServer::getInstance();
+        $docRoot = $server->getDocumentRoot();
+        // Проверяем наличие прямых слэшей
+        $this->assertRegExp('/^.*\/.*$/', $docRoot);
+        // realpath необходим под Windows для приведения пути к системному виду
+        $this->assertEquals($dir, realpath($docRoot));
+    }
+    //-----------------------------------------------------------------------------
 
-	/* */
+    /* */
 }

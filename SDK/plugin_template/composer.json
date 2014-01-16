@@ -1,0 +1,16 @@
+{
+    "name": "[разработчик]/[название]",
+    "description": "Модуль «Название» для Eresus CMS",
+    "license": "GPL-3.0",
+    "authors":
+    [
+        {
+            "name": "[имя]",
+            "email": "[e-mail]"
+        }
+    ],
+    "require":
+    {
+        "mekras/test-doubles": "dev-master"
+    }
+}

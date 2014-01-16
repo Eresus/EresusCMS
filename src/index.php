@@ -26,42 +26,30 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
-
-// Временно включаем вывод ошибок, пока не инициализированы средства журналирования
-ini_set('display_errors', true);
 
 /*
- * Установка имени файла журнала
- * ВАЖНО! Путь должен существовать быть доступен для записи скриптам PHP.
+ * Вывод ошибок нужен для правильной работы перехватчика фатальных ошибок
  */
-ini_set('error_log', dirname(__FILE__) . '/var/log/eresus.log');
-
-/**
- * Уровень детализации журнала
- */
-define('ERESUS_LOG_LEVEL' , LOG_ERR);
+ini_set('display_errors', true);
 
 ini_set('track_errors', true);
-/**
- * Подключение ядра
- */
-include_once 'core/Kernel.php';
-
-Eresus_Kernel::init();
 
 /**
- * Подключение Eresus Core
+ * Подключение автозагрузчика классов
  */
-include_once 'core/framework/core/eresus-core.compiled.php';
+include_once 'core/autoload.php';
 
 if (isset($php_errormsg))
 {
-	die($php_errormsg);
+    die($php_errormsg);
 }
 ini_set('track_errors', false);
+
+ini_set('error_log', __DIR__ . '/var/log/eresus.log');
+
+Eresus_Kernel::$logLevel = LOG_DEBUG;
+Eresus_Kernel::init();
 
 /*
  * Если есть файл install.php, запускаем установщик, а не CMS
@@ -69,27 +57,28 @@ ini_set('track_errors', false);
  */
 if (is_file('install.php'))
 {
-	$fileName = 'install.php';
-	$appName = 'Installer';
+    $fileName = 'install.php';
+    $appName = 'Installer';
 }
 else
 {
-	$fileName = 'core/CMS.php';
-	$appName = 'Eresus_CMS';
+    $fileName = 'core/CMS.php';
+    $appName = 'Eresus_CMS';
 }
 
 
 try
 {
-	/**
-	 * Подключение главного приложения
-	 */
-	include_once $fileName;
+    /**
+     * Подключение главного приложения
+     */
+    include_once $fileName;
 }
 catch (Exception $e)
 {
-	die('Can not include file "' . $fileName . '". Is it exists and accessible?');
+    die('Can not include file "' . $fileName . '". Is it exists and accessible?');
 }
 
 // Запуск приложения
 Eresus_Kernel::exec($appName);
+

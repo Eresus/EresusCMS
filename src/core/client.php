@@ -1,13 +1,11 @@
 <?php
 /**
- * ${product.title} ${product.version}
+ * Страница клиентского интерфейса
  *
- * ${product.description}
- *
- * @copyright 2004, Михаил Красильников <mihalych@vsepofigu.ru>
- * @copyright 2007, Eresus Project, http://eresus.ru/
+ * @version ${product.version}
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -26,8 +24,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -42,527 +38,598 @@ define('CLIENTUI', true);
  *
  * @package Eresus
  */
-class TClientUI extends WebPage
+class TClientUI extends Eresus_CMS_Page_Client
 {
-	public $dbItem = array(); # Информация о странице из БД
-	public $name = ''; # Имя страницы
-	public $owner = 0; # Идентификатор родительской страницы
-	public $section = array(); # Массив заголовков страниц
-	public $caption = ''; # Название страницы
-	public $hint = ''; # Подсказка с описанием страницы
-	public $description = ''; # Описание страницы
-	public $keywords = ''; # Ключевые слова страницы
-	public $access = GUEST; # Базовый уровень доступа к странице
-	public $visible = true; # Видимость страницы
-	public $type = 'default'; # Тип страницы
-	public $content = ''; # Контент страницы
-	public $options = array(); # Опции страницы
-	public $Document; # DOM-интерфейс к странице
-	public $plugin; # Плагин контента
-	public $scripts = ''; # Скрипты
-	public $styles = ''; # Стили
-	public $subpage = 0; # Подстраница списка элементов
+    public $name = ''; # Имя страницы
+    public $owner = 0; # Идентификатор родительской страницы
+    public $section = array(); # Массив заголовков страниц
+    public $caption = ''; # Название страницы
+    public $hint = ''; # Подсказка с описанием страницы
+    public $description = ''; # Описание страницы
+    public $keywords = ''; # Ключевые слова страницы
+    public $access = GUEST; # Базовый уровень доступа к странице
+    public $visible = true; # Видимость страницы
 
-	/**
-	 * Идентификатор объекта контента
-	 *
-	 * Объект контента (или «топик») – это статья, новость, фотография или другой объект в разделе,
-	 * содержащим список таких однотипных объектов.
-	 *
-	 * В $topic помещается элемент массива {@link $Eresus::$request}}['params'] , следующий после
-	 * адреса текущего раздела и номера подстраницы списка (если он есть). Если такого элемента в
-	 * массиве нет, то $topic будет равен false.
-	 *
-	 * Примеры:
-	 *
-	 * - http://exmaple.org/articles/p2/123/ — $topic равен «123».
-	 * - http://exmaple.org/articles/123/ — $topic равен «123».
-	 * - http://exmaple.org/articles/ — $topic равен «false».
-	 * - http://exmaple.org/articles/123/file?key=value — $topic равен «123».
-	 * - http://exmaple.org/articles/file?key=value — $topic равен «false».
-	 *
-	 * @var string|bool
-	 * @since 2.10
-	 */
-	public $topic = false;
+    /**
+     * Шаблон страницы
+     *
+     * Ранее это свойство создавалось динамически и не было документировано. Если ваш модуль
+     * использует эту недокументированную возможность, вы можете вместо чтения свойства $template
+     * использовать метод {@link getTemplateName()}.
+     *
+     * @var Eresus_Template
+     * @since 3.01
+     */
+    private $template;
 
-	//------------------------------------------------------------------------------
+    public $type = 'default'; # Тип страницы
 
-	/**
-	 * Конструктор
-	 *
-	 * @access  public
-	 */
-	function __construct()
-	{
-	}
-	//------------------------------------------------------------------------------
+    /**
+     * Отрисованное содержимое области контента страницы
+     *
+     * @var string
+     */
+    public $content = '';
+    public $options = array(); # Опции страницы
+    public $Document; # DOM-интерфейс к странице
+    public $plugin; # Плагин контента
 
-	# Подставляет значения макросов
-	function replaceMacros($text)
-	{
-		$section = $this->section;
-		if (siteTitleReverse)
-		{
-			$section = array_reverse($section);
-		}
-		$section = strip_tags(implode($section, option('siteTitleDivider')));
+    /**
+     * Дополнительные скрипты
+     * @var string
+     * @deprecated с 3.01
+     */
+    public $scripts = '';
 
-		$result = str_replace(
-			array(
-				'$(httpHost)',
-				'$(httpPath)',
-				'$(httpRoot)',
-				'$(styleRoot)',
-				'$(dataRoot)',
+    /**
+     * Дополнительные стили
+     * @var string
+     * @deprecated с 3.01
+     */
+    public $styles = '';
+    public $subpage = 0; # Подстраница списка элементов
 
-				'$(siteName)',
-				'$(siteTitle)',
-				'$(siteKeywords)',
-				'$(siteDescription)',
+    /**
+     * Идентификатор объекта контента
+     *
+     * Объект контента (или «топик») – это статья, новость, фотография или другой объект в разделе,
+     * содержащим список таких однотипных объектов.
+     *
+     * В $topic помещается элемент массива {@link $Eresus::$request}}['params'] , следующий после
+     * адреса текущего раздела и номера подстраницы списка (если он есть). Если такого элемента в
+     * массиве нет, то $topic будет равен false.
+     *
+     * Примеры:
+     *
+     * - http://exmaple.org/articles/p2/123/ — $topic равен «123».
+     * - http://exmaple.org/articles/123/ — $topic равен «123».
+     * - http://exmaple.org/articles/ — $topic равен «false».
+     * - http://exmaple.org/articles/123/file?key=value — $topic равен «123».
+     * - http://exmaple.org/articles/file?key=value — $topic равен «false».
+     *
+     * @var string|bool
+     * @since 2.10
+     */
+    public $topic = false;
 
-				'$(pageId)',
-				'$(pageName)',
-				'$(pageTitle)',
-				'$(pageCaption)',
-				'$(pageHint)',
-				'$(pageDescription)',
-				'$(pageKeywords)',
-				'$(pageAccessLevel)',
-				'$(pageAccessName)',
+    /**
+     * Признак того, что сейчас обрабатывается ошибка
+     *
+     * @var bool
+     * @since 3.01
+     */
+    private $processingError = false;
 
-				'$(sectionTitle)',
-			),
-			array(
-				httpHost,
-				httpPath,
-				httpRoot,
-				styleRoot,
-				dataRoot,
+    /**
+     * Подставляет значения макросов
+     *
+     * @param string $text
+     * @return mixed
+     */
+    public function replaceMacros($text)
+    {
+        $section = $this->section;
+        if (siteTitleReverse)
+        {
+            $section = array_reverse($section);
+        }
+        $section = strip_tags(implode($section, option('siteTitleDivider')));
 
-				siteName,
-				siteTitle,
-				siteKeywords,
-				siteDescription,
+        $result = str_replace(
+            array(
+                '$(httpHost)',
+                '$(httpPath)',
+                '$(httpRoot)',
+                '$(styleRoot)',
+                '$(dataRoot)',
 
-				$this->id,
-				$this->name,
-				$this->title,
-				$this->caption,
-				$this->hint,
-				$this->description,
-				$this->keywords,
-				$this->access,
-				constant('ACCESSLEVEL'.$this->access),
-				$section,
-			),
-			$text
-		);
-		$result = preg_replace_callback('/\$\(const:(.*?)\)/i', '__macroConst', $result);
-		$result = preg_replace_callback('/\$\(var:(([\w]*)(\[.*?\]){0,1})\)/i', '__macroVar', $result);
-		$result = preg_replace('/\$\(\w+(:.*?)*?\)/', '', $result);
-		return $result;
-	}
-	//------------------------------------------------------------------------------
+                '$(siteName)',
+                '$(siteTitle)',
+                '$(siteKeywords)',
+                '$(siteDescription)',
 
-	/**
-	 * Отрисовка переключателя страниц
-	 *
-	 * @param int     $total      Общее количество страниц
-	 * @param int     $current    Номер текущей страницы
-	 * @param string  $url        Шаблон адреса для перехода к подстранице.
-	 * @param array   $templates  Шаблоны оформления
-	 * @return string
-	 */
-	function pageSelector($total, $current, $url = null, $templates = null)
-	{
-		if (is_null($url))
-		{
-			$url = $this->url().'p%d/';
-		}
-		$Templates = new Templates();
-		$defaults = explode('---', $Templates->get('PageSelector', 'std'));
-		if (!is_array($templates))
-		{
-			$templates = array();
-		}
-		for ($i=0; $i < 5; $i++)
-		{
-			if (!isset($templates[$i]))
-			{
-				$templates[$i] = $defaults[$i];
-			}
-		}
-		$result = parent::pageSelector($total, $current, $url, $templates);
-		return $result;
-	}
-	//------------------------------------------------------------------------------
+                '$(pageId)',
+                '$(pageName)',
+                '$(pageTitle)',
+                '$(pageCaption)',
+                '$(pageHint)',
+                '$(pageDescription)',
+                '$(pageKeywords)',
+                '$(pageAccessLevel)',
+                '$(pageAccessName)',
 
-	/**
-	 * Производит разбор URL и загрузку соответствующего раздела
-	 *
-	 * @return  array|bool  Описание загруженного раздела или false если он не найден
-	 */
-	private function loadPage()
-	{
-		$result = false;
-		$main_fake = false;
-		if (!count(Eresus_CMS::getLegacyKernel()->request['params']) ||
-			Eresus_CMS::getLegacyKernel()->request['params'][0] != 'main')
-		{
-			array_unshift(Eresus_CMS::getLegacyKernel()->request['params'], 'main');
-			$main_fake = true;
-		}
-		reset(Eresus_CMS::getLegacyKernel()->request['params']);
-		$item['id'] = 0;
-		$url = '';
-		do
-		{
-			$items = Eresus_CMS::getLegacyKernel()->sections->children($item['id'],
-				Eresus_CMS::getLegacyKernel()->user['auth'] ?
-					Eresus_CMS::getLegacyKernel()->user['access'] : GUEST, SECTIONS_ACTIVE);
-			$item = false;
-			for ($i=0; $i<count($items); $i++)
-			{
-				if ($items[$i]['name'] == current(Eresus_CMS::getLegacyKernel()->request['params']))
-				{
-					$result = $item = $items[$i];
-					if ($item['id'] != 1 || !$main_fake)
-					{
-						$url .= $item['name'].'/';
-					}
-					Eresus_CMS::getLegacyKernel()->plugins->clientOnURLSplit($item, $url);
-					$this->section[] = $item['title'];
-					next(Eresus_CMS::getLegacyKernel()->request['params']);
-					array_shift(Eresus_CMS::getLegacyKernel()->request['params']);
-					break;
-				}
-			}
-			if ($item && $item['id'] == 1 && $main_fake)
-			{
-				$item['id'] = 0;
-			}
-		}
-		while ($item && current(Eresus_CMS::getLegacyKernel()->request['params']));
-		Eresus_CMS::getLegacyKernel()->request['path'] =
-		Eresus_CMS::getLegacyKernel()->request['path'] = Eresus_CMS::getLegacyKernel()->root . $url;
-		if ($result)
-		{
-			$result = Eresus_CMS::getLegacyKernel()->sections->get($result['id']);
-		}
-		return $result;
-	}
-	//-----------------------------------------------------------------------------
+                '$(sectionTitle)',
+            ),
+            array(
+                httpHost,
+                httpPath,
+                httpRoot,
+                styleRoot,
+                dataRoot,
 
-	/**
-	 * Проводит инициализацию страницы
-	 */
-	public function init()
-	{
-		Eresus_CMS::getLegacyKernel()->plugins->clientOnStart();
+                siteName,
+                siteTitle,
+                siteKeywords,
+                siteDescription,
 
-		$item = $this->loadPage();
-		if ($item)
-		{
-			if (count(Eresus_CMS::getLegacyKernel()->request['params']))
-			{
-				if (preg_match('/p[\d]+/i', Eresus_CMS::getLegacyKernel()->request['params'][0]))
-				{
-					$this->subpage = substr(array_shift(Eresus_CMS::getLegacyKernel()->request['params']), 1);
-				}
+                $this->id,
+                $this->name,
+                $this->title,
+                $this->caption,
+                $this->hint,
+                $this->description,
+                $this->keywords,
+                $this->access,
+                constant('ACCESSLEVEL'.$this->access),
+                $section,
+            ),
+            $text
+        );
+        $result = preg_replace_callback('/\$\(const:(.*?)\)/i', '__macroConst', $result);
+        $result = preg_replace_callback('/\$\(var:(([\w]*)(\[.*?\]){0,1})\)/i', '__macroVar', $result);
+        $result = preg_replace('/\$\(\w+(:.*?)*?\)/', '', $result);
+        return $result;
+    }
 
-				if (count(Eresus_CMS::getLegacyKernel()->request['params']))
-				{
-					$this->topic = array_shift(Eresus_CMS::getLegacyKernel()->request['params']);
-				}
-			}
-			$this->dbItem = $item;
-			$this->id = $item['id'];
-			$this->name = $item['name'];
-			$this->owner = $item['owner'];
-			$this->title = $item['title'];
-			$this->description = $item['description'];
-			$this->keywords = $item['keywords'];
-			$this->caption = $item['caption'];
-			$this->hint = $item['hint'];
-			$this->access = $item['access'];
-			$this->visible = $item['visible'];
-			$this->type = $item['type'];
-			$this->template = $item['template'];
-			$this->created = $item['created'];
-			$this->updated = $item['updated'];
-			$this->content = $item['content'];
-			$this->scripts = '';
-			$this->styles = '';
-			$this->options = $item['options'];
-		}
-		else
-		{
-			$this->httpError(404);
-		}
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Отрисовка переключателя страниц
+     *
+     * @param int     $total      Общее количество страниц
+     * @param int     $current    Номер текущей страницы
+     * @param string  $url        Шаблон адреса для перехода к подстранице.
+     * @param array   $templates  Шаблоны оформления
+     * @return string
+     */
+    public function pageSelector($total, $current, $url = null, $templates = null)
+    {
+        if (is_null($url))
+        {
+            $url = $this->url().'p%d/';
+        }
+        $Templates = Templates::getInstance();
+        $defaults = explode('---', $Templates->get('PageSelector', 'std'));
+        if (!is_array($templates))
+        {
+            $templates = array();
+        }
+        for ($i=0; $i < 5; $i++)
+        {
+            if (!isset($templates[$i]))
+            {
+                $templates[$i] = $defaults[$i];
+            }
+        }
+        $result = parent::pageSelector($total, $current, $url, $templates);
+        return $result;
+    }
 
-	function Error404()
-	{
-		$this->httpError(404);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Производит разбор URL и загрузку соответствующего раздела
+     *
+     * @return  array|bool  Описание загруженного раздела или false если он не найден
+     */
+    private function loadPage()
+    {
+        $result = false;
+        $main_fake = false;
+        if (!count(Eresus_CMS::getLegacyKernel()->request['params']) ||
+            Eresus_CMS::getLegacyKernel()->request['params'][0] != 'main')
+        {
+            array_unshift(Eresus_CMS::getLegacyKernel()->request['params'], 'main');
+            $main_fake = true;
+        }
+        reset(Eresus_CMS::getLegacyKernel()->request['params']);
+        $item['id'] = 0;
+        $url = '';
+        do
+        {
+            $items = Eresus_CMS::getLegacyKernel()->sections->children($item['id'],
+                Eresus_CMS::getLegacyKernel()->user['auth'] ?
+                    Eresus_CMS::getLegacyKernel()->user['access'] : GUEST, SECTIONS_ACTIVE);
+            $item = false;
+            for ($i=0; $i<count($items); $i++)
+            {
+                if ($items[$i]['name'] == current(Eresus_CMS::getLegacyKernel()->request['params']))
+                {
+                    $result = $item = $items[$i];
+                    if ($item['id'] != 1 || !$main_fake)
+                    {
+                        $url .= $item['name'].'/';
+                    }
+                    $event = new Eresus_Event_UrlSectionFound($item, $url);
+                    Eresus_Kernel::app()->getEventDispatcher()
+                        ->dispatch('cms.client.url_section_found', $event);
+                    $this->section[] = $item['title'];
+                    next(Eresus_CMS::getLegacyKernel()->request['params']);
+                    array_shift(Eresus_CMS::getLegacyKernel()->request['params']);
+                    break;
+                }
+            }
+            if ($item && $item['id'] == 1 && $main_fake)
+            {
+                $item['id'] = 0;
+            }
+        }
+        while ($item && current(Eresus_CMS::getLegacyKernel()->request['params']));
+        Eresus_CMS::getLegacyKernel()->request['path'] =
+        Eresus_CMS::getLegacyKernel()->request['path'] = Eresus_CMS::getLegacyKernel()->root . $url;
+        if ($result)
+        {
+            $result = Eresus_CMS::getLegacyKernel()->sections->get($result['id']);
+        }
+        return $result;
+    }
 
-	function httpError($code)
-	{
-		global $KERNEL;
+    /**
+     * Проводит инициализацию страницы
+     *
+     * @throws Eresus_CMS_Exception_NotFound
+     */
+    private function init()
+    {
+        Eresus_Kernel::app()->getEventDispatcher()->dispatch('cms.client.start');
 
-		if (isset($KERNEL['ERROR']))
-		{
-			return;
-		}
-		$ERROR = array(
-			'400' => array('response' => 'Bad Request'),
-			'401' => array('response' => 'Unauthorized'),
-			'402' => array('response' => 'Payment Required'),
-			'403' => array('response' => 'Forbidden'),
-			'404' => array('response' => 'Not Found'),
-			'405' => array('response' => 'Method Not Allowed'),
-			'406' => array('response' => 'Not Acceptable'),
-			'407' => array('response' => 'Proxy Authentication Required'),
-			'408' => array('response' => 'Request Timeout'),
-			'409' => array('response' => 'Conflict'),
-			'410' => array('response' => 'Gone'),
-			'411' => array('response' => 'Length Required'),
-			'412' => array('response' => 'Precondition Failed'),
-			'413' => array('response' => 'Request Entity Too Large'),
-			'414' => array('response' => 'Request-URI Too Long'),
-			'415' => array('response' => 'Unsupported Media Type'),
-			'416' => array('response' => 'Requested Range Not Satisfiable'),
-			'417' => array('response' => 'Expectation Failed'),
-		);
+        $item = $this->loadPage();
+        if ($item)
+        {
+            if (count(Eresus_CMS::getLegacyKernel()->request['params']))
+            {
+                if (preg_match('/p[\d]+/i', Eresus_CMS::getLegacyKernel()->request['params'][0]))
+                {
+                    $this->subpage = substr(array_shift(Eresus_CMS::getLegacyKernel()->request['params']), 1);
+                }
 
-		Header($_SERVER['SERVER_PROTOCOL'].' '.$code.' '.$ERROR[$code]['response']);
+                if (count(Eresus_CMS::getLegacyKernel()->request['params']))
+                {
+                    $this->topic = array_shift(Eresus_CMS::getLegacyKernel()->request['params']);
+                }
+            }
+            $this->dbItem = $item;
+            $this->id = $item['id'];
+            $this->name = $item['name'];
+            $this->owner = $item['owner'];
+            $this->title = $item['title'];
+            $this->description = $item['description'];
+            $this->keywords = $item['keywords'];
+            $this->caption = $item['caption'];
+            $this->hint = $item['hint'];
+            $this->access = $item['access'];
+            $this->visible = $item['visible'];
+            $this->type = $item['type'];
+            $this->setTemplate($item['template']);
+            $this->content = $item['content'];
+            $this->scripts = '';
+            $this->styles = '';
+            $this->options = $item['options'];
+        }
+        else
+        {
+            throw new Eresus_CMS_Exception_NotFound;
+        }
+    }
 
-		if (defined('HTTP_CODE_'.$code))
-		{
-			$message = constant('HTTP_CODE_'.$code);
-		}
-		else
-		{
-			$message = $ERROR[$code]['response'];
-		}
+    /**
+     * Выводит сообщение об ошибке HTTP 404 и прекращает выполнение программы
+     *
+     * @throws Eresus_CMS_Exception_NotFound
+     *
+     * @deprecated с 3.01 используйте исключение {@link Eresus_CMS_Exception_NotFound}.
+     */
+    public function Error404()
+    {
+        throw new Eresus_CMS_Exception_NotFound;
+    }
 
-		$this->section = array(siteTitle, $message);
-		$this->title = $message;
-		$this->description = '';
-		$this->keywords = '';
-		$this->caption = $message;
-		$this->hint = '';
-		$this->access = GUEST;
-		$this->visible = true;
-		$this->type = 'default';
-		if (file_exists(filesRoot.'templates/std/'.$code.'.html'))
-		{
-			$this->template = 'std/'.$code;
-			$this->content = '';
-		}
-		else
-		{
-			$this->template = 'default';
-			$this->content = '<h1>HTTP ERROR '.$code.': '.$message.'</h1>';
-		}
-		$KERNEL['ERROR'] = true;
-		$this->render();
-		exit;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Выводит сообщение об ошибке и прекращает выполнение программы
+     *
+     * @param int $code  код ошибки HTTP
+     *
+     * @throws Eresus_HTTP_Exception
+     *
+     * @deprecated с 3.01 используйте исключения Eresus_HTTP_Exception_*
+     */
+    public function httpError($code)
+    {
+        switch ($code)
+        {
+            case 400:
+                throw new Eresus_HTTP_Exception_BadRequest;
+            case 401:
+                throw new Eresus_HTTP_Exception_Unauthorized;
+            case 402:
+                throw new Eresus_HTTP_Exception_PaymentRequired;
+            case 403:
+                throw new Eresus_HTTP_Exception_Forbidden;
+            case 404:
+                throw new Eresus_HTTP_Exception_NotFound;
+            default:
+                throw new Eresus_HTTP_Exception('', $code);
+        }
+    }
 
-	/**
-	 * Отправляет созданную страницу пользователю.
-	 */
-	public function render()
-	{
-		if (arg('HTTP_ERROR'))
-		{
-			$this->httpError(arg('HTTP_ERROR', 'int'));
-		}
-		# Отрисовываем контент
-		$content = Eresus_CMS::getLegacyKernel()->plugins->clientRenderContent();
-		$templates = new Templates;
-		$this->template = $templates->get($this->template);
-		$content = Eresus_CMS::getLegacyKernel()->plugins->clientOnContentRender($content);
+    /**
+     * Отправляет созданную страницу пользователю.
+     *
+     * @param Eresus_CMS_Request $request
+     *
+     * @return Eresus_HTTP_Response
+     */
+    public function render(Eresus_CMS_Request $request)
+    {
+        Eresus_Kernel::log(__METHOD__, LOG_DEBUG, 'starting...');
 
-		if (
-			isset(Eresus_CMS::getLegacyKernel()->session['msg']['information']) &&
-			count(Eresus_CMS::getLegacyKernel()->session['msg']['information'])
-		)
-		{
-			$messages = '';
-			foreach (Eresus_CMS::getLegacyKernel()->session['msg']['information'] as $message)
-			{
-				$messages .= InfoBox($message);
-			}
-			$content = $messages.$content;
-			Eresus_CMS::getLegacyKernel()->session['msg']['information'] = array();
-		}
-		if (
-			isset(Eresus_CMS::getLegacyKernel()->session['msg']['errors']) &&
-			count(Eresus_CMS::getLegacyKernel()->session['msg']['errors'])
-		)
-		{
-			$messages = '';
-			foreach (Eresus_CMS::getLegacyKernel()->session['msg']['errors'] as $message)
-			{
-				$messages .= ErrorBox($message);
-			}
-			$content = $messages.$content;
-			Eresus_CMS::getLegacyKernel()->session['msg']['errors'] = array();
-		}
-		$result = str_replace('$(Content)', $content, $this->template);
+        try
+        {
+            $this->init();
 
-		# FIX: Обратная совместимость
-		if (!empty($this->styles))
-		{
-			$this->addStyles($this->styles);
-		}
+            $plugins = Eresus_Plugin_Registry::getInstance();
 
-		$result = Eresus_CMS::getLegacyKernel()->plugins->clientOnPageRender($result);
+            $response = $plugins->clientRenderContent($request);
+            if (!($response instanceof Eresus_HTTP_Response))
+            {
+                Eresus_Kernel::log(__METHOD__, LOG_DEBUG, 'got string content');
+                $content = new Eresus_CMS_Page_Content($this, $response);
+                $response = $this->createPageForContent($content);
+            }
+        }
+        catch (Eresus_CMS_Exception $e)
+        {
+            Eresus_Kernel::log(__METHOD__, LOG_NOTICE, '%s: "%s"', get_class($e), $e->getMessage());
+            $httpStatusCode = $e->getHttpException()->getCode();
+            $content = new Eresus_CMS_Page_Content($this,
+                $e->getMessage() ?: Eresus_HTTP_Response::getStatusText($httpStatusCode));
+            $response = $this->createPageForContent($content, $httpStatusCode);
+        }
 
-		// FIXME: Обратная совместимость
-		if (!empty($this->scripts))
-		{
-			$this->addScripts($this->scripts);
-		}
+        // TODO: Обратная совместимость (убрать)
+        $response->setContent($this->replaceMacros($response->getContent()));
 
-		$result = preg_replace('|(.*)</head>|i', '$1'.$this->renderHeadSection()."\n</head>", $result);
+        $event = new Eresus_Event_Response($response);
+        Eresus_Kernel::app()->getEventDispatcher()->dispatch('cms.client.response', $event);
 
-		# Замена макросов
-		$result = $this->replaceMacros($result);
+        return $response;
+    }
 
-		if (count($this->headers))
-		{
-			foreach ($this->headers as $header)
-			{
-				header($header);
-			}
-		}
+    /**
+     * Выводит список подстраниц для навигации по ним
+     *
+     * @param int  $pagesCount
+     * @param int  $itemsPerPage
+     * @param bool $reverse
+     *
+     * @return string
+     */
+    public function pages($pagesCount, $itemsPerPage, $reverse = false)
+    {
+        $eresus = Eresus_CMS::getLegacyKernel();
 
-		$result = Eresus_CMS::getLegacyKernel()->plugins->clientBeforeSend($result);
-		if (!Eresus_CMS::getLegacyKernel()->conf['debug']['enable'])
-		{
-			ob_start('ob_gzhandler');
-		}
-		echo $result;
-		if (!Eresus_CMS::getLegacyKernel()->conf['debug']['enable'])
-		{
-			ob_end_flush();
-		}
-	}
-	//-----------------------------------------------------------------------------
+        if ($pagesCount>1)
+        {
+            $at_once = option('clientPagesAtOnce');
+            if (!$at_once)
+            {
+                $at_once = 10;
+            }
 
-	/**
-	 * Выводит список подстраниц для навигации по ним
-	 *
-	 * @param int  $pagesCount
-	 * @param int  $itemsPerPage
-	 * @param bool $reverse
-	 *
-	 * @return string
-	 */
-	function pages($pagesCount, $itemsPerPage, $reverse = false)
-	{
-		$eresus = Eresus_CMS::getLegacyKernel();
+            $side_left = '';
+            $side_right = '';
 
-		if ($pagesCount>1)
-		{
-			$at_once = option('clientPagesAtOnce');
-			if (!$at_once)
-			{
-				$at_once = 10;
-			}
+            $for_from = $reverse ? $pagesCount : 1;
+            $default = $for_from;
+            $for_to = $reverse ? 0 : $pagesCount+1;
+            $for_delta = $reverse ? -1 : 1;
 
-			$side_left = '';
-			$side_right = '';
+            # Если количество страниц превышает AT_ONCE
+            if ($pagesCount > $at_once)
+            {
+                # Если установлен обратный порядок страниц
+                if ($reverse)
+                {
+                    if ($this->subpage < ($pagesCount - (integer) ($at_once / 2)))
+                    {
+                        $for_from = ($this->subpage + (integer) ($at_once / 2));
+                    }
+                    if ($this->subpage < (integer) ($at_once / 2))
+                    {
+                        $for_from = $at_once;
+                    }
+                    $for_to = $for_from - $at_once;
+                    if ($for_to < 0)
+                    {
+                        $for_from += abs($for_to);
+                        $for_to = 0;
+                    }
+                    if ($for_from != $pagesCount)
+                    {
+                        $side_left = "<a href=\"".$eresus->request['path']."\" title=\"".strLastPage.
+                            "\">&nbsp;&laquo;&nbsp;</a>";
+                    }
+                    if ($for_to != 0)
+                    {
+                        $side_right = "<a href=\"".$eresus->request['path']."p1/\" title=\"".strFirstPage.
+                            "\">&nbsp;&raquo;&nbsp;</a>";
+                    }
+                }
+                # Если установлен прямой порядок страниц
+                else
+                {
+                    if ($this->subpage > (integer) ($at_once / 2))
+                    {
+                        $for_from = $this->subpage - (integer) ($at_once / 2);
+                    }
+                    if ($pagesCount - $this->subpage < (integer) ($at_once / 2) + (($at_once % 2)>0))
+                    {
+                        $for_from = $pagesCount - $at_once+1;
+                    }
+                    $for_to = $for_from + $at_once;
+                    if ($for_from != 1)
+                    {
+                        $side_left = "<a href=\"".$eresus->request['path']."\" title=\"".strFirstPage.
+                            "\">&nbsp;&laquo;&nbsp;</a>";
+                    }
+                    if ($for_to < $pagesCount)
+                    {
+                        $side_right = "<a href=\"".$eresus->request['path']."p".$pagesCount."/\" title=\"".
+                            strLastPage."\">&nbsp;&raquo;&nbsp;</a>";
+                    }
+                }
+            }
+            $result = '<div class="pages">'.strPages;
+            $result .= $side_left;
+            for ($i = $for_from; $i != $for_to; $i += $for_delta)
+            {
+                if ($i == $this->subpage)
+                {
+                    $result .= '<span class="selected">&nbsp;'.$i.'&nbsp;</span>';
+                }
+                else
+                {
+                    $result .= '<a href="'.$eresus->request['path'].($i==$default?'':'p'.$i.'/').
+                        '">&nbsp;'.$i.'&nbsp;</a>';
+                }
+            }
+            $result .= $side_right;
+            $result .= "</div>\n";
+            return $result;
+        }
+        else
+        {
+            return '';
+        }
+    }
 
-			$for_from = $reverse ? $pagesCount : 1;
-			$default = $for_from;
-			$for_to = $reverse ? 0 : $pagesCount+1;
-			$for_delta = $reverse ? -1 : 1;
+    /**
+     * Возвращает имя шаблона страницы, заданного по умолчанию
+     *
+     * <b>Обратите внимание!</b> Этот метод всегда возвращает имя шаблона, назначенного разделу
+     * в АИ. Метод {@link setTemplate()} не влияет на результат, возвращаемый getTemplateName.
+     *
+     * @return string
+     *
+     * @since 3.01
+     */
+    public function getTemplateName()
+    {
+        return $this->dbItem['template'];
+    }
 
-			# Если количество страниц превышает AT_ONCE
-			if ($pagesCount > $at_once)
-			{
-				# Если установлен обратный порядок страниц
-				if ($reverse)
-				{
-					if ($this->subpage < ($pagesCount - (integer) ($at_once / 2)))
-					{
-						$for_from = ($this->subpage + (integer) ($at_once / 2));
-					}
-					if ($this->subpage < (integer) ($at_once / 2))
-					{
-						$for_from = $at_once;
-					}
-					$for_to = $for_from - $at_once;
-					if ($for_to < 0)
-					{
-						$for_from += abs($for_to);
-						$for_to = 0;
-					}
-					if ($for_from != $pagesCount)
-					{
-						$side_left = "<a href=\"".$eresus->request['path']."\" title=\"".strLastPage.
-							"\">&nbsp;&laquo;&nbsp;</a>";
-					}
-					if ($for_to != 0)
-					{
-						$side_right = "<a href=\"".$eresus->request['path']."p1/\" title=\"".strFirstPage.
-							"\">&nbsp;&raquo;&nbsp;</a>";
-					}
-				}
-				# Если установлен прямой порядок страниц
-				else
-				{
-					if ($this->subpage > (integer) ($at_once / 2))
-					{
-						$for_from = $this->subpage - (integer) ($at_once / 2);
-					}
-					if ($pagesCount - $this->subpage < (integer) ($at_once / 2) + (($at_once % 2)>0))
-					{
-						$for_from = $pagesCount - $at_once+1;
-					}
-					$for_to = $for_from + $at_once;
-					if ($for_from != 1)
-					{
-						$side_left = "<a href=\"".$eresus->request['path']."\" title=\"".strFirstPage.
-							"\">&nbsp;&laquo;&nbsp;</a>";
-					}
-					if ($for_to < $pagesCount)
-					{
-						$side_right = "<a href=\"".$eresus->request['path']."p".$pagesCount."/\" title=\"".
-							strLastPage."\">&nbsp;&raquo;&nbsp;</a>";
-					}
-				}
-			}
-			$result = '<div class="pages">'.strPages;
-			$result .= $side_left;
-			for ($i = $for_from; $i != $for_to; $i += $for_delta)
-			{
-				if ($i == $this->subpage)
-				{
-					$result .= '<span class="selected">&nbsp;'.$i.'&nbsp;</span>';
-				}
-				else
-				{
-					$result .= '<a href="'.$eresus->request['path'].($i==$default?'':'p'.$i.'/').
-						'">&nbsp;'.$i.'&nbsp;</a>';
-				}
-			}
-			$result .= $side_right;
-			$result .= "</div>\n";
-			return $result;
-		}
-		else
-		{
-			return '';
-		}
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Задаёт шаблон страницы
+     *
+     * <b>Обратите внимание!</b> Этот метод не влияет на результат, возвращаемый
+     * {@link getTemplateName()}.
+     *
+     * @param string|Eresus_Template $template  имя файла шаблона или уже созданный объект шаблона
+     * @param string                 $type      тип шаблона, только если $template — строка
+     *
+     * @throws Eresus_Exception_InvalidArgumentType
+     *
+     * @since 3.01
+     */
+    public function setTemplate($template, $type = '')
+    {
+        if (!is_string($template)
+            && (!is_object($template) || !($template instanceof Eresus_Template)))
+        {
+            throw Eresus_Exception_InvalidArgumentType::factory(__METHOD__, 1,
+                'string or an instance of Eresus_Template', $template);
+        }
+        if (is_string($template))
+        {
+            $template = Templates::getInstance()->load($template, $type);
+        }
+        $this->template = $template;
+    }
+
+    /**
+     * Создаёт страницу для переданного контента
+     *
+     * @param Eresus_CMS_Page_Content $content
+     * @param int                     $statusCode
+     *
+     * @return Eresus_HTTP_Response
+     *
+     * @since 3.01
+     */
+    private function createPageForContent(Eresus_CMS_Page_Content $content, $statusCode = 200)
+    {
+        Eresus_Kernel::log(__METHOD__, LOG_DEBUG, '(%s, %d)', $content, $statusCode);
+        $legacyKernel = Eresus_Kernel::app()->getLegacyKernel();
+
+        $html = $content->render();
+        if (
+            isset($legacyKernel->session['msg']['information']) &&
+            count($legacyKernel->session['msg']['information'])
+        )
+        {
+            $messages = '';
+            foreach ($legacyKernel->session['msg']['information'] as $message)
+            {
+                $messages .= InfoBox($message);
+            }
+            $html = $messages . $html;
+            $legacyKernel->session['msg']['information'] = array();
+        }
+        if (
+            isset($legacyKernel->session['msg']['errors']) &&
+            count($legacyKernel->session['msg']['errors'])
+        )
+        {
+            $messages = '';
+            foreach ($legacyKernel->session['msg']['errors'] as $message)
+            {
+                $messages .= ErrorBox($message);
+            }
+            $html = $messages . $html;
+            $legacyKernel->session['msg']['errors'] = array();
+        }
+
+        $this->content = $html;
+        $html = $this->template->compile();
+
+        // TODO: Обратная совместимость (удалить)
+        if (!empty($this->styles))
+        {
+            $this->addStyles($this->styles);
+        }
+
+        $event = new Eresus_Event_Render($html);
+        Eresus_Kernel::app()->getEventDispatcher()
+            ->dispatch('cms.client.render_page', $event);
+        $html = $event->getText();
+
+        // TODO: Обратная совместимость (удалить)
+        if (!empty($this->scripts))
+        {
+            $this->addScripts($this->scripts);
+        }
+
+        $html = preg_replace('|(.*)</head>|i', '$1' . $this->renderHeadSection() . "\n</head>",
+            $html);
+
+        $response = new Eresus_HTTP_Response($html, $statusCode, $this->headers);
+        return $response;
+    }
 }
+

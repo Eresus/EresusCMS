@@ -30,7 +30,7 @@
  * $Id$
  */
 
-require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @package EresusCMS
@@ -38,144 +38,149 @@ require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
  */
 class WebPageTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Проверяем WebPage::linkScripts
-	 *
-	 * @covers WebPage::linkScripts
-	 * @covers WebPage::renderHeadSection
-	 * @covers WebPage::renderBodySection
-	 */
-	public function test_linkScripts()
-	{
-		if (version_compare(PHP_VERSION, '5.3', '<'))
-		{
-			$this->markTestSkipped('PHP 5.3 required');
-		}
+    /**
+     * Проверяем WebPage::linkScripts
+     *
+     * @covers WebPage::linkScripts
+     * @covers WebPage::renderHeadSection
+     * @covers WebPage::renderBodySection
+     */
+    public function test_linkScripts()
+    {
+        if (version_compare(PHP_VERSION, '5.3', '<'))
+        {
+            $this->markTestSkipped('PHP 5.3 required');
+        }
 
-		$page = new WebPage();
-		$page->linkScripts('head.js');
-		$page->linkScripts('body.js', 'defer');
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->linkScripts('head.js');
+        $page->linkScripts('body.js', 'defer');
 
-		$renderHeadSection = new ReflectionMethod('WebPage', 'renderHeadSection');
-		$renderHeadSection->setAccessible(true);
-		$this->assertEquals('<script type="text/javascript" src="head.js"></script>', $renderHeadSection->invoke($page));
+        $renderHeadSection = new ReflectionMethod('WebPage', 'renderHeadSection');
+        $renderHeadSection->setAccessible(true);
+        $this->assertEquals('<script type="text/javascript" src="head.js"></script>', $renderHeadSection->invoke($page));
 
-		$renderBodySection = new ReflectionMethod('WebPage', 'renderBodySection');
-		$renderBodySection->setAccessible(true);
-		$this->assertEquals('<script type="text/javascript" src="body.js" defer></script>', $renderBodySection->invoke($page));
-	}
-	//-----------------------------------------------------------------------------
+        $renderBodySection = new ReflectionMethod('WebPage', 'renderBodySection');
+        $renderBodySection->setAccessible(true);
+        $this->assertEquals('<script type="text/javascript" src="body.js" defer></script>', $renderBodySection->invoke($page));
+    }
+    //-----------------------------------------------------------------------------
 
-	/**
-	 * Проверяем WebPage::addScripts
-	 *
-	 * @covers WebPage::addScripts
-	 * @covers WebPage::renderHeadSection
-	 * @covers WebPage::renderBodySection
-	 */
-	public function test_addScripts()
-	{
-		$page = new WebPage();
-		$page->addScripts('var head;');
-		$page->addScripts('var body;', 'body');
+    /**
+     * Проверяем WebPage::addScripts
+     *
+     * @covers WebPage::addScripts
+     * @covers WebPage::renderHeadSection
+     * @covers WebPage::renderBodySection
+     */
+    public function test_addScripts()
+    {
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->addScripts('var head;');
+        $page->addScripts('var body;', 'body');
 
-		$this->assertEquals(
-			"<script type=\"text/javascript\">//<!-- <![CDATA[\nvar head;\n//]] --></script>",
-			$page->renderHeadSection());
+        $this->assertEquals(
+            "<script type=\"text/javascript\">//<!-- <![CDATA[\nvar head;\n//]] --></script>",
+            $page->renderHeadSection());
 
-		$renderBodySection = new ReflectionMethod('WebPage', 'renderBodySection');
-		$renderBodySection->setAccessible(true);
-		$this->assertEquals(
-			"<script type=\"text/javascript\">//<!-- <![CDATA[\nvar body;\n//]] --></script>",
-			$renderBodySection->invoke($page)
-		);
-	}
-	//-----------------------------------------------------------------------------
-  
-  /**
-	 * @covers WebPage::setMetaHeader
-	 */
-	public function test_setMetaHeader()
-	{
-     $p_head = new ReflectionProperty('WebPage', 'head');
-     $p_head->setAccessible(true);
+        $renderBodySection = new ReflectionMethod('WebPage', 'renderBodySection');
+        $renderBodySection->setAccessible(true);
+        $this->assertEquals(
+            "<script type=\"text/javascript\">//<!-- <![CDATA[\nvar body;\n//]] --></script>",
+            $renderBodySection->invoke($page)
+        );
+    }
+    //-----------------------------------------------------------------------------
 
-     $page = new WebPage();
-     $page->setMetaHeader('foo', 'bar');
+    /**
+     * @covers WebPage::setMetaHeader
+     */
+    public function test_setMetaHeader()
+    {
+        $p_head = new ReflectionProperty('WebPage', 'head');
+        $p_head->setAccessible(true);
 
-     $head = $p_head->getValue($page);
-     
-     $this->assertArrayHasKey('foo', $head['meta-http']);
-     $this->assertEquals('bar', $head['meta-http']['foo']);
-	}
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->setMetaHeader('foo', 'bar');
 
-  /**
-	 * @covers WebPage::setMetaTag
-	 */
-	public function test_setMetaTag()
-	{
-     $p_head = new ReflectionProperty('WebPage', 'head');
-     $p_head->setAccessible(true);
+        $head = $p_head->getValue($page);
 
-     $page = new WebPage();
-     $page->setMetaTag('bar', 'foo');
+        $this->assertArrayHasKey('foo', $head['meta-http']);
+        $this->assertEquals('bar', $head['meta-http']['foo']);
+    }
 
-     $head = $p_head->getValue($page);
-     
-     $this->assertArrayHasKey('bar', $head['meta-tags']);
-     $this->assertEquals('foo', $head['meta-tags']['bar']);
-	}
-	
-  /**
-	 * @covers WebPage::linkStyles
-	 */
-	public function test_linkStyles()
-	{
-     $p_head = new ReflectionProperty('WebPage', 'head');
-     $p_head->setAccessible(true);
+    /**
+     * @covers WebPage::setMetaTag
+     */
+    public function test_setMetaTag()
+    {
+        $p_head = new ReflectionProperty('WebPage', 'head');
+        $p_head->setAccessible(true);
 
-     $page = new WebPage();
-     $page->linkStyles('foo', 'bar');
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->setMetaTag('bar', 'foo');
 
-     $head = $p_head->getValue($page);
-     
-     $this->assertCount(1, $head['link']);
-     $this->assertEquals('foo', $head['link'][0]['href']);
-     $this->assertEquals('bar', $head['link'][0]['media']);
-     
-     $page->linkStyles('bar', 'foo');
-     $head = $p_head->getValue($page);
-     
-     $page->linkStyles('foo', 'bar');
-     $head = $p_head->getValue($page);
-     
-     $this->assertCount(2, $head['link']);
-     
-	}
-  
-  /**
-	 * @covers WebPage::addStyles
-	 */
-	public function test_addStyles()
-	{
-     $p_head = new ReflectionProperty('WebPage', 'head');
-     $p_head->setAccessible(true);
+        $head = $p_head->getValue($page);
 
-     $page = new WebPage();
-     $page->addStyles(' foo', 'bar');
-     $head = $p_head->getValue($page);
-     
-     $this->assertCount(1, $head['style']);
-     $this->assertEquals('		foo', $head['style'][0]['content']);
-     $this->assertEquals('bar', $head['style'][0]['media']);
-     
-     $page->addStyles('bar', 'foo');
-     $head = $p_head->getValue($page);
-     
-     $this->assertCount(2, $head['style']);
-     $this->assertEquals("	bar", $head['style'][1]['content']);
-     $this->assertEquals('foo', $head['style'][1]['media']);   
-	}
-	/* */
-  
-} 
+        $this->assertArrayHasKey('bar', $head['meta-tags']);
+        $this->assertEquals('foo', $head['meta-tags']['bar']);
+    }
+
+    /**
+     * @covers WebPage::linkStyles
+     */
+    public function test_linkStyles()
+    {
+        $p_head = new ReflectionProperty('WebPage', 'head');
+        $p_head->setAccessible(true);
+
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->linkStyles('foo', 'bar');
+
+        $head = $p_head->getValue($page);
+
+        $this->assertCount(1, $head['link']);
+        $this->assertEquals('foo', $head['link'][0]['href']);
+        $this->assertEquals('bar', $head['link'][0]['media']);
+
+        $page->linkStyles('bar', 'foo');
+        $head = $p_head->getValue($page);
+
+        $page->linkStyles('foo', 'bar');
+        $head = $p_head->getValue($page);
+
+        $this->assertCount(2, $head['link']);
+
+    }
+
+    /**
+     * @covers WebPage::addStyles
+     */
+    public function test_addStyles()
+    {
+        $p_head = new ReflectionProperty('WebPage', 'head');
+        $p_head->setAccessible(true);
+
+        $page = $this->getMockForAbstractClass('WebPage');
+        /** @var WebPage $page */
+        $page->addStyles(' foo', 'bar');
+        $head = $p_head->getValue($page);
+
+        $this->assertCount(1, $head['style']);
+        $this->assertEquals('		foo', $head['style'][0]['content']);
+        $this->assertEquals('bar', $head['style'][0]['media']);
+
+        $page->addStyles('bar', 'foo');
+        $head = $p_head->getValue($page);
+
+        $this->assertCount(2, $head['style']);
+        $this->assertEquals("	bar", $head['style'][1]['content']);
+        $this->assertEquals('foo', $head['style'][1]['media']);
+    }
+}
+

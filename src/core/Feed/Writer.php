@@ -28,8 +28,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id: main.php 1884 2011-10-19 05:32:08Z mk $
  */
 
 /**
@@ -157,101 +155,85 @@ class Eresus_Feed_Writer
 		$Item = new Eresus_Feed_Writer_Item($this->version);
 		return $Item;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Add a FeedItem to the main class
 	 *
-	 * @param    object  instance of FeedItem class
-	 * @return   void
+	 * @param Eresus_Feed_Writer_Item $feedItem
+	 * @return void
 	 */
 	public function addItem(Eresus_Feed_Writer_Item $feedItem)
 	{
-		$this->items[] = $feedItem;
+		$this->items []= $feedItem;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Set the 'title' channel element
 	 *
-	 * @param    srting  value of 'title' channel tag
-	 * @return   void
+	 * @param string $title  value of 'title' channel tag
+	 * @return void
 	 */
 	public function setTitle($title)
 	{
-		if (LOCALE_CHARSET != 'UTF-8')
-		{
-			$title = iconv(LOCALE_CHARSET, 'UTF-8', $title);
-		}
 		$this->setChannelElement('title', $title);
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Set the 'description' channel element
 	 *
-	 * @param    srting  value of 'description' channel tag
+	 * @param  string $description  value of 'description' channel tag
 	 * @return   void
 	 */
-	public function setDescription($desciption)
+	public function setDescription($description)
 	{
-		if (LOCALE_CHARSET != 'UTF-8')
-		{
-			$desciption = iconv(LOCALE_CHARSET, 'UTF-8', $desciption);
-		}
-		$this->setChannelElement('description', $desciption);
+		$this->setChannelElement('description', $description);
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Set the 'link' channel element
 	 *
-	 * @param    srting  value of 'link' channel tag
+	 * @param string $link  value of 'link' channel tag
 	 * @return   void
 	 */
 	public function setLink($link)
 	{
 		$this->setChannelElement('link', $link);
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Set the 'image' channel element
 	 *
-	 * @param    srting  title of image
-	 * @param    srting  link url of the imahe
-	 * @param    srting  path url of the image
-	 * @return   void
+	 * @param string  $title
+	 * @param string  $link
+	 * @param string  $url
+	 * @return void
 	 */
 	public function setImage($title, $link, $url)
 	{
-		if (LOCALE_CHARSET != 'UTF-8')
-		{
-			$title = iconv(LOCALE_CHARSET, 'UTF-8', $title);
-		}
 		$this->setChannelElement('image', array('title'=>$title, 'link'=>$link, 'url'=>$url));
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Set the 'about' channel element. Only for RSS 1.0
 	 *
-	 * @param    srting  value of 'about' channel tag
-	 * @return   void
+	 * @param string $url  value of 'about' channel tag
+	 * @return void
 	 */
 	public function setChannelAbout($url)
 	{
 		$this->data['ChannelAbout'] = $url;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
-	 * Genarates an UUID
-	 * @author     Anis uddin Ahmad <admin@ajaxray.com>
-	 * @param      string  an optional prefix
-	 * @return     string  the formated uuid
+	 * Generates an UUID
+	 *
+     * @author     Anis uddin Ahmad <admin@ajaxray.com>
+	 * @param string $key
+     * @param string $prefix  an optional prefix
+     *
+	 * @return string  the formatted uuid
 	 */
-	public function uuid($key = null, $prefix = '')
+	public static function uuid($key = null, $prefix = '')
 	{
 		$key = ($key == null)? uniqid(rand()) : $key;
 		$chars = md5($key);
@@ -263,7 +245,6 @@ class Eresus_Feed_Writer
 
 		return $prefix . $uuid;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Prints the xml and rss namespace
@@ -327,10 +308,10 @@ class Eresus_Feed_Writer
 	/**
 	 * Creates a single node as xml format
 	 *
-	 * @param    srting  name of the tag
-	 * @param    mixed   tag value as string or array of nested tags in 'tagName' => 'tagValue' format
-	 * @param    array   Attributes(if any) in 'attrName' => 'attrValue' format
-	 * @return   string  formatted xml tag
+	 * @param string $tagName     name of the tag
+	 * @param mixed  $tagContent  tag value as string or array of nested tags in 'tagName' => 'tagValue' format
+	 * @param array  $attributes  Attributes (if any) in 'attrName' => 'attrValue' format
+	 * @return string  formatted xml tag
 	 */
 	private function makeNode($tagName, $tagContent, $attributes = null)
 	{
@@ -366,8 +347,8 @@ class Eresus_Feed_Writer
 		else
 		{
 			$nodeText .= (in_array($tagName, $this->CDATAEncoding)) ?
-				$tagContent :
-				htmlentities($tagContent, ENT_QUOTES, 'UTF-8');
+				$this->sanitizeCDATA($tagContent) : 
+				htmlspecialchars($tagContent);
 		}
 
 		$nodeText .= (in_array($tagName, $this->CDATAEncoding))? "]]></$tagName>" : "</$tagName>";
@@ -404,7 +385,7 @@ class Eresus_Feed_Writer
 			if ($this->version == self::ATOM && $key == 'link')
 			{
 				// ATOM prints link element as href attribute
-				$out .= $this->makeNode($key,'',array('href'=>$value));
+				$out .= $this->makeNode($key,'',array('href'=>$value, 'rel'=>'self', 'type'=>'application/atom+xml'));
 				//Add the id for ATOM
 				$out .= $this->makeNode('id',$this->uuid($value,'urn:uuid:'));
 			}
@@ -455,12 +436,13 @@ class Eresus_Feed_Writer
 	}
 	//-----------------------------------------------------------------------------
 
-	/**
-	 * Make the starting tag of channels
-	 *
-	 * @param    srting  The vale of about tag which is used for only RSS 1.0
-	 * @return string
-	 */
+    /**
+     * Make the starting tag of channels
+     *
+     * @param bool|string $about The value of about tag which is used for only RSS 1.0
+     * @throws LogicException
+     * @return string
+     */
 	private function startItem($about = false)
 	{
 		$out = '';
@@ -507,4 +489,22 @@ class Eresus_Feed_Writer
 		return $out;
 	}
 	//-----------------------------------------------------------------------------
+
+	/**
+	 * Sanitizes data which will be later on returned as CDATA in the feed.
+	 *
+	 * A "]]>" respectively "<![CDATA" in the data would break the CDATA in the
+	 * XML, so the brackets are converted to a HTML entity.
+	 *
+	 * @param string $text  Data to be sanitized
+	 *
+     * @return string  Sanitized data
+	 */
+	private function sanitizeCDATA($text)
+	{
+		$text = str_replace("]]>", "]]&gt;", $text);
+		$text = str_replace("<![CDATA[", "&lt;![CDATA[", $text);
+
+		return $text;
+	}
 }

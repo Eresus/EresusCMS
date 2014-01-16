@@ -3,7 +3,7 @@
 
 Для добавления собственного пункта меню "Расширения" в АИ, надо выполнить три действия:
 
-**1. Установить обработчик события adminOnMenuRender**
+**1. Установить обработчик события cms.admin.start**
 
 .. code-block:: php
 
@@ -13,12 +13,13 @@
     */
    public function __construct()
    {
-     parent::__construct();
-     $this->listenEvents('adminOnMenuRender');
+       parent::__construct();
+       Eresus_Kernel::app()->getEventDispatcher()
+           ->addEventListener('cms.admin.start', array($this, 'addMenuItem'));
    }
 
 
-**2. Определить метод adminOnMenuRender**
+**2. Написать обработчик**
 
 .. code-block:: php
 
@@ -28,11 +29,11 @@
     *
     * @return void
     */
-   public function adminOnMenuRender()
+   public function addMenuItem()
    {
      Eresus_Kernel::app()->getPage()->addMenuItem(admExtensions, array(
        'access'  => EDITOR,
-       'link'  => $this->name,
+       'link'  => $this->getName(),
        'caption'  => $this->title,
        'hint'  => $this->description
      ));

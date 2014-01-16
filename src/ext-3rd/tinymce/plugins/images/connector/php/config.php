@@ -1,11 +1,11 @@
 <?php
 
 //Корневая директория сайта
-define('DIR_ROOT',		Eresus_CMS::getLegacyKernel()->froot);
+define('DIR_ROOT', Eresus_CMS::getLegacyKernel()->froot);
 //Директория с изображениями (относительно корневой)
-define('DIR_IMAGES',	'/data');
+define('DIR_IMAGES', '/data');
 //Директория с файлами (относительно корневой)
-define('DIR_FILES',		'/data');
+define('DIR_FILES', '/data');
 
 
 //Высота и ширина картинки до которой будет сжато исходное изображение и создана ссылка на полную версию

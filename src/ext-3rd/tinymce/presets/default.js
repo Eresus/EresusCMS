@@ -27,8 +27,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package EresusCMS
- *
- * $Id$
  */
 
 var Eresus = Eresus || {siteRoot : '/'};

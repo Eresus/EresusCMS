@@ -28,8 +28,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package [Имя пакета]
- *
- * $Id$
  */
 
 /**
@@ -37,72 +35,69 @@
  *
  * @package [Имя пакета]
  */
-class MyPlugin extends Plugin
+class MyPlugin extends Eresus_Plugin
 {
-	/**
-	 * Версия плагина
-	 * @var string
-	 */
-	public $version = '${product.version}';
+    /**
+     * Версия плагина
+     * @var string
+     */
+    public $version = '${product.version}';
 
-	/**
-	 * Требуемая версия ядра
-	 * @var string
-	 */
-	public $kernel = '3.xx';
+    /**
+     * Требуемая версия ядра
+     * @var string
+     */
+    public $kernel = '3.xx';
 
-	/**
-	 * Название плагина
-	 * @var string
-	 */
-	public $title = 'Название';
+    /**
+     * Название плагина
+     * @var string
+     */
+    public $title = 'Название';
 
-	/**
-	 * Описание плагина
-	 * @var string
-	 */
-	public $description = 'Описание';
+    /**
+     * Описание плагина
+     * @var string
+     */
+    public $description = 'Описание';
 
-	/**
-	 * Настройки плагина
-	 *
-	 * @var array
-	 */
-	public $settings = array(
-	);
+    /**
+     * Настройки плагина
+     *
+     * @var array
+     */
+    public $settings = array(
+    );
 
-	/**
-	 * Конструктор
-	 *
-	 * @return MyPlugin
-	 *
-	 * @since 1.00
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Конструктор
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Диалог настроек плагина
-	 *
-	 * @return string  Форма настроек
-	 */
-	public function settings()
-	{
-		$form = array(
-			'name' => 'SettingsForm',
-			'caption' => $this->title . ' ' . $this->version,
-			'width' => '500px',
-			'fields' => array (
-				array('type' => 'hidden', 'name' => 'update', 'value' => $this->name),
-				// Необходимые поля формы
-			),
-			'buttons' => array('ok', 'apply', 'cancel'),
-		);
-		$html = $GLOBALS['page']->renderForm($form, $this->settings);
-		return $html;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Диалог настроек плагина
+     *
+     * @return string  разметка формы настроек
+     */
+    public function settings()
+    {
+        $form = array(
+            'name' => 'SettingsForm',
+            'caption' => $this->title . ' ' . $this->version,
+            'width' => '500px',
+            'fields' => array (
+                array('type' => 'hidden', 'name' => 'update', 'value' => $this->getName()),
+                // Необходимые поля формы
+            ),
+            'buttons' => array('ok', 'apply', 'cancel'),
+        );
+        /** @var TAdminUI $page */
+        $page = Eresus_Kernel::app()->getPage();
+        $html = $page->renderForm($form, $this->settings);
+        return $html;
+    }
 }
+

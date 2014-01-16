@@ -13,17 +13,18 @@
 
 Основной класс модуля должен быть унаследован от одного из базовых классов:
 
-  * `Plugin <../../api/Eresus/Plugin.html>`_
-  * `ContentPlugin <../../api/Eresus/ContentPlugin.html>`_
+  * `Eresus_Plugin <../../api/classes/Eresus_Plugin.html>`_
+  * `ContentPlugin <../../api/classes/ContentPlugin.html>`_
 
 Имя класса плагина должно совпадать с именем плагина и, соответственно, его файла (пример: "MyPlugin").
 
 Выбор базового класса
 ---------------------
 
-Если ваш плагин должен :doc:`предоставлять тип контента (тип раздела)<../guide/providing_content_type>`, то он должен быть унаследован от `ContentPlugin <../../api/Eresus/ContentPlugin.html>`_.
+Если ваш плагин должен :doc:`предоставлять тип контента (тип раздела)<../guide/providing_content_type>`, то он должен быть унаследован от `ContentPlugin <../../api/classes/ContentPlugin.html>`_.
 
-Во всех остальных случаях в качестве базового класса следует использовать `Plugin <../../api/Eresus/Plugin.html>`_.
+Во всех остальных случаях в качестве базового класса следует использовать
+`Eresus_Plugin <../../api/classes/Eresus_Plugin.html>`_.
 
 .. code-block:: php
 
@@ -32,7 +33,7 @@
     * Тестовый плагин
     * @package Demo
     */
-   class MyPlugin extends Plugin
+   class MyPlugin extends Eresus_Plugin
    {
      ...
    }
@@ -42,10 +43,10 @@
 
 В объявлении основного класса плагина обязательно должен быть установлен ряд публичных свойств:
 
-* `Plugin::$version <../../api/Eresus/Plugin.html#$version>`_ — строковое свойство, задающее версию плагина.
-* `Plugin::$kernel <../../api/Eresus/Plugin.html#$kernel>`_ — строковое свойство, задающее минимальную необходимую для плагина версию CMS.
-* `Plugin::$title <../../api/Eresus/Plugin.html#$title>`_ — строковое свойство, задающее название плагина.
-* `Plugin::$description <../../api/Eresus/Plugin.html#$description>`_ — строковое свойство, задающее описание плагина.
+* `Eresus_Plugin::$version <../../api/classes/Eresus_Plugin.html#$version>`_ — строковое свойство, задающее версию плагина.
+* `Eresus_Plugin::$kernel <../../api/classes/Eresus_Plugin.html#$kernel>`_ — строковое свойство, задающее минимальную необходимую для плагина версию CMS.
+* `Eresus_Plugin::$title <../../api/classes/Eresus_Plugin.html#$title>`_ — строковое свойство, задающее название плагина.
+* `Eresus_Plugin::$description <../../api/classes/Eresus_Plugin.html#$description>`_ — строковое свойство, задающее описание плагина.
 
 Пример:
 
@@ -56,7 +57,7 @@
     * Тестовый плагин
     * @package Demo
     */
-   class MyPlugin extends Plugin
+   class MyPlugin extends Eresus_Plugin
    {
      /**
       * Версия плагина
@@ -103,5 +104,6 @@
 * ''tests/'' --- автоматические тесты
 
   * ''phpunit'' --- тесты `PHPUnit <http://phpunit.de/>`_
-* ''build.xml'' --- файл сборки для `phing <http://phing.info/>`_
+* ''.gitignore'' --- файл исключений для Git
 * ''build.properties'' --- параметры сборки для ''build.xml''
+* ''build.xml'' --- файл сборки для `phing <http://phing.info/>`_

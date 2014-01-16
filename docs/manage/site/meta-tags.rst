@@ -1,7 +1,10 @@
 Настройка мета-тегов
 ====================
 
-CMS Eresus предоставляет гибкую систему управления мета-тегами на основе шаблонов страниц и :doc:`макросов </manage/appendix/macros>`. Комбинируя такие макросы как ``$(siteKeywords)``, ``$(pageKeywords)``, ``$(siteDescription)`` и ``$(pageDescription)``, вы можете задать нужную вам схему генерации мета-тегов. Схема задаётся в :doc:`шаблонах станиц <markup>`.
+Eresus CMS предоставляет гибкую систему управления мета-тегами на основе
+:doc:`шаблонов страниц </markup/page-templates>`. Комбинируя свойства сайта, страницы и ряд других,
+вы можете задать нужную вам схему генерации мета-тегов. Схема задаётся в
+:doc:`управлении шаблонами станиц </manage/site/themes>`.
 
 Рассмотрим несколько примеров.
 
@@ -10,37 +13,40 @@ CMS Eresus предоставляет гибкую систему управле
 
 Это самый простой вариант. В этом случае шаблон страницы может выглядеть так:
 
-.. code-block:: html
+.. code-block:: smarty
 
    <meta name="keywords" content="список ключевых слов">
    <meta name="description" content="описание сайта">
 
 
-Соответственно на всех страницах сайта, использующих этот шаблон будут одни и те же значения мета-тегов.
+Соответственно на всех страницах сайта, использующих этот шаблон будут одни и те же значения
+мета-тегов.
 
 Значения редактируются в настройках сайта
 -----------------------------------------
 
-Это более правильный вариант чем предыдущий. Вместо значений мета-тегов, в шаблон вставляются макросы ``$(siteKeywords)`` и ``$(siteDescription)``.
+Это более правильный вариант чем предыдущий. Вместо значений мета-тегов, в шаблон вставляются
+свойства сайта ``{$site->keywords}`` и ``{$site->description}``:
 
-.. code-block:: html
+.. code-block:: smarty
 
-   <meta name="keywords" content="$(siteKeywords)">
-   <meta name="description" content="$(siteDescription)">
+   <meta name="keywords" content="{$site->keywords}">
+   <meta name="description" content="{$site->description}">
 
 Значения тегов в этом случае редактируются через :doc:`Конфигурацию сайта <settings>`
 
 Значения редактируются в свойствах раздела
 ------------------------------------------
 
-Этот вариант позволяет задать свои собственные значения мета-тегов для каждого раздела. Для этого в шаблон надо вставить макросы ``$(pageKeywords)`` и ``$(pageDescription)``:
+Этот вариант позволяет задать свои собственные значения мета-тегов для каждого раздела. Для этого в
+шаблон надо вставить значения раздела ``{$page->keywords}`` и ``{$page->description}``:
 
-.. code-block:: html
+.. code-block:: smarty
 
-   <meta name="keywords" content="$(pageKeywords)">
-   <meta name="description" content="$(pageDescription)">
+   <meta name="keywords" content="{$page->keywords}">
+   <meta name="description" content="{$page->description}">
 
-Значения тегов в этом случае редактируются в :doc:`свойствах раздела <sections>`.
+Значения тегов в этом случае редактируются в :doc:`свойствах раздела </manage/site/sections/manage>`.
 
 
 Комбинированные варианты
@@ -48,9 +54,10 @@ CMS Eresus предоставляет гибкую систему управле
 
 Вы также можете комбинировать предыдущие варианты. Например так:
 
-.. code-block:: html
+.. code-block:: smarty
 
-   <meta name="keywords" content="$(pageKeywords) $(siteKeywords)">
-   <meta name="description" content="$(pageDescription) $(siteDescription)">
+   <meta name="keywords" content="{$page->keywords} ${site->keywords}">
+   <meta name="description" content="{$page->description} ${site->description}">
 
-Это позволит вам часть значения каждого тега сделать одинаковой для всех разделов, а часть индивидуальной.
+Это позволит вам часть значения каждого тега сделать одинаковой для всех разделов, а часть
+индивидуальной.

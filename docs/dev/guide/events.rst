@@ -9,7 +9,8 @@
 Метод-обработчик
 ----------------
 
-Метод-обработчик — это открытый метод, имя которого совпадает с именем события (см. :doc:`../appendix/events`).
+Метод-обработчик — это открытый метод, получающий в качестве единственного аргумента экземпляр
+`Eresus_Event <../../api/classes/Eresus_Event.html>`_ или его потомка.
 
 Пример
 ^^^^^^
@@ -17,12 +18,12 @@
 .. code-block:: php
 
    <?php
-   class MyPlugin extends Plugin
+   class MyPlugin extends Eresus_Plugin
    {
      /**
-      * Обработчик события "clientOnStart"
+      * Обработчик события
       */
-     public function clientOnStart()
+     public function myEventHandler(Eresus_Event $event)
      {
        // Необходимые действия
      }
@@ -30,15 +31,17 @@
 Регистрация обработчика
 -----------------------
 
-Регистрация выполняется при помощи метода `Plugin::listenEvents() <../../api/Eresus/Plugin.html#listenEvents>`_. Обычно метод вызывается в конструкторе, но он может также вызываться и в любом другом месте.
+Регистрация выполняется при помощи метода
+`Eresus_Event_Dispatcher::addListener() <../../api/classes/Eresus_Event_Dispatcher.html#method_addListener>`_.
+Обычно метод вызывается в конструкторе, но он может также вызываться и в любом другом месте.
 
-Пример 1
-^^^^^^^^
+Пример
+^^^^^^
 
 .. code-block:: php
 
    <?php
-   class MyPlugin extends Plugin
+   class MyPlugin extends Eresus_Plugin
    {
      /**
       * Конструктор
@@ -46,24 +49,31 @@
      public function __construct()
      {
        parent::__construct();
-       $this->listenEvents('clientOnStart');
+       Eresus_Kernel::app()->getEventDispatcher()
+           ->addListener('event.name', array($this, 'MyEventHandler'));
      }
 
-Пример 2
-^^^^^^^^
+События CMS
+-----------
 
-В ``listenEvents`` можно указывать несколько событий, которые должен слушать плагин:
+Со списком событий, генерируемых CMS можно ознакомиться в :doc:`приложении <../appendix/events>`.
+
+Собственные события
+-------------------
+
+Разработчики расширений могут генерировать свои собственные события. Имена событий могут быть
+любыми, при условии, что они не начинаются с «cms.» или «eresus.».
+
+Пример
+^^^^^^
 
 .. code-block:: php
 
    <?php
-   class MyPlugin extends Plugin
+   class MyPlugin extends Eresus_Plugin
    {
-     /**
-      * Конструктор
-      */
-     public function __construct()
+     private function someMethod()
      {
-       parent::__construct();
-       $this->listenEvents('clientOnStart', 'clientOnPageRender');
+       $event = new MyPlugin_Event_MyEvent(); // Класс должен быть потомком Eresus_Event
+       Eresus_Kernel::app()->getEventDispatcher()->dispatch('myplugin.my_event', $event);
      }

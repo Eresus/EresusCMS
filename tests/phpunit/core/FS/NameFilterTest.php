@@ -29,7 +29,6 @@
  */
 
 require_once __DIR__ . '/../../bootstrap.php';
-require_once TESTS_SRC_DIR . '/core/FS/NameFilter.php';
 
 /**
  * @package Eresus
@@ -37,36 +36,36 @@ require_once TESTS_SRC_DIR . '/core/FS/NameFilter.php';
  */
 class Eresus_FS_NameFilterTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * @cover Eresus_FS_NameFilter::setAllowedChars
-	 * @expectedException PHPUnit_Framework_Error_Warning
-	 */
-	public function test_setAllowedChars_notString()
-	{
-		$filter = new Eresus_FS_NameFilter();
-		$filter->setAllowedChars(true);
-	}
+    /**
+     * @cover Eresus_FS_NameFilter::setAllowedChars
+     * @expectedException PHPUnit_Framework_Error_Warning
+     */
+    public function test_setAllowedChars_notString()
+    {
+        $filter = new Eresus_FS_NameFilter();
+        $filter->setAllowedChars(true);
+    }
 
-	/**
-	 * @cover Eresus_FS_NameFilter::setAllowedChars
-	 * @expectedException InvalidArgumentException
-	 */
-	public function test_setAllowedChars_barRegexp()
-	{
-		$filter = new Eresus_FS_NameFilter();
-		$filter->setAllowedChars('/');
-	}
+    /**
+     * @cover Eresus_FS_NameFilter::setAllowedChars
+     * @expectedException InvalidArgumentException
+     */
+    public function test_setAllowedChars_barRegexp()
+    {
+        $filter = new Eresus_FS_NameFilter();
+        $filter->setAllowedChars('/');
+    }
 
-	/**
-	 * @cover Eresus_FS_NameFilter::setAllowedChars
-	 * @cover Eresus_FS_NameFilter::filter
-	 */
-	public function test_filter()
-	{
-		$filter = new Eresus_FS_NameFilter();
+    /**
+     * @cover Eresus_FS_NameFilter::setAllowedChars
+     * @cover Eresus_FS_NameFilter::filter
+     */
+    public function test_filter()
+    {
+        $filter = new Eresus_FS_NameFilter();
 
-		$this->assertEquals('foo', $filter->filter('%@f*oo$'));
-		$filter->setAllowedChars('a-z%');
-		$this->assertEquals('%foo', $filter->filter('%@f*oo$'));
-	}
+        $this->assertEquals('foo', $filter->filter('%@f*oo$'));
+        $filter->setAllowedChars('a-z%');
+        $this->assertEquals('%foo', $filter->filter('%@f*oo$'));
+    }
 }

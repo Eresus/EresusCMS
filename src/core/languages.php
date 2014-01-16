@@ -1,13 +1,11 @@
 <?php
 /**
- * ${product.title} ${product.version}
+ * Управление языками
  *
- * ${product.description}
- *
- * @copyright 2004-2007, Михаил Красильников <mihalych@vsepofigu.ru>
- * @copyright 2007-2008, Eresus Project, http://eresus.ru/
+ * @version ${product.version}
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -26,8 +24,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 /**
@@ -35,15 +31,24 @@
  *
  * @package Eresus
  */
-class TLanguages {
-	var $access = ROOT;
-	#--------------------------------------------------------------------------------------------------------------------------------------------------------------#
-	function adminRender()
-	{
+class TLanguages
+{
+    /**
+     * Минимальный уровень доступа
+     * @var int
+     */
+    private $access = ROOT;
 
-		if (UserRights($this->access)) {
-		}
-		return 'Данная функция недоступна в этой версии';
-	}
-	#--------------------------------------------------------------------------------------------------------------------------------------------------------------#
+    /**
+     * Отрисовывает АИ
+     * @return string
+     */
+    public function adminRender()
+    {
+        if (UserRights($this->access))
+        {
+        }
+        return 'Данная функция недоступна в этой версии';
+    }
 }
+

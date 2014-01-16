@@ -28,8 +28,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id: main.php 1884 2011-10-19 05:32:08Z mk $
  */
 
 /**
@@ -43,166 +41,151 @@
  */
 class Eresus_Feed_Writer_Item
 {
-	private $elements = array();    //Collection of feed elements
-	private $version;
+    private $elements = array(); //Collection of feed elements
+    private $version;
 
-	/**
-	 * Constructor
-	 *
-	 * @param    contant     (RSS1/RSS2/ATOM) RSS2 is default.
-	 */
-	function __construct($version = Eresus_Feed_Writer::RSS2)
-	{
-		$this->version = $version;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Constructor
+     *
+     * @param string $version  (RSS1/RSS2/ATOM) RSS2 is default.
+     */
+    public function __construct($version = Eresus_Feed_Writer::RSS2)
+    {
+        $this->version = $version;
+    }
 
-	/**
-	 * Add an element to elements array
-	 *
-	 * @param string $elementName  The tag name of an element
-	 * @param string $content      The content of tag
-	 * @param array  $attributes   Attributes(if any) in 'attrName' => 'attrValue' format
-	 * @return void
-	 */
-	public function addElement($elementName, $content, $attributes = null)
-	{
-		$this->elements[$elementName]['name']       = $elementName;
-		$this->elements[$elementName]['content']    = $content;
-		$this->elements[$elementName]['attributes'] = $attributes;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Add an element to elements array
+     *
+     * @param string $elementName  The tag name of an element
+     * @param string $content      The content of tag
+     * @param array $attributes   Attributes(if any) in 'attrName' => 'attrValue' format
+     * @return void
+     */
+    public function addElement($elementName, $content, $attributes = null)
+    {
+        $this->elements[$elementName]['name'] = $elementName;
+        $this->elements[$elementName]['content'] = $content;
+        $this->elements[$elementName]['attributes'] = $attributes;
+    }
 
-	/**
-	 * Set multiple feed elements from an array.
-	 * Elements which have attributes cannot be added by this method
-	 *
-	 * @param    array   array of elements in 'tagName' => 'tagContent' format.
-	 * @return   void
-	 */
-	public function addElementArray($elementArray)
-	{
-		if (! is_array($elementArray))
-		{
-			return;
-		}
-		foreach ($elementArray as $elementName => $content)
-		{
-			$this->addElement($elementName, $content);
-		}
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Set multiple feed elements from an array.
+     * Elements which have attributes cannot be added by this method
+     *
+     * @param    array   array of elements in 'tagName' => 'tagContent' format.
+     * @return   void
+     */
+    public function addElementArray($elementArray)
+    {
+        if (!is_array($elementArray))
+        {
+            return;
+        }
+        foreach ($elementArray as $elementName => $content)
+        {
+            $this->addElement($elementName, $content);
+        }
+    }
 
-	/**
-	 * Return the collection of elements in this feed item
-	 *
-	 * @return   array
-	 */
-	public function getElements()
-	{
-		return $this->elements;
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Return the collection of elements in this feed item
+     *
+     * @return   array
+     */
+    public function getElements()
+    {
+        return $this->elements;
+    }
 
-	/**
-	 * Set the 'description' element of feed item
-	 *
-	 * @param string $description  The content of 'description' element
-	 * @return   void
-	 */
-	public function setDescription($description)
-	{
-		if (LOCALE_CHARSET != 'UTF-8')
-		{
-			$description = iconv(LOCALE_CHARSET, 'UTF-8', $description);
-		}
-		$tag = ($this->version == Eresus_Feed_Writer::ATOM)? 'summary' : 'description';
-		$this->addElement($tag, $description);
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Set the 'description' element of feed item
+     *
+     * @param string $description  The content of 'description' element
+     * @return   void
+     */
+    public function setDescription($description)
+    {
+        $tag = ($this->version == Eresus_Feed_Writer::ATOM) ? 'summary' : 'description';
+        $this->addElement($tag, $description);
+    }
 
-	/**
-	 * @desc     Set the 'title' element of feed item
-	 * @param    string  The content of 'title' element
-	 * @return   void
-	 */
-	public function setTitle($title)
-	{
-		if (LOCALE_CHARSET != 'UTF-8')
-		{
-			$title = iconv(LOCALE_CHARSET, 'UTF-8', $title);
-		}
-		$this->addElement('title', $title);
-	}
-	//-----------------------------------------------------------------------------
 
-	/**
-	 * Set the 'date' element of feed item
-	 *
-	 * @param    string  The content of 'date' element
-	 * @return   void
-	 */
-	public function setDate($date)
-	{
-		if (! is_numeric($date))
-		{
-			$date = strtotime($date);
-		}
+    /**
+     * @desc     Set the 'title' element of feed item
+     * @param string $title  The content of 'title' element
+     * @return  void
+     */
+    public function setTitle($title)
+    {
+        $this->addElement('title', $title);
+    }
 
-		if ($this->version == Eresus_Feed_Writer::ATOM)
-		{
-			$tag    = 'updated';
-			$value  = date(DATE_ATOM, $date);
-		}
-		elseif ($this->version == Eresus_Feed_Writer::RSS2)
-		{
-			$tag    = 'pubDate';
-			$value  = date(DATE_RSS, $date);
-		}
-		else
-		{
-			$tag    = 'dc:date';
-			$value  = date("Y-m-d", $date);
-		}
+    /**
+     * Set the 'date' element of feed item
+     *
+     * @param string $date  The content of 'date' element
+     * @return void
+     */
+    public function setDate($date)
+    {
+        if (!is_numeric($date))
+        {
+            $date = strtotime($date);
+        }
 
-		$this->addElement($tag, $value);
-	}
-	//-----------------------------------------------------------------------------
+        if ($this->version == Eresus_Feed_Writer::ATOM)
+        {
+            $tag = 'updated';
+            $value = date(DATE_ATOM, $date);
+        }
+        elseif ($this->version == Eresus_Feed_Writer::RSS2)
+        {
+            $tag = 'pubDate';
+            $value = date(DATE_RSS, $date);
+        }
+        else
+        {
+            $tag = 'dc:date';
+            $value = date("Y-m-d", $date);
+        }
 
-	/**
-	 * Set the 'link' element of feed item
-	 *
-	 * @param    string  The content of 'link' element
-	 * @return   void
-	 */
-	public function setLink($link)
-	{
-		if ($this->version == Eresus_Feed_Writer::RSS2 || $this->version == Eresus_Feed_Writer::RSS1)
-		{
-			$this->addElement('link', $link);
-		}
-		else
-		{
-			$this->addElement('link','',array('href'=>$link));
-			$this->addElement('id', FeedWriter::uuid($link,'urn:uuid:'));
-		}
+        $this->addElement($tag, $value);
+    }
 
-	}
-	//-----------------------------------------------------------------------------
+    /**
+     * Set the 'link' element of feed item
+     *
+     * @param string $link  The content of 'link' element
+     * @return void
+     */
+    public function setLink($link)
+    {
+        if ($this->version == Eresus_Feed_Writer::RSS2 || $this->version == Eresus_Feed_Writer::RSS1)
+        {
+            $this->addElement('link', $link);
+        }
+        else
+        {
+            $this->addElement('link', '', array('href' => $link));
+            $this->addElement('id', Eresus_Feed_Writer::uuid($link, 'urn:uuid:'));
+        }
 
-	/**
-	 * Set the 'encloser' element of feed item
-	 * For RSS 2.0 only
-	 *
-	 * @param    string  The url attribute of encloser tag
-	 * @param    string  The length attribute of encloser tag
-	 * @param    string  The type attribute of encloser tag
-	 * @return   void
-	 */
-	public function setEncloser($url, $length, $type)
-	{
-		$attributes = array('url'=>$url, 'length'=>$length, 'type'=>$type);
-		$this->addElement('enclosure','',$attributes);
-	}
-	//-----------------------------------------------------------------------------
+    }
+
+    /**
+     * Set the 'encloser' element of feed item
+     * For RSS 2.0 only
+     *
+     * @param string $url     The url attribute of encloser tag
+     * @param string $length  The length attribute of encloser tag
+     * @param string $type    The type attribute of encloser tag
+     * @return void
+     */
+    public function setEncloser($url, $length, $type)
+    {
+        $attributes = array('url' => $url, 'length' => $length, 'type' => $type);
+        $this->addElement('enclosure', '', $attributes);
+    }
 }
+

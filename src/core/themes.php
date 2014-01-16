@@ -104,14 +104,14 @@ class TThemes
 
 		if ($filename != arg('name'))
 		{
-			ErrorMessage(sprintf(ADM_THEMES_FILENAME_FILTERED, $filename));
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                sprintf(ADM_THEMES_FILENAME_FILTERED, $filename));
 		}
 
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$templates->add($filename, '', arg('code'), arg('desc'));
 		HTTP::redirect(arg('submitURL'));
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -119,11 +119,10 @@ class TThemes
 	 */
 	public function sectionTemplatesUpdate()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$templates->update(arg('name'), '', arg('code'), arg('desc'));
 		HTTP::redirect(arg('submitURL'));
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -131,11 +130,10 @@ class TThemes
 	 */
 	public function sectionTemplatesDelete()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$templates->delete(arg('delete'));
 		HTTP::redirect(Eresus_Kernel::app()->getPage()->url());
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -170,7 +168,7 @@ class TThemes
 	 */
 	public function sectionTemplatesEdit()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$item = $templates->get(arg('id'), '', true);
 		$form = array(
 			'name' => 'editForm',
@@ -220,7 +218,7 @@ class TThemes
 				)
 			),
 		);
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$list = $templates->enum();
 		$items = array();
 		foreach ($list as $key=>$value)
@@ -232,7 +230,6 @@ class TThemes
 		$result = $page->renderTable($table, $items);
 		return $result;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -278,11 +275,10 @@ class TThemes
 	 */
 	public function sectionStdInsert()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$templates->add(arg('name'), 'std', arg('code'), $this->stdTemplates[arg('name')]['caption']);
 		HTTP::redirect(arg('submitURL'));
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -300,11 +296,10 @@ class TThemes
 	 */
 	public function sectionStdDelete()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$templates->delete(arg('delete'), 'std');
 		HTTP::redirect(Eresus_Kernel::app()->getPage()->url());
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * Диалог добавления стандартного шаблона
@@ -316,7 +311,7 @@ class TThemes
 		/*
 		 * Создаём список имеющихся шаблонов чтобы отфильтровать их из списка доступных.
 		 */
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$list = array_keys($templates->enum('std'));
 		$existed = array();
 		foreach ($list as $key)
@@ -381,7 +376,7 @@ class TThemes
 	 */
 	public function sectionStdEdit()
 	{
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$item = $templates->get(arg('id'), 'std', true);
 		$form = array(
 			'name' => 'editForm',
@@ -435,7 +430,7 @@ class TThemes
 				)
 			),
 		);
-		$templates = new Templates();
+		$templates = Templates::getInstance();
 		$list = $templates->enum('std');
 		$items = array();
 		foreach ($list as $key=>$value)
@@ -447,7 +442,6 @@ class TThemes
 		$result = $page->renderTable($table, $items);
 		return $result;
 	}
-	//-----------------------------------------------------------------------------
 
 	/**
 	 * ???
@@ -505,7 +499,8 @@ class TThemes
 
 		if ($filename != arg('filename'))
 		{
-			ErrorMessage(sprintf(ADM_THEMES_FILENAME_FILTERED, $filename));
+            Eresus_Kernel::app()->getPage()->addErrorMessage(
+                sprintf(ADM_THEMES_FILENAME_FILTERED, $filename));
 		}
 
 		$contents = "/* ".arg('description')." */\r\n\r\n".arg('html');

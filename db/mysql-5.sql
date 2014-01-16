@@ -20,7 +20,7 @@ CREATE TABLE `pages` (
   `visible` tinyint(1) unsigned NOT NULL default 1,
   `template` varchar(64) NOT NULL default '',
   `type` varchar(32) NOT NULL default 'default',
-  `content` longtext NOT NULL,
+  `content` longtext default NULL,
   `options` text NOT NULL,
   `created` datetime NOT NULL default '0000-00-00 00:00:00',
   `updated` datetime NOT NULL default '0000-00-00 00:00:00',

@@ -27,15 +27,24 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
 
 return array(
-	'EresusForm' => 'core/EresusForm.php',
-	'I18n' => 'core/i18n.php',
-	'PaginationHelper' => 'core/classes/helpers/PaginationHelper.php',
-	'Templates' => 'core/lib/templates.php',
-	'WebServer' => 'core/classes/WebServer.php',
-	'WebPage' => 'core/classes/WebPage.php',
+    'AdminList' => 'core/lib/admin/lists.php',
+    'EresusAccounts' => 'core/lib/accounts.php',
+    'EresusForm' => 'core/EresusForm.php',
+    'Form' => 'core/lib/forms.php',
+    'I18n' => 'core/i18n.php',
+    'MySQL' => 'core/lib/mysql.php',
+    'mysql' => 'core/lib/mysql.php',
+    'PaginationHelper' => 'core/classes/helpers/PaginationHelper.php',
+    'Sections' => 'core/lib/sections.php',
+    'TAdminUI' => 'core/admin.php',
+    'TClientUI' => 'core/client.php',
+    'TContentPlugin' => 'core/classes/backward/TContentPlugin.php',
+    'Templates' => 'core/lib/templates.php',
+    'TListContentPlugin' => 'core/classes/backward/TListContentPlugin.php',
+    'WebServer' => 'core/classes/WebServer.php',
+    'WebPage' => 'core/classes/WebPage.php',
 );
+

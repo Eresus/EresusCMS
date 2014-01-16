@@ -1,15 +1,11 @@
 <?php
 /**
- * ${product.title}
- *
- * Модульные тесты
+ * Стартовый файл тестов
  *
  * @version ${product.version}
- *
- * @copyright 2004, Михаил Красильников <mihalych@vsepofigu.ru>
- * @copyright 2007, Eresus Project, http://eresus.ru/
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -29,93 +25,64 @@
  *
  * @package Eresus
  * @subpackage Tests
- *
- * $Id$
  */
 
+define('TESTS_SRC_DIR', realpath(__DIR__ . '/../../src'));
 define('TESTS_TEST_DIR', __DIR__ );
 define('TESTS_FIXT_DIR', __DIR__ . '/fixtures');
 
+require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/stubs.php';
 
 require_once TESTS_SRC_DIR . '/lang/ru.php';
+require_once TESTS_SRC_DIR . '/core/autoload.php';
 
 /**
- * Вспомогательный инструментарий для тестов
- *
- * @package Eresus
- * @subpackage Tests
- * @since 3.00
+ * Базовый класс для тестов
  */
-class Eresus_Tests
+class Eresus_TestCase extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Устанавливает статическое приватное свойство класса
-	 *
-	 * @param string $className
-	 * @param mixed  $value
-	 * @param string $propertyName
-	 *
-	 * @return void
-	 *
-	 * @since 3.00
-	 */
-	public static function setStatic($className, $value, $propertyName = 'instance')
-	{
-		$property = new ReflectionProperty($className, $propertyName);
-		$property->setAccessible(true);
-		$property->setValue($className, $value);
-	}
-	//-----------------------------------------------------------------------------
+    private $staticProps = array();
+
+    /**
+     * Очищает окружение
+     */
+    protected function tearDown()
+    {
+        foreach ($this->staticProps as $className => $props)
+        {
+            foreach (array_keys($props) as $propertyName)
+            {
+                $property = new ReflectionProperty($className, $propertyName);
+                $property->setAccessible(true);
+                $property->setValue($className, null);
+            }
+        }
+        $this->staticProps = array();
+        parent::tearDown();
+    }
+
+    /**
+     * Устанавливает статическое приватное свойство класса
+     *
+     * @param string $className
+     * @param mixed  $value
+     * @param string $propertyName
+     *
+     * @return void
+     *
+     * @since 3.01
+     */
+    protected function setStaticProperty($className, $value, $propertyName = 'instance')
+    {
+        $property = new ReflectionProperty($className, $propertyName);
+        $property->setAccessible(true);
+        $property->setValue($className, $value);
+        if (!array_key_exists($className, $this->staticProps))
+        {
+            $this->staticProps[$className] = array();
+        }
+        $this->staticProps[$className][$propertyName] = true;
+    }
 }
 
-/**
- * Универсальная заглушка
- *
- * @package Eresus
- * @subpackage Tests
- */
-class UniversalStub implements ArrayAccess
-{
-	public function __get($a)
-	{
-		return $this;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function __call($a, $b)
-	{
-		return $this;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function offsetExists($offset)
-	{
-		return true;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function offsetGet($offset)
-	{
-		return $this;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function offsetSet($offset, $value)
-	{
-		;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function offsetUnset($offset)
-	{
-		;
-	}
-	//-----------------------------------------------------------------------------
-
-	public function __toString()
-	{
-		return '';
-	}
-	//-----------------------------------------------------------------------------
-}

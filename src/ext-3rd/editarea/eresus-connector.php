@@ -27,8 +27,6 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id: eresus-connector.php 739 2010-02-06 18:43:28Z mk $
  */
 
 /**

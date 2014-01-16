@@ -208,7 +208,7 @@ class TFiles
 						$x = ($x - ($x % 2)) / 2;
 						$result[$i]['perm'] = (($x % 2 == 1)?'r':'-').$result[$i]['perm'];
 					}
-					if (function_exists('posix_getpwuid') && !System::isWindows())
+					if (function_exists('posix_getpwuid') && !Eresus_Kernel::isWindows())
 					{
 						$filename = Eresus_CMS::getLegacyKernel()->froot.$this->root . $dir . $name;
 						$result[$i]['owner'] = posix_getpwuid(fileowner($filename));
@@ -365,7 +365,7 @@ class TFiles
 	{
 		$pathname = Eresus_CMS::getLegacyKernel()->froot . $this->root .
 			$this->panels[$this->sp] . arg('mkdir', FILES_FILTER);
-		FS::mkDir($pathname, 0777, true);
+		mkdir($pathname, 0777, true);
 		HTTP::redirect(str_replace('&amp;', '&', $this->url()));
 	}
 

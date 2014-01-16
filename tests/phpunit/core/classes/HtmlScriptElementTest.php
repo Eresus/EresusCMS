@@ -26,7 +26,7 @@
  * @package Eresus
  */
 
-require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @package EresusCMS
@@ -34,72 +34,72 @@ require_once TESTS_SRC_DIR . '/core/classes/WebPage.php';
  */
 class HtmlScriptElementTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Проверяем простую конструкцию
-	 *
-	 * @covers HtmlScriptElement::__construct
-	 */
-	public function test_simple()
-	{
-		$test = new HtmlScriptElement();
-		$this->assertEquals('<script type="text/javascript"></script>', $test->getHTML());
-	}
+    /**
+     * Проверяем простую конструкцию
+     *
+     * @covers HtmlScriptElement::__construct
+     */
+    public function test_simple()
+    {
+        $test = new HtmlScriptElement();
+        $this->assertEquals('<script type="text/javascript"></script>', $test->getHTML());
+    }
 
-	/**
-	 * Проверяем конструктор с URL
-	 *
-	 * @covers HtmlScriptElement::__construct
-	 */
-	public function test_construct_URL()
-	{
-		$test = new HtmlScriptElement('http://example.org/some_script');
-		$this->assertEquals(
-			'<script type="text/javascript" src="http://example.org/some_script"></script>',
-			$test->getHTML()
-		);
+    /**
+     * Проверяем конструктор с URL
+     *
+     * @covers HtmlScriptElement::__construct
+     */
+    public function test_construct_URL()
+    {
+        $test = new HtmlScriptElement('http://example.org/some_script');
+        $this->assertEquals(
+            '<script type="text/javascript" src="http://example.org/some_script"></script>',
+            $test->getHTML()
+        );
 
-		$test = new HtmlScriptElement('/some_script.js');
-		$this->assertEquals(
-			'<script type="text/javascript" src="/some_script.js"></script>',
-			$test->getHTML()
-		);
-	}
+        $test = new HtmlScriptElement('/some_script.js');
+        $this->assertEquals(
+            '<script type="text/javascript" src="/some_script.js"></script>',
+            $test->getHTML()
+        );
+    }
 
-	/**
-	 * Проверяем конструктор с кодом
-	 *
-	 * @covers HtmlScriptElement::__construct
-	 * @covers HtmlScriptElement::setContents
-	 */
-	public function test_construct_code()
-	{
-		$test = new HtmlScriptElement('alert("Hello world");');
-		$this->assertEquals(
-			"<script type=\"text/javascript\">//<!-- <![CDATA[\n" .
-				"alert(\"Hello world\");\n//]] --></script>",
-			$test->getHTML()
-		);
+    /**
+     * Проверяем конструктор с кодом
+     *
+     * @covers HtmlScriptElement::__construct
+     * @covers HtmlScriptElement::setContents
+     */
+    public function test_construct_code()
+    {
+        $test = new HtmlScriptElement('alert("Hello world");');
+        $this->assertEquals(
+            "<script type=\"text/javascript\">//<!-- <![CDATA[\n" .
+            "alert(\"Hello world\");\n//]] --></script>",
+            $test->getHTML()
+        );
 
-		$test = new HtmlScriptElement('jQuery.webshims.polyfill();');
-		$this->assertEquals(
-			"<script type=\"text/javascript\">//<!-- <![CDATA[\n" .
-				"jQuery.webshims.polyfill();\n//]] --></script>",
-			$test->getHTML()
-		);
-	}
+        $test = new HtmlScriptElement('jQuery.webshims.polyfill();');
+        $this->assertEquals(
+            "<script type=\"text/javascript\">//<!-- <![CDATA[\n" .
+            "jQuery.webshims.polyfill();\n//]] --></script>",
+            $test->getHTML()
+        );
+    }
 
-	/**
-	 * Проверяем async и defer
-	 *
-	 * @covers HtmlScriptElement::__construct
-	 */
-	public function test_construct_async_defer()
-	{
-		$test = new HtmlScriptElement('script.js');
-		$test->setAttribute('defer');
-		$this->assertEquals('<script type="text/javascript" src="script.js" defer></script>',
-			$test->getHTML());
-	}
+    /**
+     * Проверяем async и defer
+     *
+     * @covers HtmlScriptElement::__construct
+     */
+    public function test_construct_async_defer()
+    {
+        $test = new HtmlScriptElement('script.js');
+        $test->setAttribute('defer');
+        $this->assertEquals('<script type="text/javascript" src="script.js" defer></script>',
+            $test->getHTML());
+    }
 
-	/* */
+    /* */
 }

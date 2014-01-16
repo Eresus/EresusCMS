@@ -1,12 +1,11 @@
 <?php
 /**
- * ${product.title} ${product.version}
+ * Страница "О программе"
  *
- * ${product.description}
- *
- * @copyright 2010, Eresus Project, http://eresus.ru/
+ * @version ${product.version}
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
- * @author Михаил Красильников <mihalych@vsepofigu.ru>
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
  * Данная программа является свободным программным обеспечением. Вы
  * вправе распространять ее и/или модифицировать в соответствии с
@@ -25,9 +24,8 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- *
- * $Id$
  */
+
 
 /**
  * Страница "О программе"
@@ -36,47 +34,49 @@
  */
 class TAbout
 {
-	/**
-	 * Возвращает страницу "О программе"
-	 *
-	 * @return string  HTML
-	 */
-	public function adminRender()
-	{
-		global $locale;
+    /**
+     * Возвращает страницу "О программе"
+     *
+     * @return string  HTML
+     */
+    public function adminRender()
+    {
+        global $locale;
 
-		$xml = new DOMDocument('1.0', 'UTF-8');
-		$xml->load(Eresus_CMS::getLegacyKernel()->froot . 'core/about.xml');
+        $xml = new DOMDocument('1.0', 'UTF-8');
+        $xml->load(Eresus_CMS::getLegacyKernel()->froot . 'core/about.xml');
 
-		$data = array();
+        $data = array();
 
-		/* @var DOMElement $product */
-		$product = $xml->getElementsByTagName('product')->item(0);
-		$data['product'] = array();
-		$data['product']['title'] = $product->getAttribute('title');
-		$data['product']['version'] = $product->getAttribute('version');
+        /* @var DOMElement $product */
+        $product = $xml->getElementsByTagName('product')->item(0);
+        $data['product'] = array();
+        $data['product']['title'] = $product->getAttribute('title');
+        $data['product']['version'] = $product->getAttribute('version');
 
-		$data['product']['copyrights'] = array();
-		$copyrights = $product->getElementsByTagName('copyright');
-		for ($i = 0; $i < $copyrights->length; $i++)
-		{
-			/* @var DOMElement $copyright */
-			$copyright = $copyrights->item($i);
-			$data['product']['copyrights'] []= array(
-				'year' => $copyright->getAttribute('year'),
-				'owner' => $copyright->getAttribute('owner'),
-				'url' => $copyright->getAttribute('url'),
-			);
-		}
+        $data['product']['copyrights'] = array();
+        $copyrights = $product->getElementsByTagName('copyright');
+        for ($i = 0; $i < $copyrights->length; $i++)
+        {
+            /* @var DOMElement $copyright */
+            $copyright = $copyrights->item($i);
+            $data['product']['copyrights'] []= array(
+                'year' => $copyright->getAttribute('year'),
+                'owner' => $copyright->getAttribute('owner'),
+                'url' => $copyright->getAttribute('url'),
+            );
+        }
 
-		$license = $xml->getElementsByTagName('license')->item(0);
-		$data['license'] = array();
-		$data['license']['text'] = $license->getElementsByTagName($locale['lang'])->item(0)->textContent;
+        $license = $xml->getElementsByTagName('license')->item(0);
+        $data['license'] = array();
+        $data['license']['text'] = $license->getElementsByTagName($locale['lang'])->item(0)->textContent;
 
-		$tmpl = Eresus_Kernel::app()->getPage()->getUITheme()->getTemplate('misc/about.html');
-		$html = $tmpl->compile($data);
+        /** @var TAdminUI $page */
+        $page = Eresus_Kernel::app()->getPage();
+        $tmpl = $page->getUITheme()->getTemplate('misc/about.html');
+        $html = $tmpl->compile($data);
 
-		return $html;
-	}
-	//-----------------------------------------------------------------------------
+        return $html;
+    }
 }
+

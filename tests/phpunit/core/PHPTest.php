@@ -30,7 +30,6 @@
  */
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once TESTS_SRC_DIR . '/core/PHP.php';
 
 /**
  * @package Eresus
@@ -38,20 +37,20 @@ require_once TESTS_SRC_DIR . '/core/PHP.php';
  */
 class Eresus_PHPTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * @covers Eresus_PHP::iniSizeToInt
-	 */
-	public function test_iniSizeToInt()
-	{
-		$this->assertEquals(1024, Eresus_PHP::iniSizeToInt('1024'));
+    /**
+     * @covers Eresus_PHP::iniSizeToInt
+     */
+    public function test_iniSizeToInt()
+    {
+        $this->assertEquals(1024, Eresus_PHP::iniSizeToInt('1024'));
 
-		$this->assertEquals(2 * 1024, Eresus_PHP::iniSizeToInt('2K'));
-		$this->assertEquals(2 * 1024, Eresus_PHP::iniSizeToInt('2 K'));
+        $this->assertEquals(2 * 1024, Eresus_PHP::iniSizeToInt('2K'));
+        $this->assertEquals(2 * 1024, Eresus_PHP::iniSizeToInt('2 K'));
 
-		$this->assertEquals(3 * 1024 * 1024, Eresus_PHP::iniSizeToInt('3M'));
-		$this->assertEquals(3 * 1024 * 1024, Eresus_PHP::iniSizeToInt('3 M'));
+        $this->assertEquals(3 * 1024 * 1024, Eresus_PHP::iniSizeToInt('3M'));
+        $this->assertEquals(3 * 1024 * 1024, Eresus_PHP::iniSizeToInt('3 M'));
 
-		$this->assertEquals(4 * 1024 * 1024 * 1024, Eresus_PHP::iniSizeToInt('4G'));
-		$this->assertEquals(4 * 1024 * 1024 * 1024, Eresus_PHP::iniSizeToInt('4 G'));
-	}
+        $this->assertEquals(4 * 1024 * 1024 * 1024, Eresus_PHP::iniSizeToInt('4G'));
+        $this->assertEquals(4 * 1024 * 1024 * 1024, Eresus_PHP::iniSizeToInt('4 G'));
+    }
 }

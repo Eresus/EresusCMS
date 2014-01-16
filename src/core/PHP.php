@@ -37,69 +37,70 @@
  */
 class Eresus_PHP
 {
-	/**
-	 * Переводит значение параметра настройки в целое число с учётом сокращений
-	 *
-	 * См. {@link http://www.php.net/faq.using.php#faq.using.shorthandbytes документацию}.
-	 *
-	 * @param string $size
-	 *
-	 * @return int
-	 */
-	public static function iniSizeToInt($size)
-	{
-		assert('is_string($size)');
+    /**
+     * Переводит значение параметра настройки в целое число с учётом сокращений
+     *
+     * См. {@link http://www.php.net/faq.using.php#faq.using.shorthandbytes документацию}.
+     *
+     * @param string $size
+     *
+     * @return int
+     */
+    public static function iniSizeToInt($size)
+    {
+        assert('is_string($size)');
 
-		preg_match('/([\d\.]+)\s*([KMG])?/', $size, $matches);
-		$result = $matches[1];
-		if (isset($matches[2]))
-		{
-			switch ($matches[2])
-			{
-				case 'K':
-					$result *= 1024;
-					break;
-				case 'M':
-					$result *= 1024 * 1024;
-					break;
-				case 'G':
-					$result *= 1024 * 1024 * 1024;
-					break;
-			}
-		}
-		return $result;
-	}
+        preg_match('/([\d\.]+)\s*([KMG])?/', $size, $matches);
+        $result = $matches[1];
+        if (isset($matches[2]))
+        {
+            switch ($matches[2])
+            {
+                case 'K':
+                    $result *= 1024;
+                    break;
+                case 'M':
+                    $result *= 1024 * 1024;
+                    break;
+                case 'G':
+                    $result *= 1024 * 1024 * 1024;
+                    break;
+            }
+        }
+        return $result;
+    }
 
-	/**
-	 * Возвращает максимально допустимый размер загружаемого файла в байтах
-	 *
-	 * Во внимание принимаются настройки upload_max_filesize и post_max_size
-	 *
-	 * @return int|bool  размер в байтах или false, если размер не ограничен
-	 */
-	public static function getMaxUploadSize()
-	{
-		$limit = false;
-		if ($value = self::iniSizeToInt(ini_get('upload_max_filesize')))
-		{
-			$limit = $value;
-		}
+    /**
+     * Возвращает максимально допустимый размер загружаемого файла в байтах
+     *
+     * Во внимание принимаются настройки upload_max_filesize и post_max_size
+     *
+     * @return int|bool  размер в байтах или false, если размер не ограничен
+     */
+    public static function getMaxUploadSize()
+    {
+        $limit = false;
+        if ($value = self::iniSizeToInt(ini_get('upload_max_filesize')))
+        {
+            $limit = $value;
+        }
 
-		$value = self::iniSizeToInt(ini_get('post_max_size'));
-		$reserveForHeadersAndBody = 1024;
-		if ($value && $value - $reserveForHeadersAndBody < $limit)
-		{
-			$limit = $value - $reserveForHeadersAndBody;
-		}
+        $value = self::iniSizeToInt(ini_get('post_max_size'));
+        $reserveForHeadersAndBody = 1024;
+        if ($value && $value - $reserveForHeadersAndBody < $limit)
+        {
+            $limit = $value - $reserveForHeadersAndBody;
+        }
 
-		/*
-		$value = self::iniValueToInt(ini_get('memory_limit'));
-		$reserveForAppItself = memory_get_peak_usage(true);
-		if ($value && $value < $limit)
-		{
-			$limit = $value - $reserveForAppItself;
-		}
-		*/
-		return $limit;
-	}
+        /*
+        $value = self::iniValueToInt(ini_get('memory_limit'));
+        $reserveForAppItself = memory_get_peak_usage(true);
+        if ($value && $value < $limit)
+        {
+            $limit = $value - $reserveForAppItself;
+        }
+        */
+        return $limit;
+    }
 }
+
