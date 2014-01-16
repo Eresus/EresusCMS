@@ -10,15 +10,11 @@
             "email": "m.krasilnikov@yandex.ru"
         }
     ],
-<<<<<<< HEAD
-	"require":
-=======
     "config":
     {
         "component-dir": "vendor/components"
     },
     "require":
->>>>>>> release/3.01
 	{
 		"mekras/botobor" : "0.4.0",
         "components/jquery": "1.10.2",
