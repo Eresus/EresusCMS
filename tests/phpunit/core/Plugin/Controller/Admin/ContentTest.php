@@ -49,7 +49,7 @@ class Eresus_Plugin_Controller_Admin_ContentTest extends PHPUnit_Framework_TestC
         $GLOBALS['Eresus'] = new stdClass();
         $GLOBALS['Eresus']->request = array('arg' => array());
         /** @var Eresus_Plugin_Controller_Admin_Content $controller */
-        $controller->getHtml();
+        $controller->getHtml(new Eresus_CMS_Request());
     }
 
     /**
@@ -65,7 +65,7 @@ class Eresus_Plugin_Controller_Admin_ContentTest extends PHPUnit_Framework_TestC
         $GLOBALS['Eresus'] = new stdClass();
         $GLOBALS['Eresus']->request = array('arg' => array());
         /** @var Eresus_Plugin_Controller_Admin_Content $controller */
-        $controller->getHtml();
+        $controller->getHtml(new Eresus_CMS_Request());
     }
 }
 

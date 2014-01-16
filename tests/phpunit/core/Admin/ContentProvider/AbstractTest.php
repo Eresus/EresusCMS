@@ -48,7 +48,7 @@ class Eresus_Admin_ContentProvider_AbstractTest extends Eresus_TestCase
         $provider->expects($this->any())->method('getModule')
             ->will($this->returnValue(new stdClass()));
         /** @var Eresus_Admin_ContentProvider_Abstract $provider */
-        $provider->adminRender();
+        $provider->adminRender(new Eresus_CMS_Request());
     }
 
     /**
@@ -67,7 +67,7 @@ class Eresus_Admin_ContentProvider_AbstractTest extends Eresus_TestCase
         $provider->expects($this->any())->method('getModule')
             ->will($this->returnValue($module));
         /** @var Eresus_Admin_ContentProvider_Abstract $provider */
-        $provider->adminRender();
+        $provider->adminRender(new Eresus_CMS_Request());
     }
 
     /**
@@ -81,7 +81,7 @@ class Eresus_Admin_ContentProvider_AbstractTest extends Eresus_TestCase
         $provider->expects($this->any())->method('getModule')
             ->will($this->returnValue(new stdClass()));
         /** @var Eresus_Admin_ContentProvider_Abstract $provider */
-        $provider->adminRenderContent();
+        $provider->adminRenderContent(new Eresus_CMS_Request());
     }
 
     /**
@@ -100,7 +100,7 @@ class Eresus_Admin_ContentProvider_AbstractTest extends Eresus_TestCase
         $provider->expects($this->any())->method('getModule')
             ->will($this->returnValue($module));
         /** @var Eresus_Admin_ContentProvider_Abstract $provider */
-        $provider->adminRenderContent();
+        $provider->adminRenderContent(new Eresus_CMS_Request());
     }
 }
 

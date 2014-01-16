@@ -43,20 +43,22 @@ abstract class Eresus_Plugin_Controller_Admin_Content extends Eresus_Plugin_Cont
      * получившимся названием. Если такого метода нет, вбрасывается исключение. Если метод есть,
      * он вызывается, а его результат возвращается.
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @throws Eresus_CMS_Exception_NotFound
      *
      * @return string
      * @since 3.01
      */
-    public function getHtml()
+    public function getHtml(Eresus_CMS_Request $request)
     {
-        $action = 'action' . $this->getAction();
+        $action = 'action' . $this->getAction($request);
         if (!method_exists($this, $action))
         {
             throw new Eresus_CMS_Exception_NotFound;
         }
 
-        return $this->{$action}();
+        return $this->{$action}($request);
     }
 
     /**
@@ -65,12 +67,15 @@ abstract class Eresus_Plugin_Controller_Admin_Content extends Eresus_Plugin_Cont
      * Действие определяется на основе аргумента «action» из запроса HTTP. Если аргумент не указан,
      * возвращается действие «index».
      *
+     * @param Eresus_CMS_Request $request
+     *
      * @return string
      * @since 3.01
      */
-    protected function getAction()
+    protected function getAction(Eresus_CMS_Request $request)
     {
-        return arg('action') ?: 'index';
+        $args = $request->getMethod() == 'GET' ? $request->query : $request->request;
+        return $args->has('action') ? $args->get('action') : 'index';
     }
 }
 
