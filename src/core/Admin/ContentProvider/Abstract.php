@@ -66,6 +66,10 @@ abstract class Eresus_Admin_ContentProvider_Abstract
         {
             $html = $this->getModule()->adminRender($request);
         }
+        catch (Eresus_CMS_Exception_NotFound $e)
+        {
+            throw $e;
+        }
         catch (Exception $e)
         {
             throw new RuntimeException(

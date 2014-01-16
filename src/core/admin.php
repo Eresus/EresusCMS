@@ -1023,8 +1023,15 @@ class TAdminUI extends Eresus_CMS_Page_Admin
             }
             catch (RuntimeException $e)
             {
-                Eresus_Kernel::logException($e);
-                $result = ErrorBox($e->getMessage());
+                if ($e instanceof Eresus_CMS_Exception_NotFound)
+                {
+                    $result = ErrorBox($e->getMessage() ?: 'Запрошенная страница не найдена.');
+                }
+                else
+                {
+                    Eresus_Kernel::logException($e);
+                    $result = ErrorBox($e->getMessage());
+                }
             }
         }
 
