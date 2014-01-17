@@ -1,6 +1,6 @@
 <?php
 /**
- * Тесты класса Eresus_Event
+ * Событие отрисовки
  *
  * @version ${product.version}
  * @copyright ${product.copyright}
@@ -22,41 +22,61 @@
  * Вы должны были получить копию Стандартной Общественной Лицензии
  * GNU с этой программой. Если Вы ее не получили, смотрите документ на
  * <http://www.gnu.org/licenses/>
- *
- * @package Eresus
- * @subpackage Tests
  */
 
-require_once __DIR__ . '/../bootstrap.php';
+namespace Eresus\Events;
+
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Тесты класса Eresus_Event
- * @package Eresus
- * @subpackage Tests
+ * Событие отрисовки
+ *
+ * @api
+ * @since x.xx
  */
-class Eresus_EventTest extends PHPUnit_Framework_TestCase
+class RenderEvent extends Event
 {
     /**
-     * @covers Eresus_Event::setName
-     * @covers Eresus_Event::getName
+     * Отрисованная строка
+     *
+     * @var string
+     *
+     * @since x.xx
      */
-    public function testGetSetName()
+    private $text;
+
+    /**
+     * @param string $text  отрисованная строка
+     *
+     * @since x.xx
+     */
+    public function __construct($text)
     {
-        $event = new Eresus_Event();
-        $event->setName('foo');
-        $this->assertEquals('foo', $event->getName());
+        $this->text = $text;
     }
 
     /**
-     * @covers Eresus_Event::stopPropagation
-     * @covers Eresus_Event::isPropagationStopped
+     * Возвращает отрисованную строку
+     *
+     * @return string
+     *
+     * @since x.xx
      */
-    public function testPropagation()
+    public function getText()
     {
-        $event = new Eresus_Event();
-        $this->assertFalse($event->isPropagationStopped());
-        $event->stopPropagation();
-        $this->assertTrue($event->isPropagationStopped());
+        return $this->text;
+    }
+
+    /**
+     * Меняет отрисованную строку
+     *
+     * @param string $text
+     *
+     * @since x.xx
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
     }
 }
 

@@ -95,14 +95,5 @@ class Eresus_CMSTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('foo', $eresus->getPage());
     }
-
-    /**
-     * @covers Eresus_CMS::getEventDispatcher
-     */
-    public function testGetEventDispatcher()
-    {
-        $cms = new Eresus_CMS();
-        $this->assertInstanceOf('Eresus_Event_Dispatcher', $cms->getEventDispatcher());
-    }
 }
 

@@ -22,31 +22,34 @@
  * Вы должны были получить копию Стандартной Общественной Лицензии
  * GNU с этой программой. Если Вы ее не получили, смотрите документ на
  * <http://www.gnu.org/licenses/>
- *
- * @package Eresus
  */
+
+namespace Eresus\Events;
+
+use Symfony\Component\EventDispatcher\Event;
+use Eresus_HTTP_Response;
 
 /**
  * Событие «Отправка ответа»
  *
- * @since 3.01
- * @package Eresus
+ * @api
+ * @since x.xx
  */
-class Eresus_Event_Response extends Eresus_Event
+class ResponseEvent extends Event
 {
     /**
      * Ответ
      *
      * @var Eresus_HTTP_Response
      *
-     * @since 3.01
+     * @since x.xx
      */
     private $response;
 
     /**
      * @param Eresus_HTTP_Response $response
      *
-     * @since 3.01
+     * @since x.xx
      */
     public function __construct(Eresus_HTTP_Response $response)
     {
@@ -58,7 +61,7 @@ class Eresus_Event_Response extends Eresus_Event
      *
      * @return Eresus_HTTP_Response
      *
-     * @since 3.01
+     * @since x.xx
      */
     public function getResponse()
     {

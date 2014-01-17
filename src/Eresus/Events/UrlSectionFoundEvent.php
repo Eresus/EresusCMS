@@ -1,6 +1,6 @@
 <?php
 /**
- * Тесты класса Eresus_Event_Dispatcher
+ * Событие «При разборе URL в нём найден раздел сайта»
  *
  * @version ${product.version}
  * @copyright ${product.copyright}
@@ -24,41 +24,72 @@
  * <http://www.gnu.org/licenses/>
  *
  * @package Eresus
- * @subpackage Tests
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
+namespace Eresus\Events;
+
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Тесты класса Eresus_Event_Dispatcher
- * @package Eresus
- * @subpackage Tests
+ * Событие «При разборе URL в нём найден раздел сайта»
+ *
+ * @api
+ * @since x.xx
  */
-class Eresus_Event_DispatcherTest extends PHPUnit_Framework_TestCase
+class UrlSectionFoundEvent extends Event
 {
     /**
-     * @covers Eresus_Event_Dispatcher::addListener
-     * @covers Eresus_Event_Dispatcher::dispatch
+     * Описание найденного раздела
+     *
+     * @var array
+     *
+     * @since x.xx
      */
-    public function testOverall()
-    {
-        $dispatcher = new Eresus_Event_Dispatcher();
-        $listener = $this->getMock('stdClass', array('foo', 'bar', 'baz'));
-        $listener->expects($this->once())->method('foo');
-        $listener->expects($this->once())->method('bar')
-            ->will($this->returnCallback(
-                function (Eresus_Event $event)
-                {
-                    $event->stopPropagation();
-                }
-            ));
-        $listener->expects($this->never())->method('baz');
-        $dispatcher->addListener('my_event', array($listener, 'bar'));
-        $dispatcher->addListener('my_event', array($listener, 'foo'), 1);
-        $dispatcher->addListener('my_event', array($listener, 'baz'));
-        $dispatcher->dispatch('my_event');
+    private $sectionInfo;
 
-        $dispatcher->dispatch('other_event');
+    /**
+     * Адрес найденного раздела
+     *
+     * @var string
+     *
+     * @since x.xx
+     */
+    private $url;
+
+    /**
+     * @param array  $sectionInfo  описание найденного раздела
+     * @param string $url          адрес найденного раздела
+     *
+     * @since x.xx
+     */
+    public function __construct(array $sectionInfo, $url)
+    {
+        $this->sectionInfo = $sectionInfo;
+        $this->url = $url;
+    }
+
+    /**
+     * Возвращает описание найденного раздела
+     *
+     * @return array
+     *
+     * @since x.xx
+     */
+    public function getSectionInfo()
+    {
+        return $this->sectionInfo;
+    }
+
+    /**
+     * Возвращает адрес найденного раздела
+     *
+     * @return string
+     *
+     * @since x.xx
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 }
 

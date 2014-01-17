@@ -53,14 +53,6 @@ class Eresus_CMS extends Eresus_Application
     private $version = '${product.version}';
 
     /**
-     * Диспетчер событий
-     * @var Eresus_Event_Dispatcher
-     *
-     * @since 3.01
-     */
-    private $eventDispatcher;
-
-    /**
      * Описание сайта
      * @var Eresus_Site
      * @since 3.01
@@ -95,10 +87,10 @@ class Eresus_CMS extends Eresus_Application
         $this->container
             ->register('container', $this->container);
         $this->container
+            ->register('events', 'Symfony\Component\EventDispatcher\EventDispatcher');
+        $this->container
             ->register('plugins', 'Eresus_Plugin_Registry')
             ->addArgument(new Reference('container'));
-
-        $this->eventDispatcher = new Eresus_Event_Dispatcher();
     }
 
     /**
@@ -158,13 +150,14 @@ class Eresus_CMS extends Eresus_Application
     /**
      * Возвращает диспетчер событий CMS
      *
-     * @return Eresus_Event_Dispatcher
+     * @return \Symfony\Component\EventDispatcher\EventDispatcher
      *
      * @since 3.01
+     * @deprecated с 3.02 используйте службу «events» из контейнера зависимостей
      */
     public function getEventDispatcher()
     {
-        return $this->eventDispatcher;
+        return $this->container->get('events');
     }
 
     /**
