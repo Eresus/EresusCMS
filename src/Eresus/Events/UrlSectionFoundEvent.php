@@ -1,6 +1,6 @@
 <?php
 /**
- * Тесты класса Eresus_Event
+ * Событие «При разборе URL в нём найден раздел сайта»
  *
  * @version ${product.version}
  * @copyright ${product.copyright}
@@ -22,41 +22,72 @@
  * Вы должны были получить копию Стандартной Общественной Лицензии
  * GNU с этой программой. Если Вы ее не получили, смотрите документ на
  * <http://www.gnu.org/licenses/>
- *
- * @package Eresus
- * @subpackage Tests
  */
 
-require_once __DIR__ . '/../bootstrap.php';
+namespace Eresus\Events;
+
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Тесты класса Eresus_Event
- * @package Eresus
- * @subpackage Tests
+ * Событие «При разборе URL в нём найден раздел сайта»
+ *
+ * @api
+ * @since x.xx
  */
-class Eresus_EventTest extends PHPUnit_Framework_TestCase
+class UrlSectionFoundEvent extends Event
 {
     /**
-     * @covers Eresus_Event::setName
-     * @covers Eresus_Event::getName
+     * Описание найденного раздела
+     *
+     * @var array
+     *
+     * @since x.xx
      */
-    public function testGetSetName()
+    private $sectionInfo;
+
+    /**
+     * Адрес найденного раздела
+     *
+     * @var string
+     *
+     * @since x.xx
+     */
+    private $url;
+
+    /**
+     * @param array  $sectionInfo  описание найденного раздела
+     * @param string $url          адрес найденного раздела
+     *
+     * @since x.xx
+     */
+    public function __construct(array $sectionInfo, $url)
     {
-        $event = new Eresus_Event();
-        $event->setName('foo');
-        $this->assertEquals('foo', $event->getName());
+        $this->sectionInfo = $sectionInfo;
+        $this->url = $url;
     }
 
     /**
-     * @covers Eresus_Event::stopPropagation
-     * @covers Eresus_Event::isPropagationStopped
+     * Возвращает описание найденного раздела
+     *
+     * @return array
+     *
+     * @since x.xx
      */
-    public function testPropagation()
+    public function getSectionInfo()
     {
-        $event = new Eresus_Event();
-        $this->assertFalse($event->isPropagationStopped());
-        $event->stopPropagation();
-        $this->assertTrue($event->isPropagationStopped());
+        return $this->sectionInfo;
+    }
+
+    /**
+     * Возвращает адрес найденного раздела
+     *
+     * @return string
+     *
+     * @since x.xx
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 }
 

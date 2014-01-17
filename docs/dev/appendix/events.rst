@@ -2,7 +2,7 @@
 ==================
 
 Если в описании события не указано иное, то обработчикам этого события передаётся экземпляр
-`Eresus_Event <../../api/classes/Eresus_Event.html>`_.
+`Symfony\Component\EventDispatcher\Event`.
 
 cms.admin.start
 ---------------
@@ -13,19 +13,19 @@ cms.client.render_content
 -------------------------
 
 Генерируется в КИ после отрисовки контента. Обработчику передаётся экземпляр
-`Eresus_Event_Render <../../api/classes/Eresus_Event_Render.html>`_.
+`Eresus\Events\RenderEvent <../../api/classes/Eresus.Events.RenderEvent.html>`_.
 
 cms.client.render_page
 ----------------------
 
 Генерируется в КИ после подстановки контента в шаблон страницы. Обработчику передаётся  экземпляр
-`Eresus_Event_Render <../../api/classes/Eresus_Event_Render.html>`_.
+`Eresus\Events\RenderEvent <../../api/classes/Eresus.Events.RenderEvent.html>`_.
 
 cms.client.response
 -------------------
 
 Генерируется в КИ непосредственно перед отправкой страницы браузеру. Обработчику передаётся
-экземпляр `Eresus_Event_Response <../../api/classes/Eresus_Event_Response.html>`_.
+экземпляр `Eresus\Events\ResponseEvent <../../api/classes/Eresus.Events.ResponseEvent.html>`_.
 
 cms.client.start
 ----------------
@@ -39,5 +39,5 @@ cms.client.url_section_found
 
 Событие генерируется для каждой виртуальной директории в адресе, которая соответствует разделу
 сайта. Обработчику передаётся экземпляр
-`Eresus_Event_UrlSectionFound <../../api/classes/Eresus_Event_UrlSectionFound.html>`_.
+`Eresus\Events\UrlSectionFoundEvent <../../api/classes/Eresus.Events.UrlSectionFoundEvent.html>`_.
 

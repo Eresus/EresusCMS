@@ -26,6 +26,10 @@
  * @package Eresus
  */
 
+use Eresus\Events\UrlSectionFoundEvent;
+use Eresus\Events\ResponseEvent;
+use Eresus\Events\RenderEvent;
+
 /**
  * Признак клиентского интерфейса
  *
@@ -241,6 +245,10 @@ class TClientUI extends Eresus_CMS_Page_Client
         reset(Eresus_CMS::getLegacyKernel()->request['params']);
         $item['id'] = 0;
         $url = '';
+
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+
         do
         {
             $items = Eresus_CMS::getLegacyKernel()->sections->children($item['id'],
@@ -256,9 +264,8 @@ class TClientUI extends Eresus_CMS_Page_Client
                     {
                         $url .= $item['name'].'/';
                     }
-                    $event = new Eresus_Event_UrlSectionFound($item, $url);
-                    Eresus_Kernel::app()->getEventDispatcher()
-                        ->dispatch('cms.client.url_section_found', $event);
+                    $event = new UrlSectionFoundEvent($item, $url);
+                    $evd->dispatch('cms.client.url_section_found', $event);
                     $this->section[] = $item['title'];
                     next(Eresus_CMS::getLegacyKernel()->request['params']);
                     array_shift(Eresus_CMS::getLegacyKernel()->request['params']);
@@ -406,8 +413,10 @@ class TClientUI extends Eresus_CMS_Page_Client
         // TODO: Обратная совместимость (убрать)
         $response->setContent($this->replaceMacros($response->getContent()));
 
-        $event = new Eresus_Event_Response($response);
-        Eresus_Kernel::app()->getEventDispatcher()->dispatch('cms.client.response', $event);
+        $event = new ResponseEvent($response);
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+        $evd->dispatch('cms.client.response', $event);
 
         return $response;
     }
@@ -615,9 +624,10 @@ class TClientUI extends Eresus_CMS_Page_Client
             $this->addStyles($this->styles);
         }
 
-        $event = new Eresus_Event_Render($html);
-        Eresus_Kernel::app()->getEventDispatcher()
-            ->dispatch('cms.client.render_page', $event);
+        $event = new RenderEvent($html);
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+        $evd->dispatch('cms.client.render_page', $event);
         $html = $event->getText();
 
         // TODO: Обратная совместимость (удалить)

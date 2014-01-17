@@ -10,7 +10,7 @@
 ----------------
 
 Метод-обработчик — это открытый метод, получающий в качестве единственного аргумента экземпляр
-`Eresus_Event <../../api/classes/Eresus_Event.html>`_ или его потомка.
+`Symfony\Component\EventDispatcher\Event` или его потомка.
 
 Пример
 ^^^^^^
@@ -18,12 +18,14 @@
 .. code-block:: php
 
    <?php
+   use Symfony\Component\EventDispatcher\Event;
+
    class MyPlugin extends Eresus_Plugin
    {
      /**
       * Обработчик события
       */
-     public function myEventHandler(Eresus_Event $event)
+     public function myEventHandler(Event $event)
      {
        // Необходимые действия
      }
@@ -32,7 +34,7 @@
 -----------------------
 
 Регистрация выполняется при помощи метода
-`Eresus_Event_Dispatcher::addListener() <../../api/classes/Eresus_Event_Dispatcher.html#method_addListener>`_.
+`Symfony\Component\EventDispatcher\EventDispatcher::addListener`.
 Обычно метод вызывается в конструкторе, но он может также вызываться и в любом другом месте.
 
 Пример
@@ -49,7 +51,7 @@
      public function __construct()
      {
        parent::__construct();
-       Eresus_Kernel::app()->getEventDispatcher()
+       $this->get('events')
            ->addListener('event.name', array($this, 'MyEventHandler'));
      }
 
@@ -74,6 +76,7 @@
    {
      private function someMethod()
      {
-       $event = new MyPlugin_Event_MyEvent(); // Класс должен быть потомком Eresus_Event
-       Eresus_Kernel::app()->getEventDispatcher()->dispatch('myplugin.my_event', $event);
+       // Класс MyPlugin_Event_MyEvent должен быть потомком Symfony\Component\EventDispatcher\Event
+       $event = new MyPlugin_Event_MyEvent();
+       $this->get('events')->dispatch('myplugin.my_event', $event);
      }

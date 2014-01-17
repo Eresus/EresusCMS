@@ -42,7 +42,9 @@ class Eresus_Admin_FrontController extends Eresus_CMS_FrontController
      */
     public function dispatch()
     {
-        Eresus_Kernel::app()->getEventDispatcher()->dispatch('cms.admin.start');
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+        $evd->dispatch('cms.admin.start');
 
         if (!UserRights(EDITOR))
         {

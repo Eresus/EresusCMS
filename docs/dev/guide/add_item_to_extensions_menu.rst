@@ -14,7 +14,7 @@
    public function __construct()
    {
        parent::__construct();
-       Eresus_Kernel::app()->getEventDispatcher()
+       $this->get('events')
            ->addEventListener('cms.admin.start', array($this, 'addMenuItem'));
    }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Тесты класса Eresus_Event_Dispatcher
+ * Событие отрисовки
  *
  * @version ${product.version}
  * @copyright ${product.copyright}
@@ -22,43 +22,61 @@
  * Вы должны были получить копию Стандартной Общественной Лицензии
  * GNU с этой программой. Если Вы ее не получили, смотрите документ на
  * <http://www.gnu.org/licenses/>
- *
- * @package Eresus
- * @subpackage Tests
  */
 
-require_once __DIR__ . '/../../bootstrap.php';
+namespace Eresus\Events;
+
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Тесты класса Eresus_Event_Dispatcher
- * @package Eresus
- * @subpackage Tests
+ * Событие отрисовки
+ *
+ * @api
+ * @since x.xx
  */
-class Eresus_Event_DispatcherTest extends PHPUnit_Framework_TestCase
+class RenderEvent extends Event
 {
     /**
-     * @covers Eresus_Event_Dispatcher::addListener
-     * @covers Eresus_Event_Dispatcher::dispatch
+     * Отрисованная строка
+     *
+     * @var string
+     *
+     * @since x.xx
      */
-    public function testOverall()
-    {
-        $dispatcher = new Eresus_Event_Dispatcher();
-        $listener = $this->getMock('stdClass', array('foo', 'bar', 'baz'));
-        $listener->expects($this->once())->method('foo');
-        $listener->expects($this->once())->method('bar')
-            ->will($this->returnCallback(
-                function (Eresus_Event $event)
-                {
-                    $event->stopPropagation();
-                }
-            ));
-        $listener->expects($this->never())->method('baz');
-        $dispatcher->addListener('my_event', array($listener, 'bar'));
-        $dispatcher->addListener('my_event', array($listener, 'foo'), 1);
-        $dispatcher->addListener('my_event', array($listener, 'baz'));
-        $dispatcher->dispatch('my_event');
+    private $text;
 
-        $dispatcher->dispatch('other_event');
+    /**
+     * @param string $text  отрисованная строка
+     *
+     * @since x.xx
+     */
+    public function __construct($text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * Возвращает отрисованную строку
+     *
+     * @return string
+     *
+     * @since x.xx
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * Меняет отрисованную строку
+     *
+     * @param string $text
+     *
+     * @since x.xx
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
     }
 }
 

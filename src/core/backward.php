@@ -62,6 +62,39 @@ class DB extends Eresus_DB
  *
  * @package Eresus
  * @subpackage BC
+ * @deprecated с x.xx
+ */
+class Eresus_Event_Render extends \Eresus\Events\RenderEvent
+{
+}
+
+/**
+ * Класс для обратной совместимости
+ *
+ * @package Eresus
+ * @subpackage BC
+ * @deprecated с x.xx
+ */
+class Eresus_Event_Response extends \Eresus\Events\ResponseEvent
+{
+}
+
+/**
+ * Класс для обратной совместимости
+ *
+ * @package Eresus
+ * @subpackage BC
+ * @deprecated с x.xx
+ */
+class Eresus_Event_UrlSectionFound extends \Eresus\Events\UrlSectionFoundEvent
+{
+}
+
+/**
+ * Класс для обратной совместимости
+ *
+ * @package Eresus
+ * @subpackage BC
  * @deprecated с 3.01
  */
 class EresusFsRuntimeException extends RuntimeException

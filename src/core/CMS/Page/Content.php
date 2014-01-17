@@ -98,9 +98,10 @@ class Eresus_CMS_Page_Content
         $tmpl = new Eresus_Template();
         $tmpl->setSource($this->content);
 
-        $event = new Eresus_Event_Render($tmpl->compile());
-        Eresus_Kernel::app()->getEventDispatcher()
-            ->dispatch('cms.client.render_content', $event);
+        $event = new \Eresus\Events\RenderEvent($tmpl->compile());
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+        $evd->dispatch('cms.client.render_content', $event);
         return $event->getText();
     }
 }
