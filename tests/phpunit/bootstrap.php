@@ -37,6 +37,9 @@ require_once __DIR__ . '/stubs.php';
 require_once TESTS_SRC_DIR . '/lang/ru.php';
 require_once TESTS_SRC_DIR . '/core/autoload.php';
 
+$loader = require __DIR__ . '/../../vendor/autoload.php';
+$loader->add('Eresus\\', __DIR__ . '/../../src');
+
 /**
  * Базовый класс для тестов
  */
