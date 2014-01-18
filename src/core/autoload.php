@@ -105,7 +105,7 @@ spl_autoload_register(
             'HTTP' => 'framework/core/WWW/HTTP/HTTP.php',
         );
 
-        static $bcClasses = array('DB', 'HttpRequest', 'Plugin', 'Plugins', 'Template');
+        static $bcClasses = array('DB', 'Plugin', 'Plugins', 'Template');
 
         if (stripos($class, 'Eresus_') === 0)
         /*

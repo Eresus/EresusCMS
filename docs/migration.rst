@@ -21,6 +21,7 @@
   (`#41 <https://github.com/Eresus/EresusCMS/issues/401>`).
 * Вместо конструкции `Eresus_Kernel::app()->getEventDispatcher()` теперь рекомендуется использовать
   `Контейнер зависимостей </dev/guide/container>`.
+* Класс HTTP объявлен устаревшим.
 
 Обновлено
 ^^^^^^^^^

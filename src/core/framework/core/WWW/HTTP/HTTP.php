@@ -32,6 +32,7 @@
  *
  * @package Eresus
  * @subpackage HTTP
+ * @deprecated с x.xx
  */
 class HTTP
 {
