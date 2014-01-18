@@ -33,6 +33,7 @@
   * ``Eresus_HTTP_Parameters`` унаследован от ``Symfony\Component\HttpFoundation\ParameterBag``.
   * Изменён набор аргументов ``Eresus_HTTP_Parameters::filter`` (совместимость сохранена).
   * ``Eresus_HTTP_Response`` унаследован от ``Symfony\Component\HttpFoundation\Response``.
+  * ``Eresus_HTTP_Redirect`` унаследован от ``Symfony\Component\HttpFoundation\RedirectResponse``.
 
 Обновлено
 ^^^^^^^^^

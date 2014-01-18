@@ -52,12 +52,9 @@ class Eresus_HTTP_RedirectTest extends PHPUnit_Framework_TestCase
      */
     public function testSetStatusCode()
     {
-        $response = new Eresus_HTTP_Redirect();
+        $response = new Eresus_HTTP_Redirect('foo');
         $response->setStatusCode(307);
         $this->assertEquals(307, $response->getStatusCode());
-        $response->setProtocolVersion('1.0');
-        $response->setStatusCode(303);
-        $this->assertEquals(302, $response->getStatusCode());
     }
 
     /**
