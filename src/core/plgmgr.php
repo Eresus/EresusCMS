@@ -73,7 +73,7 @@ class TPlgMgr implements ContainerAwareInterface
             );
         $q->execute();
 
-        HttpResponse::redirect(Eresus_Kernel::app()->getPage()->url());
+        return new Eresus_HTTP_Redirect(Eresus_Kernel::app()->getPage()->url());
     }
 
     private function delete()
@@ -153,7 +153,7 @@ class TPlgMgr implements ContainerAwareInterface
             }
 
         }
-        HttpResponse::redirect('admin.php?mod=plgmgr');
+        return new Eresus_HTTP_Redirect('admin.php?mod=plgmgr');
     }
 
     /**

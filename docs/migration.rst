@@ -13,7 +13,7 @@
 Удалено
 ^^^^^^^
 
-* Класс HttpRequest
+* Классы HttpRequest, HttpResponse
 
 Изменено
 ^^^^^^^^
