@@ -152,10 +152,11 @@ class Eresus_CMS_Request extends Eresus_HTTP_Request
      *
      * @return string
      * @since 3.01
+     * @deprecated с x.xx используйте {@link getPathInfo()}
      */
     public function getPath()
     {
-        $path = parent::getPath();
+        $path = $this->getBasePath() . $this->getPathInfo();
         if ('' == $path)
         {
             $path = '/';

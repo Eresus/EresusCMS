@@ -103,13 +103,9 @@ spl_autoload_register(
 
             /* WWW */
             'HTTP' => 'framework/core/WWW/HTTP/HTTP.php',
-            'HttpHeader' => 'framework/core/WWW/HTTP/HttpHeaders.php',
-            'HttpHeaders' => 'framework/core/WWW/HTTP/HttpHeaders.php',
-            'HttpMessage' => 'framework/core/WWW/HTTP/HttpMessage.php',
-            'HttpResponse' => 'framework/core/WWW/HTTP/HttpResponse.php',
         );
 
-        static $bcClasses = array('DB', 'HttpRequest', 'Plugin', 'Plugins', 'Template');
+        static $bcClasses = array('DB', 'Plugin', 'Plugins', 'Template');
 
         if (stripos($class, 'Eresus_') === 0)
         /*

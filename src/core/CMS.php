@@ -312,7 +312,9 @@ class Eresus_CMS extends Eresus_Application
         }
         else
         {
-            if ($request->getDirectory() == '/admin' || $request->getPath() == '/admin.php')
+            if (substr($request->getPath(), 0, 7) == '/admin/'
+                || $request->getPath() == '/admin'
+                || $request->getPath() == '/admin.php')
             {
                 $controller = new Eresus_Admin_FrontController($this->container, $request);
             }
@@ -386,7 +388,7 @@ class Eresus_CMS extends Eresus_Application
      */
     protected function call3rdPartyExtension(Eresus_CMS_Request $request)
     {
-        $extension = substr($request->getDirectory(), 9);
+        $extension = substr(dirname($request->getPath()), 9);
         if (($p = strpos($extension, '/')) !== false)
         {
             $extension = substr($extension, 0, $p);

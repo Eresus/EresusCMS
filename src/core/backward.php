@@ -139,17 +139,6 @@ class EresusTypeException extends Eresus_Exception_InvalidArgumentType
  *
  * @package Eresus
  * @subpackage BC
- * @deprecated с 3.01 используйте {@link Eresus_HTTP_Request}
- */
-class HttpRequest extends Eresus_HTTP_Request
-{
-}
-
-/**
- * Класс для обратной совместимости
- *
- * @package Eresus
- * @subpackage BC
  * @deprecated с 3.01 используйте {@link Eresus_Plugin}
  */
 class Plugin extends Eresus_Plugin

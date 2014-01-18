@@ -85,7 +85,7 @@ class Eresus_Admin_FrontController extends Eresus_CMS_FrontController
         $req = $this->getRequest();
         if ($req->getMethod() == 'POST')
         {
-            $user = $req->request->filter('user', null, FILTER_REGEXP, '/[^a-z0-9_\-\.\@]/');
+            $user = preg_replace('/[^a-z0-9_\-\.\@]/', '', $req->request->filter('user'));
             $password = $req->request->get('password');
             $autologin = $req->request->get('autologin');
             if ($legacyKernel->login($user, $legacyKernel->password_hash($password), $autologin))

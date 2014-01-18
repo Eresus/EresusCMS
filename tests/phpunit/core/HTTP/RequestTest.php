@@ -43,8 +43,7 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
     public function testScheme()
     {
         $request = new Eresus_HTTP_Request();
-        $request->setScheme('https');
-        $this->assertEquals('https', $request->getScheme());
+        $this->assertEquals('http', $request->getScheme());
     }
 
     /**
@@ -64,8 +63,8 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
      */
     public function testHost()
     {
-        $request = new Eresus_HTTP_Request();
-        $request->setHost('example.org');
+        $request = new Eresus_HTTP_Request(array(), array(), array(), array(), array(),
+            array('HTTP_HOST' => 'example.org'));
         $this->assertEquals('example.org', $request->getHost());
     }
 
@@ -75,8 +74,8 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
      */
     public function testPath()
     {
-        $request = new Eresus_HTTP_Request();
-        $request->setPath('/foo');
+        $request = new Eresus_HTTP_Request(array(), array(), array(), array(), array(),
+            array('REQUEST_URI' => '/foo'));
         $this->assertEquals('/foo', $request->getPath());
     }
 
@@ -86,9 +85,9 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
      */
     public function testQuery()
     {
-        $request = new Eresus_HTTP_Request();
-        $request->setQueryString('foo=bar&bar=baz');
-        $this->assertEquals('foo=bar&bar=baz', $request->getQueryString());
+        $request = new Eresus_HTTP_Request(array(), array(), array(), array(), array(),
+            array('QUERY_STRING' => 'foo=bar&bar=baz'));
+        $this->assertEquals('bar=baz&foo=bar', $request->getQueryString());
     }
 
     /**
@@ -97,13 +96,13 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
      */
     public function testDirectoryFile()
     {
-        $request = new Eresus_HTTP_Request();
-
-        $request->setPath('/foo/bar');
+        $request = new Eresus_HTTP_Request(array(), array(), array(), array(), array(),
+            array('REQUEST_URI' => '/foo/bar'));
         $this->assertEquals('/foo', $request->getDirectory());
         $this->assertEquals('bar', $request->getFile());
 
-        $request->setPath('/foo/');
+        $request = new Eresus_HTTP_Request(array(), array(), array(), array(), array(),
+            array('REQUEST_URI' => '/foo/'));
         $this->assertEquals('/foo', $request->getDirectory());
         $this->assertEquals('', $request->getFile());
     }
@@ -122,9 +121,9 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('foo=bar', $request->getQueryString());
 
         $request = new Eresus_HTTP_Request();
-        $this->assertEquals('', $request->getScheme());
+        $this->assertEquals('http', $request->getScheme());
         $this->assertEquals('', $request->getHost());
-        $this->assertEquals('', $request->getPath());
+        $this->assertEquals('/', $request->getPath());
         $this->assertEquals('', $request->getQueryString());
     }
 
@@ -142,50 +141,6 @@ class Eresus_HTTP_RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('example.org', $request2->getHost());
         $this->assertEquals('POST', $request2->getMethod());
         $this->assertTrue($request2->request->has('foo'));
-    }
-
-    /**
-     * Формирование URL
-     *
-     * @covers Eresus_HTTP_Request::__toString
-     */
-    public function testToString()
-    {
-        $request = new Eresus_HTTP_Request();
-        $this->assertEquals('', strval($request));
-
-        $request->setScheme('http');
-        $this->assertEquals('http:', strval($request));
-
-        $request->setHost('example.org');
-        $this->assertEquals('http://example.org', strval($request));
-
-        $request->setPath('/foo/bar.php');
-        $this->assertEquals('http://example.org/foo/bar.php', strval($request));
-
-        $request->setQueryString('foo=bar');
-        $this->assertEquals('http://example.org/foo/bar.php?foo=bar', strval($request));
-    }
-
-    /**
-     * @covers Eresus_HTTP_Request::createFromGlobals
-     */
-    public function testCreateFromGlobals()
-    {
-        $_SERVER['REQUEST_URI'] = 'http://example.org/foo/bar.php?foo=bar';
-        $request = Eresus_HTTP_Request::createFromGlobals();
-        $this->assertEquals('http', $request->getScheme());
-        $this->assertEquals('GET', $request->getMethod());
-        $this->assertEquals('example.org', $request->getHost());
-        $this->assertEquals('bar', $request->query->get('foo'));
-
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST = array('foo' => 'baz');
-        $request = Eresus_HTTP_Request::createFromGlobals();
-        $this->assertEquals('http', $request->getScheme());
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('example.org', $request->getHost());
-        $this->assertEquals('baz', $request->request->get('foo'));
     }
 }
 
