@@ -103,8 +103,6 @@ spl_autoload_register(
 
             /* WWW */
             'HTTP' => 'framework/core/WWW/HTTP/HTTP.php',
-            'HttpHeader' => 'framework/core/WWW/HTTP/HttpHeaders.php',
-            'HttpHeaders' => 'framework/core/WWW/HTTP/HttpHeaders.php',
         );
 
         static $bcClasses = array('DB', 'HttpRequest', 'Plugin', 'Plugins', 'Template');

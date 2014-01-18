@@ -13,7 +13,7 @@
 Удалено
 ^^^^^^^
 
-* Классы HttpMessage, HttpRequest, HttpResponse
+* Классы HttpHeader, HttpHeaders, HttpMessage, HttpRequest, HttpResponse
 
 Изменено
 ^^^^^^^^
