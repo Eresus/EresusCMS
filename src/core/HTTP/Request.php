@@ -26,235 +26,108 @@
  * @package Eresus
  */
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Запрос HTTP
  *
  * @package Eresus
  * @subpackage HTTP
  */
-class Eresus_HTTP_Request
+class Eresus_HTTP_Request extends Request
 {
-    /**
-     * Параметры GET
-     * @var Eresus_HTTP_Parameters
-     * @since 3.01
-     */
-    public $query;
-
-    /**
-     * Параметры POST
-     * @var Eresus_HTTP_Parameters
-     * @since 3.01
-     */
-    public $request;
-
-    /**
-     * Схема (http, https…)
-     * @var string
-     * @since 3.01
-     */
-    private $scheme = null;
-
-    /**
-     * Метод
-     * @var string
-     * @since 3.01
-     */
-    private $method = 'GET';
-
-    /**
-     * Хост
-     * @var string
-     * @since 3.01
-     */
-    private $host = null;
-
-    /**
-     * Порт
-     * @var string
-     * @since 3.01
-     */
-    private $port = null;
-
-    /**
-     * Пользователь
-     * @var string
-     * @since 3.01
-     */
-    private $user = null;
-
-    /**
-     * Пароль
-     * @var string
-     * @since 3.01
-     */
-    private $password = null;
-
-    /**
-     * Путь
-     * @var string
-     * @since 3.01
-     */
-    private $path = null;
-
-    /**
-     * Фрагмент
-     * @var string
-     * @since 3.01
-     */
-    private $fragment = null;
-
     /**
      * Конструктор
      *
-     * @param string|Eresus_HTTP_Request $source  запрос в виде объекта или строки
-     *
-     * @throws Eresus_Exception_InvalidArgumentType
+     * @param array  $query      The GET parameters
+     * @param array  $request    The POST parameters
+     * @param array  $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array  $cookies    The COOKIE parameters
+     * @param array  $files      The FILES parameters
+     * @param array  $server     The SERVER parameters
+     * @param string $content    The raw body data
      */
-    public function __construct($source = null)
+    public function __construct($query = array(), array $request = array(),
+        array $attributes = array(), array $cookies = array(), array $files = array(),
+        array $server = array(), $content = null)
     {
-        if ($source instanceof self)
+        $errstr = 'Passing $query as %s in method %s is deprecated';
+        switch (true)
         {
-            $this->query = clone $source->query;
-            $this->request = clone $source->request;
-            $this->scheme = $source->scheme;
-            $this->method = $source->method;
-            $this->host = $source->host;
-            $this->port = $source->port;
-            $this->user = $source->user;
-            $this->password = $source->password;
-            $this->path = $source->path;
-            $this->fragment = $source->fragment;
+            case is_string($query):
+                trigger_error(sprintf($errstr, 'string', __METHOD__), E_USER_DEPRECATED);
+                $parts = parse_url($query);
+                $queryString = isset($parts['query']) ? $parts['query'] : '';
+                parse_str($queryString, $query);
+                $server = array(
+                    'HTTP_HOST' => $parts['host'],
+                    'REQUEST_URI' => $parts['path'] . ($queryString ? '?' . $queryString : ''),
+                    'QUERY_STRING' => $queryString
+                );
+                parent::__construct($query, array(), array(), array(), array(), $server);
+                break;
+            case is_null($query):
+                trigger_error(sprintf($errstr, 'null', __METHOD__), E_USER_DEPRECATED);
+                $parts = parse_url(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+                $queryString = isset($parts['query']) ? $parts['query'] : '';
+                parse_str($queryString, $query);
+                parent::__construct($query);
+                break;
+            case $query instanceof Eresus_HTTP_Request:
+                /** @var Request $query */
+                parent::__construct($query->query->all(), $query->request->all(),
+                    $query->attributes->all(), $query->cookies->all(), $query->files->all(),
+                    $query->server->all(), $query->content);
+                break;
+            default:
+                parent::__construct($query, $request, $attributes, $cookies, $files, $server,
+                    $content);
         }
-        else
-        {
-            $this->query = new Eresus_HTTP_Parameters();
-            $this->request = new Eresus_HTTP_Parameters();
-            switch (true)
-            {
-                case is_string($source):
-                    break;
-                case is_null($source):
-                    $source = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-                    break;
-                default:
-                    throw Eresus_Exception_InvalidArgumentType::factory(__METHOD__, 1,
-                        'Eresus_HTTP_Request, string or null', $source);
-            }
-            $url = parse_url($source);
-            $this->scheme = @$url['scheme'];
-            $this->host = @$url['host'];
-            $this->port = @$url['port'];
-            $this->user = @$url['user'];
-            $this->password = @$url['password'];
-            $this->path = @$url['path'];
-            if (array_key_exists('query', $url))
-            {
-                $this->setQueryString($url['query']);
-            }
-            $this->fragment = @$url['fragment'];
-        }
-    }
-
-    /**
-     * Возвращает объект, созданный на основе глобальных переменных PHP
-     *
-     * @return Eresus_HTTP_Request
-     * @since 3.01
-     */
-    public static function createFromGlobals()
-    {
-        $request = new self(@$_SERVER['REQUEST_URI']);
-        if (array_key_exists('REQUEST_METHOD', $_SERVER))
-        {
-            $request->setMethod($_SERVER['REQUEST_METHOD']);
-        }
-        if ($request->getMethod() == 'POST')
-        {
-            $request->request->replace($_POST);
-        }
-        return $request;
-    }
-
-    /**
-     * Возвращает схему (протокол)
-     *
-     * @return string  «http» или «https»
-     */
-    public function getScheme()
-    {
-        return $this->scheme;
     }
 
     /**
      * Задаёт схему (протокол)
      *
-     * @param string  $scheme
+     * @since 3.01
+     * @deprecated с x.xx метод ничего не делает и генерирует E_USER_DEPRECATED
+     */
+    public function setScheme()
+    {
+        trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+    }
+
+    /**
+     * Задаёт хост
      *
      * @since 3.01
+     * @deprecated с x.xx метод ничего не делает и генерирует E_USER_DEPRECATED
      */
-    public function setScheme($scheme)
+    public function setHost()
     {
-        $this->scheme = $scheme;
-    }
-
-    /**
-     * Возвращает метод запроса
-     *
-     * @return string  GET, POST…
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * Задаёт метод запроса
-     *
-     * @param string $value
-     */
-    public function setMethod($value)
-    {
-        $this->method = $value;
-    }
-
-    /**
-     * Возвращает хост
-     *
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    /**
-     * Возвращает хост
-     *
-     * @param string $host
-     *
-     * @since 3.01
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
+        trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
     }
 
     /**
      * Возвращает путь (папку и имя файла) из запроса
+     *
      * @return string
+     *
+     * @deprecated с x.xx используйте {@link getBasePath()} и {@link getPathInfo()}
      */
     public function getPath()
     {
-        return $this->path;
+        trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+        return $this->getBasePath() . $this->getPathInfo();
     }
 
     /**
-     * @param string $path
+     * Задаёт путь (папку и имя файла)
+     *
+     * @deprecated с x.xx метод ничего не делает и генерирует E_USER_DEPRECATED
      */
-    public function setPath($path)
+    public function setPath()
     {
-        $this->path = $path;
+        trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
     }
 
     /**
@@ -263,6 +136,8 @@ class Eresus_HTTP_Request
      * Возвращаемый путь не заканчивается слэшем.
      *
      * @return string
+     *
+     * @deprecated с x.xx
      */
     public function getDirectory()
     {
@@ -275,6 +150,8 @@ class Eresus_HTTP_Request
      * Возвращает имя файла (без пути) из запроса
      *
      * @return string
+     *
+     * @deprecated с x.xx
      */
     public function getFile()
     {
@@ -284,56 +161,15 @@ class Eresus_HTTP_Request
     }
 
     /**
-     * Возвращает строку аргументов GET (часть URL после знака "?")
-     * @return string
-     */
-    public function getQueryString()
-    {
-        $parameters = $this->query->all();
-        array_walk($parameters,
-            function (&$value, $key)
-            {
-                $value = $key . '=' . $value;
-            }
-        );
-        return implode('&', $parameters);
-    }
-
-    /**
      * Задаёт строку аргументов GET
      *
-     * @param string $query
-     *
      * @since 3.01
-     */
-    public function setQueryString($query)
-    {
-        parse_str($query, $parameters);
-        $this->query->replace($parameters);
-    }
-
-    /**
-     * Возвращает запрос (URL) в виде строки
      *
-     * @return string
+     * @deprecated с x.xx метод ничего не делает и генерирует E_USER_DEPRECATED
      */
-    public function __toString()
+    public function setQueryString()
     {
-        $url = '';
-        if ($this->getScheme() != '')
-        {
-            $url .= $this->getScheme() . ':';
-        }
-        if ($this->getHost() != '')
-        {
-            $url .= '//' . $this->getHost();
-        }
-        $url .= $this->getPath();
-        if ($this->getQueryString())
-        {
-            $url .= '?' . $this->getQueryString();
-        }
-        return $url;
+        trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
     }
 }
 

@@ -38,16 +38,6 @@ class Eresus_FS_NameFilterTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @cover Eresus_FS_NameFilter::setAllowedChars
-     * @expectedException PHPUnit_Framework_Error_Warning
-     */
-    public function test_setAllowedChars_notString()
-    {
-        $filter = new Eresus_FS_NameFilter();
-        $filter->setAllowedChars(true);
-    }
-
-    /**
-     * @cover Eresus_FS_NameFilter::setAllowedChars
      * @expectedException InvalidArgumentException
      */
     public function test_setAllowedChars_barRegexp()
