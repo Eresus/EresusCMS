@@ -141,9 +141,10 @@ class Eresus_HTTP_Request extends Request
      */
     public function getDirectory()
     {
-        return substr($this->getPath(), -1) == '/'
-            ? substr($this->getPath(), 0, -1)
-            : dirname($this->getPath());
+        $path = @$this->getPath();
+        return substr($path, -1) == '/'
+            ? substr($path, 0, -1)
+            : dirname($path);
     }
 
     /**
@@ -155,9 +156,9 @@ class Eresus_HTTP_Request extends Request
      */
     public function getFile()
     {
-        return substr($this->getPath(), -1) == '/'
+        return substr($this->getPathInfo(), -1) == '/'
             ? ''
-            : basename($this->getPath());
+            : basename($this->getPathInfo());
     }
 
     /**
