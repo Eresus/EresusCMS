@@ -19,6 +19,7 @@
         "mekras/bedoved": "dev-develop",
         "symfony/dependency-injection": "2.3.x-dev",
         "symfony/event-dispatcher": "2.3.x-dev",
+        "symfony/http-foundation": "2.3.x-dev",
 		"mekras/botobor" : "0.4.0",
         "components/jquery": "1.10.2",
         "components/jqueryui": "1.10.3",

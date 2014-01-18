@@ -66,7 +66,7 @@ class Eresus_Plugin_Controller_Admin_LegacySettingsTest extends Eresus_TestCase
             ->setMethods(array('settings'))->getMock();
         $plugin->expects($this->once())->method('settings');
         $controller = new Eresus_Plugin_Controller_Admin_LegacySettings($plugin);
-        $controller->getHtml(new Eresus_CMS_Request());
+        $controller->getHtml(new Eresus_CMS_Request(array()));
     }
 
     /**
@@ -75,7 +75,7 @@ class Eresus_Plugin_Controller_Admin_LegacySettingsTest extends Eresus_TestCase
      */
     public function testPost()
     {
-        $request = new Eresus_CMS_Request();
+        $request = new Eresus_CMS_Request(array());
         $request->setMethod('POST');
         $plugin = $this->getMockBuilder('Eresus_Plugin')->disableOriginalConstructor()
             ->setMethods(array('updateSettings'))->getMock();

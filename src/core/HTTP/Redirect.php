@@ -27,6 +27,8 @@
  * @subpackage HTTP
  */
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /**
  * Ответ-перенаправление
  *
@@ -34,7 +36,7 @@
  * @subpackage HTTP
  * @since 3.01
  */
-class Eresus_HTTP_Redirect extends Eresus_HTTP_Response
+class Eresus_HTTP_Redirect extends RedirectResponse
 {
     /**
      * Создаёт новый ответ-перенаправление
@@ -43,86 +45,11 @@ class Eresus_HTTP_Redirect extends Eresus_HTTP_Response
      * @param int    $status   статус HTTP
      * @param array  $headers  дополнительные заголовки
      *
-     * @throws InvalidArgumentException
-     *
      * @since 3.01
      */
-    public function __construct($url = '', $status = 303, array $headers = array())
+    public function __construct($url, $status = 303, array $headers = array())
     {
-        if ($status < 300 || $status > 399)
-        {
-            throw new InvalidArgumentException('Status code must be one of 3xx');
-        }
         parent::__construct($url, $status, $headers);
-    }
-
-    /**
-     * Задаёт код состояния
-     *
-     * @param int   $code  код состояния
-     * @param mixed $text  опциональное текстовое описание кода
-     *
-     * @throws InvalidArgumentException
-     *
-     * @return $this
-     * @since 3.01
-     */
-    public function setStatusCode($code, $text = null)
-    {
-        if ($this->getProtocolVersion() == '1.0'
-            && !in_array($this->getStatusCode(), array(300, 301, 302, 304)))
-        {
-            $code = 302;
-        }
-        return parent::setStatusCode($code, $text);
-    }
-
-    /**
-     * Отправляет заголовки
-     *
-     * @return $this
-     *
-     * @since 3.01
-     */
-    public function sendHeaders()
-    {
-        parent::sendHeaders();
-        $url = strval($this->getContent());
-        header("Location: $url");
-        return $this;
-    }
-
-    /**
-     * Отправляет тело ответа
-     *
-     * @return $this
-     * @since 3.01
-     */
-    public function sendContent()
-    {
-        $url = htmlspecialchars(strval($this->getContent()));
-        $message = $this->statusText ?: self::getStatusText($this->getStatusCode());
-        echo <<<PAGE
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
-	<head>
-		<meta http-equiv="Refresh" content="0; url='{$url}'">
-		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-		<title>{$message}</title>
-	</head>
-	<body>
-		<script>
-			function doRedirect()
-			{
-				location.replace("{$url}");
-			}
-			setTimeout("doRedirect()", 1000);
-		</script>
-		<p>Your browser does not support automatic redirection. Please follow <a href="{$url}">this link</a>.</p>
-	</body>
-</html>
-PAGE;
-        return $this;
     }
 }
 

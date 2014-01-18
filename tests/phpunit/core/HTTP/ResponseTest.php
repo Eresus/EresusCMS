@@ -49,18 +49,6 @@ class Eresus_HTTP_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Попытка установить неправильный номер версии
-     *
-     * @covers Eresus_HTTP_Response::setProtocolVersion
-     * @expectedException InvalidArgumentException
-     */
-    public function testSetProtocolVersionInvalid()
-    {
-        $response = new Eresus_HTTP_Response();
-        $response->setProtocolVersion('1');
-    }
-
-    /**
      * Установка и получение номера версии
      *
      * @covers Eresus_HTTP_Response::setProtocolVersion
@@ -69,9 +57,9 @@ class Eresus_HTTP_ResponseTest extends PHPUnit_Framework_TestCase
     public function testSetGetProtocolVersion()
     {
         $response = new Eresus_HTTP_Response();
-        $this->assertEquals('1.1', $response->getProtocolVersion());
-        $response->setProtocolVersion('1.0');
         $this->assertEquals('1.0', $response->getProtocolVersion());
+        $response->setProtocolVersion('1.1');
+        $this->assertEquals('1.1', $response->getProtocolVersion());
         $response->setProtocolVersion('3.2.1');
         $this->assertEquals('3.2.1', $response->getProtocolVersion());
     }
@@ -104,8 +92,6 @@ class Eresus_HTTP_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('', $response->getContent());
         $response->setContent('foo');
         $this->assertEquals('foo', $response->getContent());
-        $response->setContent(array('bar'));
-        $this->assertEquals(array('bar'), $response->getContent());
     }
 }
 
