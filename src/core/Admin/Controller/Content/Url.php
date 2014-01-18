@@ -26,6 +26,8 @@
  * @package Eresus
  */
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Контроллер АИ типа раздела «URL»
  *
@@ -83,12 +85,12 @@ class Eresus_Admin_Controller_Content_Url implements Eresus_Admin_Controller_Con
     /**
      * Сохраняет изменения
      *
-     * @param array                  $item
-     * @param Eresus_HTTP_Parameters $args
+     * @param array        $item
+     * @param ParameterBag $args
      *
      * @return Eresus_HTTP_Redirect
      */
-    private function updateAction(array $item, Eresus_HTTP_Parameters $args)
+    private function updateAction(array $item, ParameterBag $args)
     {
         $item['content'] = $args->get('url');
         Eresus_Kernel::app()->getLegacyKernel()->sections->update($item);
