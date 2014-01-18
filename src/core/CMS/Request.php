@@ -156,7 +156,7 @@ class Eresus_CMS_Request extends Eresus_HTTP_Request
      */
     public function getPath()
     {
-        $path = parent::getPath();
+        $path = $this->getBasePath() . $this->getPathInfo();
         if ('' == $path)
         {
             $path = '/';
