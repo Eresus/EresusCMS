@@ -26,12 +26,17 @@
  * @package Eresus
  */
 
-/**
- * Фильтрация по регулярному выражению
- *
- * @since 3.01
- */
-define('FILTER_REGEXP', 2048);
+use Symfony\Component\HttpFoundation\ParameterBag;
+
+if (!defined('FILTER_REGEXP'))
+{
+    /**
+     * Фильтрация по регулярному выражению
+     *
+     * @since 3.01
+     */
+    define('FILTER_REGEXP', 2048);
+}
 
 /**
  * Параметры GET или POST
@@ -41,138 +46,69 @@ define('FILTER_REGEXP', 2048);
  *
  * @since 3.01
  */
-class Eresus_HTTP_Parameters
+class Eresus_HTTP_Parameters extends ParameterBag
 {
-    /**
-     * Параметры
-     * @var array
-     * @since 3.01
-     */
-    private $data = array();
-
-    /**
-     * @param array $data
-     * @since 3.01
-     */
-    public function __construct(array $data = array())
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * Возвращает все параметры в виде ассоциативного массива
-     *
-     * @return array
-     * @since 3.01
-     */
-    public function all()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Заменяет текущий набор параметров новым
-     *
-     * @param array $parameters
-     *
-     * @since 3.01
-     */
-    public function replace(array $parameters)
-    {
-        $this->data = $parameters;
-    }
-
-    /**
-     * Добавляет новый набор параметров
-     *
-     * @param array $parameters
-     *
-     * @since 3.01
-     */
-    public function add(array $parameters)
-    {
-        $this->data += $parameters;
-    }
-
     /**
      * Возвращает значение параметра
      *
-     * @param string $name     имя параметра
+     * @param string $path     ключ
      * @param mixed  $default  значение по умолчанию, если параметр отсутствует
      *
      * @return mixed
      *
      * @since 3.01
      */
-    public function get($name, $default = null)
+    public function get($path, $default = null)
     {
-        return $this->has($name) ? (@$this->data[$name] ?: $this->data["wyswyg_$name"]) : $default;
+        if ($this->has("wyswyg_$path"))
+        {
+            $path = "wyswyg_$path";
+        }
+        return parent::get($path, $default);
     }
 
     /**
      * Возвращает профильтрованное значение параметра $name
      *
-     * @param string $name     имя параметра
-     * @param mixed  $default  значение по умолчанию, если параметр отсутствует
-     * @param int    $filter   фильтр (константа FILTER_*)
-     * @param mixed  $options  опции фильтра
+     * @param string   $key      ключ
+     * @param mixed    $default  значение по умолчанию, если параметр отсутствует
+     * @param bool     $deep
+     * @param int      $filter   фильтр (константа FILTER_*)
+     * @param mixed    $options  опции фильтра
      *
      * @return mixed
      * @since 3.01
      */
-    public function filter($name, $default = null, $filter = FILTER_DEFAULT, $options = null)
+    public function filter($key, $default = null, $deep = false, $filter = FILTER_DEFAULT,
+        $options = array())
     {
-        $value = $this->get($name, $default);
+        /* Совместимость с 3.01 */
+        if (is_int($deep) && $deep > 1)
+        {
+            trigger_error('Deprecated argument list used in call ' . __METHOD__, E_USER_DEPRECATED);
+            $options = $filter;
+            $filter = $deep;
+        }
+
         if (FILTER_REGEXP == $filter)
         {
-            return preg_replace($options, '', $value);
+            return preg_replace($options, '', $this->get($key));
         }
-        if (FILTER_CALLBACK == $filter && is_callable($options))
-        {
-            $options = array('options' => $options);
-        }
-        return filter_var($value, $filter, $options);
-    }
-
-    /**
-     * @param string $name
-     * @param int     $default
-     *
-     * @return int|null
-     * @since 3.01
-     */
-    public function getInt($name, $default = null)
-    {
-        $value = $this->get($name, $default);
-        return null === $value ? null : intval($value);
-    }
-
-    /**
-     * Задаёт значение параметра
-     *
-     * @param string $name   имя параметра
-     * @param mixed  $value  значение
-     *
-     * @since 3.01
-     */
-    public function set($name, $value)
-    {
-        $this->data[$name] = $value;
+        return parent::filter($key, $default, $deep, $filter, $options);
     }
 
     /**
      * Проверяет наличие параметра
      *
-     * @param string $name     имя параметра
+     * @param string $path  ключ
      *
      * @return bool
      *
      * @since 3.01
      */
-    public function has($name)
+    public function has($path)
     {
-        return array_key_exists($name, $this->data)
-            || array_key_exists("wyswyg_$name", $this->data);
+        return parent::has($path) || parent::has("wyswyg_$path");
     }
 }
 

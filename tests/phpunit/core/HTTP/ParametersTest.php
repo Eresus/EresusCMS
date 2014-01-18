@@ -37,48 +37,11 @@ require_once __DIR__ . '/../../bootstrap.php';
 class Eresus_HTTP_ParametersTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @covers Eresus_HTTP_Parameters::__construct
-     * @covers Eresus_HTTP_Parameters::all
-     * @covers Eresus_HTTP_Parameters::add
-     * @covers Eresus_HTTP_Parameters::get
-     * @covers Eresus_HTTP_Parameters::set
-     * @covers Eresus_HTTP_Parameters::has
-     * @covers Eresus_HTTP_Parameters::replace
-     */
-    public function testBrief()
-    {
-        $params = new Eresus_HTTP_Parameters(array('foo' => 'bar'));
-        $this->assertEquals(array('foo' => 'bar'), $params->all());
-        $params->add(array('bar' => 'baz'));
-        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $params->all());
-
-        $this->assertTrue($params->has('foo'));
-        $this->assertEquals('bar', $params->get('foo', 123));
-        $this->assertFalse($params->has('baz'));
-        $this->assertEquals(123, $params->get('baz', 123));
-        $params->set('baz', 321);
-        $this->assertEquals(321, $params->get('baz', 123));
-
-        $params->replace(array('foo' => 'bar'));
-        $this->assertEquals(array('foo' => 'bar'), $params->all());
-    }
-
-    /**
      * @covers Eresus_HTTP_Parameters::filter
      */
     public function testFilter()
     {
-        $params = new Eresus_HTTP_Parameters(array(
-            'foo' => '1fwrf2fer3',
-            'bar' => 'b%@^a*(@#r'
-        ));
-        $this->assertEquals(123, $params->filter('foo', null, FILTER_SANITIZE_NUMBER_INT));
-        $this->assertEquals('bar', $params->filter('bar', null, FILTER_CALLBACK,
-            function ($value)
-            {
-                return preg_replace('/\W/', '', $value);
-            }
-        ));
+        $params = new Eresus_HTTP_Parameters(array('bar' => 'b%@^a*(@#r'));
         $this->assertEquals('bar', $params->filter('bar', null, FILTER_REGEXP, '/\W/'));
     }
 }

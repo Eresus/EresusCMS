@@ -30,6 +30,8 @@
     массива объявлена устаревшей;
   * Объект ``Eresus_HTTP_Request`` при конвертацию в строку, теперь ведёт себя иначе, см.
     документацию по ``Symfony\Components\HttpFoundation\Request``.
+  * ``Eresus_HTTP_Parameters`` унаследован от ``Symfony\Component\HttpFoundation\ParameterBag``.
+  * Изменён набор аргументов ``Eresus_HTTP_Parameters::filter`` (совместимость сохранена).
 
 Обновлено
 ^^^^^^^^^
