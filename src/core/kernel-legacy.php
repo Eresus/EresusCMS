@@ -1480,14 +1480,14 @@ class Eresus
 
     /**
      * @var ContainerInterface
-     * @since 3.02
+     * @since x.xx
      */
     private $container;
 
     /**
      * @param ContainerInterface $container
      *
-     * @since 3.02
+     * @since x.xx
      */
     public function __construct(ContainerInterface $container)
     {
@@ -1499,9 +1499,6 @@ class Eresus
 	 */
 	private function init_session()
 	{
-		session_set_cookie_params(ini_get('session.cookie_lifetime'), $this->path);
-		session_name('sid');
-		session_start();
 		$this->session = &$_SESSION['session'];
 		if (!isset($this->session['msg']))
 		{
@@ -1523,7 +1520,7 @@ class Eresus
 	{
 		if (is_null($this->froot))
 		{
-			$this->froot = Eresus_Kernel::app()->getFsRoot() . '/';
+			$this->froot = $GLOBALS['kernel']->getAppDir() . '/';
 		}
 
 		$this->fdata = $this->froot . 'data' . DIRECTORY_SEPARATOR;

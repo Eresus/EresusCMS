@@ -90,7 +90,6 @@ spl_autoload_register(
             'tthemes' => 'themes.php',
             'TUsers' => 'users.php',
             'tusers' => 'users.php',
-            'WebServer' => 'classes/WebServer.php',
             'WebPage' => 'classes/WebPage.php',
             /* DB */
             'DBSettings' => 'framework/core/DB/DB.php',

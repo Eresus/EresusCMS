@@ -27,6 +27,8 @@
  */
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Eresus\Site;
 
 /**
  * Абстрактный фронт-контроллер CMS
@@ -40,14 +42,22 @@ abstract class Eresus_CMS_FrontController
      * Контейнер служб
      *
      * @var ContainerInterface
-     * @since 3.02
+     * @since x.xx
      */
     protected $container;
 
     /**
+     * Текущий сайт
+     *
+     * @var Site
+     * @since x.xx
+     */
+    private $site;
+
+    /**
      * Обрабатываемый запрос
      *
-     * @var Eresus_CMS_Request
+     * @var Request
      * @since 3.01
      */
     private $request;
@@ -63,13 +73,15 @@ abstract class Eresus_CMS_FrontController
      * Конструктор контроллера
      *
      * @param ContainerInterface $container
-     * @param Eresus_CMS_Request $request
+     * @param Site               $site
+     * @param Request            $request
      *
      * @since 3.01
      */
-    public function __construct(ContainerInterface $container, Eresus_CMS_Request $request)
+    public function __construct(ContainerInterface $container, Site $site, Request $request)
     {
         $this->container = $container;
+        $this->site = $site;
         $this->request = $request;
         $this->page = $this->createPage();
     }

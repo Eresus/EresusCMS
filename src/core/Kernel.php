@@ -29,13 +29,9 @@
 /**
  * Ядро CMS
  *
- * Основные функции ядра
- * 1. запуск {@link Eresus_CMS основного класса приложения};
- * 2. перехват ошибок и исключений;
- * 3. получение основных сведений о системе.
- *
  * @package Eresus
  * @since 3.00
+ * @deprecated с x.xx
  */
 class Eresus_Kernel
 {
@@ -47,29 +43,6 @@ class Eresus_Kernel
     static public $logLevel = LOG_ERR;
 
     /**
-     * Выполняемое приложение
-     *
-     * @var Eresus_CMS
-     * @see exec(), app()
-     */
-    static private $app = null;
-
-    /**
-     * Режим отладки
-     *
-     * @var bool
-     *
-     * @since 3.02
-     */
-    private $debug = false;
-
-    /**
-     * @var Bedoved
-     * @since 3.02
-     */
-    private $bedoved;
-
-    /**
      * Записывает сообщение в журнал
      *
      * @param string|array $sender    отправитель (используйте \__METHOD\__ и \__FUNCTION\__)
@@ -78,7 +51,6 @@ class Eresus_Kernel
      * @param mixed        ...        аргументы для вставки в $message через {@link sprintf}
      *
      * @see $logLevel
-     * @since 3.01
      */
     public static function log($sender, $priority, $message)
     {
@@ -142,8 +114,6 @@ class Eresus_Kernel
      * Записывает сообщение об исключении в журнал
      *
      * @param Exception $e
-     *
-     * @since 3.01
      */
     public static function logException($e)
     {
@@ -262,58 +232,13 @@ class Eresus_Kernel
     /**
      * Возвращает выполняемое приложение или null, если приложение не запущено
      *
-     * Пример: получение корневой директории приложения.
+     * @return \Eresus\Kernel  выполняемое приложение
      *
-     * <code>
-     * $appRootDir = Eresus_Kernel::app()->getRootDir();
-     * </code>
-     *
-     * @return Eresus_CMS  выполняемое приложение
-     *
-     * @see $app, exec()
      * @since 3.00
      */
     public static function app()
     {
-        return self::$app;
-    }
-
-    /**
-     * Включает или отключает режим отладки
-     *
-     * @param bool $state
-     *
-     * @since 3.02
-     */
-    public function setDebug($state)
-    {
-        $this->debug = $state;
-    }
-
-    /**
-     * Выполняет все основные действия
-     *
-     * @since 3.02
-     */
-    public function dispatch()
-    {
-        $this->initErrorHandling();
-        self::$app = new Eresus_CMS();
-        self::$app->main();
-    }
-
-    /**
-     * Инициализация обработки ошибок
-     *
-     * @since 3.02
-     */
-    private function initErrorHandling()
-    {
-        $this->bedoved = new Bedoved($this->debug);
-        $this->bedoved
-            ->enableErrorConversion()
-            ->enableExceptionHandling()
-            ->enableFatalErrorHandling();
+        return $GLOBALS['kernel'];
     }
 }
 

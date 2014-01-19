@@ -26,6 +26,8 @@
  * @package Eresus
  */
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Запрос к CMS
  *
@@ -55,19 +57,19 @@ class Eresus_CMS_Request extends Eresus_HTTP_Request
     /**
      * Конструктор
      *
-     * @param string|Eresus_HTTP_Request $source  запрос в виде объекта или строки
+     * @param string|Request $source  запрос в виде объекта или строки
      *
      * @throws Eresus_Exception_InvalidArgumentType
      */
     public function __construct($source = null)
     {
-        if ($source instanceof Eresus_HTTP_Request)
+        if ($source instanceof Request)
         {
             $this->httpRequest = $source;
         }
         else
         {
-            $this->httpRequest = new Eresus_HTTP_Request($source);
+            $this->httpRequest = new Request($source);
         }
         parent::__construct($source);
     }

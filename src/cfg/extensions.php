@@ -24,7 +24,7 @@
  * @package Eresus
  */
 
-Eresus_Kernel::app()->getLegacyKernel()->conf['extensions'] = array(
+$GLOBALS['Eresus']->conf['extensions'] = array(
     // Расширение возможностей форм ввода
     'forms' => array(
         // Расширение полей типа memo

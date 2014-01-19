@@ -32,6 +32,9 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Eresus_Kernel;
+use Eresus_CMS_Request;
+use TemplateSettings;
+use I18n;
 
 /**
  * Ядро
@@ -42,6 +45,12 @@ use Eresus_Kernel;
  */
 class Kernel
 {
+    /**
+     * Версия CMS
+     * @since x.xx
+     */
+    const VERSION = '${product.version}';
+
     /**
      * Режим отладки
      *
@@ -70,8 +79,9 @@ class Kernel
      * Контейнер служб
      * @var ContainerBuilder
      * @since x.xx
+     * @deprecated сделать приватным по окончанию рефакторинга
      */
-    private $container;
+    public $container;
 
     /**
      * Описание сайта
@@ -96,6 +106,31 @@ class Kernel
     }
 
     /**
+     * Эмуляция устаревших свойств
+     *
+     * @param string $property
+     *
+     * @return mixed
+     *
+     * @since x.xx
+     * @deprecated с x.xx
+     */
+    public function __get($property)
+    {
+        switch ($property)
+        {
+            case 'name':
+                trigger_error('Use of ' . __CLASS__ . '::$name is deprecated', E_USER_DEPRECATED);
+                return 'Eresus';
+            case 'version':
+                trigger_error('Use of ' . __CLASS__ . '::$version is deprecated',
+                    E_USER_DEPRECATED);
+                return self::VERSION;
+        }
+        return null;
+    }
+
+    /**
      * Включает или отключает режим отладки
      *
      * @param bool $state
@@ -114,19 +149,22 @@ class Kernel
      */
     public function start()
     {
-        $request = Request::createFromGlobals();
-
         $this->initErrorHandling();
-        $this->initContainer($request);
+
+        $request = Request::createFromGlobals();
+        $cmsRequest = new Eresus_CMS_Request($request);
+        $this->initContainer($cmsRequest);
         $this->initLegacyKernel();
         $this->initEventListeners();
         $this->initConf();
 
-        /** TODO Обратная совместимость @deprecated с x.xx */
-        $GLOBALS['Eresus']->init();
-        Eresus_Kernel::$app = $this;
+        /** @var \Eresus $legacyKernel */
+        $legacyKernel = $GLOBALS['Eresus'];
+        $legacyKernel->init();
+        $i18n = I18n::getInstance();
+        TemplateSettings::setGlobalValue('i18n', $i18n);
 
-        $this->run($request);
+        $this->run($cmsRequest);
     }
 
     /**
@@ -191,6 +229,44 @@ class Kernel
     }
 
     /**
+     * Возвращает диспетчер событий CMS
+     *
+     * @return \Symfony\Component\EventDispatcher\EventDispatcher
+     *
+     * @deprecated с x.xx используйте службу «events» из контейнера зависимостей
+     */
+    public function getEventDispatcher()
+    {
+        return $this->container->get('events');
+    }
+
+    /**
+     * Возвращает экземпляр класса TClientUI или TAdminUI
+     *
+     * Метод нужен до отказа от переменной $page
+     *
+     * @return \WebPage
+     *
+     * @since 3.00
+     * @deprecated с x.xx
+     */
+    public function getPage()
+    {
+        return $this->site->controller->getPage();
+    }
+
+    /**
+     * Get application root directory
+     *
+     * @return string
+     * @deprecated с x.xx используйте {@link getAppDir()}
+     */
+    public function getFsRoot()
+    {
+        return $this->getAppDir();
+    }
+
+    /**
      * Инициализация обработки ошибок
      *
      * @since x.xx
@@ -199,7 +275,7 @@ class Kernel
     {
         $this->bedoved = new Bedoved($this->debug);
         $this->bedoved
-            ->enableErrorConversion()
+            ->enableErrorConversion(/*E_ALL ^ (E_NOTICE | E_USER_NOTICE | E_USER_DEPRECATED)*/)
             ->enableExceptionHandling()
             ->enableFatalErrorHandling();
     }
@@ -216,7 +292,7 @@ class Kernel
         $this->container = new ContainerBuilder();
 
         $this->container->setParameter('debug', $this->debug);
-        //$this->container->setParameter('request', $request);
+        $this->container->setParameter('request', $request);
         //$this->container->setParameter('security.session.ttl', 30); // в минутах
         //$this->container->setParameter('admin.theme', 'default');
 
@@ -236,9 +312,13 @@ class Kernel
 
         /*$this->container
             ->register('security', 'Eresus\Security\SecurityManager')
-            ->addArgument(new Reference('container'));
+            ->addArgument(new Reference('container'));*/
 
         $this->container
+            ->register('plugins', 'Eresus_Plugin_Registry')
+            ->addArgument(new Reference('container'));
+
+        /*$this->container
             ->register('plugins', 'Eresus\Plugins\PluginManager')
             ->addArgument(new Reference('container'));
 
@@ -273,7 +353,7 @@ class Kernel
             ->addArgument(new Reference('container'))
             ->addArgument('%admin.theme%');*/
 
-        //TODO Удалить после удаления устаревших компонентов
+        // TODO Удалить после удаления устаревших компонентов
         $GLOBALS['_container'] = $this->container;
     }
 
@@ -284,9 +364,9 @@ class Kernel
      */
     private function initEventListeners()
     {
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $dispatcher */
-        $dispatcher = $this->container->get('events');
-        $dispatcher->addListener('cms.shutdown', array($this, 'onShutdown'));
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
+        $evd->addListener('cms.shutdown', array($this, 'onShutdown'));
     }
 
     /**
@@ -305,6 +385,7 @@ class Kernel
          * @deprecated с 3.00 используйте Eresus_Kernel::app()->getLegacyKernel()
          */
         $GLOBALS['Eresus'] = $legacyKernel;
+        TemplateSettings::setGlobalValue('Eresus', $legacyKernel);
     }
 
     /**
@@ -355,6 +436,8 @@ class Kernel
     {
         $this->site = new Site($this, $request);
         $this->container->setParameter('site', $this->site);
+        TemplateSettings::setGlobalValue('site', $this->site);
+        TemplateSettings::setGlobalValue('cms', $this);
 
         $response = $this->site->handleRequest($request);
         $response->send();

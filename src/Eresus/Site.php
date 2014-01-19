@@ -100,6 +100,13 @@ class Site
     private $keywords = '';
 
     /**
+     * @var \Eresus_CMS_FrontController
+     * @internal
+     * TODO Удалить по окончанию рефакторинга
+     */
+    public $controller;
+
+    /**
      * Создаёт описание сайта
      *
      * @param Kernel  $kernel
@@ -117,6 +124,28 @@ class Site
         $this->title = siteTitle;
         $this->description = siteDescription;
         $this->keywords = siteKeywords;
+    }
+
+    /**
+     * Эмуляция устаревших свойств
+     *
+     * @param string $property
+     *
+     * @return mixed
+     *
+     * @since x.xx
+     * @deprecated с x.xx
+     */
+    public function __get($property)
+    {
+        switch ($property)
+        {
+            case 'webRoot':
+                trigger_error('Use of ' . __CLASS__ . '::$webRoot is deprecated',
+                    E_USER_DEPRECATED);
+                return $this->getRootUrl();
+        }
+        return null;
     }
 
     /**
@@ -295,21 +324,60 @@ class Site
         if (substr($request->getPathInfo(), 0, 8) == '/ext-3rd')
         {
             // TODO
-            $this->call3rdPartyExtension($request);
+            $response = $this->call3rdPartyExtension($request);
         }
         else
         {
             if ($request->getPathInfo() == '/admin/' || $request->getPathInfo() == '/admin.php')
             {
-                $controller = new \Eresus_Admin_FrontController($this->container, $this);
+                $controller = new \Eresus_Admin_FrontController($this->container, $this, $request);
             }
             else
             {
                 // TODO
-                $controller = new \Eresus_Client_FrontController($this->container, $request);
+                $controller = new \Eresus_Client_FrontController($this->container, $this, $request);
             }
+            $this->controller = $controller;
             /** @var Response $response */
-            $response = $controller->process($request);
+            //$response = $controller->process($request);
+            $response = $controller->dispatch();
+        }
+        return $response;
+    }
+
+    /**
+     * Обрабатывает запрос к стороннему расширению
+     *
+     * Вызов производится через коннектор этого расширения
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    protected function call3rdPartyExtension(Request $request)
+    {
+        $extension = substr(dirname($request->getPathInfo()), 9);
+        if (($p = strpos($extension, '/')) !== false)
+        {
+            $extension = substr($extension, 0, $p);
+        }
+
+        /** @var Kernel $kernel */
+        $kernel = $this->container->get('kernel');
+        $filename = $kernel->getAppDir() . '/ext-3rd/' . $extension . '/eresus-connector.php';
+        if ($extension && is_file($filename))
+        {
+            /** @noinspection PhpIncludeInspection */
+            include_once $filename;
+            $className = $extension . 'Connector';
+            /** @var \EresusExtensionConnector $connector */
+            $connector = new $className;
+            $connector->proxy();
+            $response = new Response();
+        }
+        else
+        {
+            $response = new Response('Not found', 404);
         }
         return $response;
     }

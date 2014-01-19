@@ -73,7 +73,7 @@ class Eresus_HTTP_Request extends Request
                 parse_str($queryString, $query);
                 parent::__construct($query);
                 break;
-            case $query instanceof Eresus_HTTP_Request:
+            case $query instanceof Request:
                 /** @var Request $query */
                 parent::__construct($query->query->all(), $query->request->all(),
                     $query->attributes->all(), $query->cookies->all(), $query->files->all(),

@@ -15,6 +15,8 @@
 
 * Классы ``HttpHeader``, ``HttpHeaders``, ``HttpMessage``, ``HttpRequest``, ``HttpResponse``
 * Класс ``Eresus_HTTP_Parameters``
+* Класс ``WebServer``
+* Класс ``Eresus_Application``
 
 Изменено
 ^^^^^^^^
@@ -22,7 +24,7 @@
   (`#41 <https://github.com/Eresus/EresusCMS/issues/401>`).
 * Вместо конструкции `Eresus_Kernel::app()->getEventDispatcher()` теперь рекомендуется использовать
   `Контейнер зависимостей </dev/guide/container>`.
-* Класс ``HTTP`` объявлен устаревшим.
+* Объявлены устаревшими классы ``HTTP``, ``Eresus_CMS`` и ``Eresus_Kernel``.
 * В связи с переходом на компонент Symfony HttpFoundation:
 
   * ``Eresus_HTTP_Request`` унаследован от ``Symfony\Component\HttpFoundation\Request``;
