@@ -39,7 +39,11 @@ use I18n;
 /**
  * Ядро
  *
- * Ядро обеспечивает начальную инициализацию CMS, создание объекта сайта и передачу ему управления.
+ * Ядро обеспечивает:
+ *
+ * 1. начальную инициализацию CMS;
+ * 2. создание контейнера зависимостей;
+ * 3. создание объекта сайта и передачу ему управления.
  *
  * @since x.xx
  */
@@ -61,6 +65,8 @@ class Kernel
     private $debug = false;
 
     /**
+     * Обработчик ошибок
+     *
      * @var Bedoved
      * @since x.xx
      */
@@ -151,16 +157,10 @@ class Kernel
     {
         $this->initErrorHandling();
 
-        $request = Request::createFromGlobals();
-        $cmsRequest = new Eresus_CMS_Request($request);
+        $cmsRequest = $this->initRequest();
         $this->initContainer($cmsRequest);
         $this->initLegacyKernel();
         $this->initEventListeners();
-        $this->initConf();
-
-        /** @var \Eresus $legacyKernel */
-        $legacyKernel = $GLOBALS['Eresus'];
-        $legacyKernel->init();
         $i18n = I18n::getInstance();
         TemplateSettings::setGlobalValue('i18n', $i18n);
 
@@ -385,6 +385,8 @@ class Kernel
          * @deprecated с 3.00 используйте Eresus_Kernel::app()->getLegacyKernel()
          */
         $GLOBALS['Eresus'] = $legacyKernel;
+        $this->initConf();
+        $legacyKernel->init();
         TemplateSettings::setGlobalValue('Eresus', $legacyKernel);
     }
 
@@ -445,6 +447,20 @@ class Kernel
         /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
         $evd = $this->container->get('events');
         $evd->dispatch('cms.shutdown');
+    }
+
+    /**
+     * Создаёт объект обрабатываемого запроса
+     *
+     * @return Eresus_CMS_Request
+     *
+     * @since x.xx
+     */
+    private function initRequest()
+    {
+        $request = Request::createFromGlobals();
+        $cmsRequest = new Eresus_CMS_Request($request);
+        return $cmsRequest;
     }
 }
 
