@@ -74,31 +74,6 @@ class MySQL
     private $dbSchema = null;
 
     /**
-     * Открывает соединение сервером данных и выбирает источник
-     *
-     * @param string $server    Сервер данных
-     * @param string $username  Имя пользователя для доступа к серверу
-     * @param string $password  Пароль пользователя
-     * @param string $source    Имя источника данных
-     * @param string $prefix
-     *
-     * @throws Eresus_DB_Exception
-     *
-     * @return bool  Результат соединения
-     * @deprecated
-     */
-    public function init($server, $username, $password, $source, $prefix = '')
-    {
-        Eresus_Kernel::log(__METHOD__, LOG_NOTICE, 'This method is deprecated');
-        $dsn = "mysql://$username:$password@$server/$source?charset=utf8";
-
-        $db = Eresus_DB::connect($dsn);
-        $options = new ezcDbOptions(array('tableNamePrefix' => $prefix));
-        $db->setOptions($options);
-        return true;
-    }
-
-    /**
      * Возвращает объект-одиночку схемы БД
      * @return ezcDbSchema
      */
@@ -116,8 +91,6 @@ class MySQL
         return $this->dbSchema;
     }
 
-    //-----------------------------------------------------------------------------
-
     /**
      * Выполняет запрос к источнику
      *
@@ -133,8 +106,6 @@ class MySQL
         $db->exec($query);
         return true;
     }
-
-    //-----------------------------------------------------------------------------
 
     /**
      * Выполняет запрос к источнику и возвращает ассоциативный массив значений
@@ -156,8 +127,6 @@ class MySQL
         $values = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $values;
     }
-
-    //------------------------------------------------------------------------------
 
     /**
      * Создание новой таблицы
@@ -186,8 +155,6 @@ class MySQL
         return $result;
     }
 
-    //------------------------------------------------------------------------------
-
     /**
      * Удаление таблицы
      *
@@ -212,8 +179,6 @@ class MySQL
 
         return $result;
     }
-
-    //------------------------------------------------------------------------------
 
     /**
      * Производит выборку данных из источника
@@ -333,8 +298,6 @@ class MySQL
         $q->execute();
         return true;
     }
-
-    //-----------------------------------------------------------------------------
 
     /**
      * Выполняет обновление информации в источнике
@@ -508,8 +471,6 @@ class MySQL
         }
     }
 
-    //-----------------------------------------------------------------------------
-
     /**
      * Возвращает идентификатор последней вставленной записи
      *
@@ -522,8 +483,6 @@ class MySQL
         $db = Eresus_DB::getHandler();
         return $db->lastInsertId();
     }
-
-    //-----------------------------------------------------------------------------
 
     /**
      *
@@ -548,8 +507,6 @@ class MySQL
         return $result;
     }
 
-    //-----------------------------------------------------------------------------
-
     /**
      * Экранирует потенциально опасные символы
      *
@@ -564,5 +521,5 @@ class MySQL
         Eresus_Kernel::log(__METHOD__, LOG_NOTICE, 'This method is deprecated');
         return $src;
     }
-    //-----------------------------------------------------------------------------
 }
+

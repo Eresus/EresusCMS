@@ -31,10 +31,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Yaml\Yaml;
 use Eresus_Kernel;
 use Eresus_CMS_Request;
 use TemplateSettings;
 use I18n;
+use Eresus_DB;
+use ezcDbOptions;
 
 /**
  * Ядро
@@ -281,6 +284,20 @@ class Kernel
     }
 
     /**
+     * Создаёт объект обрабатываемого запроса
+     *
+     * @return Eresus_CMS_Request
+     *
+     * @since x.xx
+     */
+    private function initRequest()
+    {
+        $request = Request::createFromGlobals();
+        $cmsRequest = new Eresus_CMS_Request($request);
+        return $cmsRequest;
+    }
+
+    /**
      * Создаёт контейнер служб
      *
      * @param Request $request
@@ -386,6 +403,7 @@ class Kernel
          */
         $GLOBALS['Eresus'] = $legacyKernel;
         $this->initConf();
+        $this->initDB();
         $legacyKernel->init();
         TemplateSettings::setGlobalValue('Eresus', $legacyKernel);
     }
@@ -399,32 +417,148 @@ class Kernel
      */
     private function initConf()
     {
-        /*
-         * Переменную $Eresus приходится делать глобальной, чтобы файл конфигурации
-         * мог записывать в неё свои значения.
-         * TODO Избавиться от глобальной переменной
-         */
-        /** @noinspection PhpUnusedLocalVariableInspection */
-        global $Eresus;
-
-        $filename = $this->getAppDir() . '/cfg/main.php';
+        $filename = $this->getAppDir() . '/cfg/global.yml';
         if (!file_exists($filename))
         {
-            throw new \RuntimeException(_("Не найден файл настроек «{$filename}»!"));
+            throw new \RuntimeException('File cfg/global.yml not found!');
+        }
+        $conf = Yaml::parse($filename);
+        if (!array_key_exists('parameters', $conf))
+        {
+            $conf['parameters'] = array();
         }
 
-        /** @noinspection PhpIncludeInspection */
-        include $filename;
-        // TODO: Сделать проверку успешного подключения файла
+        $filename = $this->getAppDir() . '/cfg/local.yml';
+        if (!file_exists($filename))
+        {
+            throw new \RuntimeException('File cfg/local.yml not found!');
+        }
+        $locals = Yaml::parse($filename);
+        if (!array_key_exists('parameters', $locals))
+        {
+            $locals['parameters'] = array();
+        }
+        $conf = array_merge($conf, $locals);
 
-        $this->container->setParameter('debug', $Eresus->conf['debug']['enable']);
+        $params = $conf['parameters'];
 
-        $this->container->setParameter('db.driver', 'pdo_' . $Eresus->conf['db']['engine']);
-        $this->container->setParameter('db.host', $Eresus->conf['db']['host']);
-        $this->container->setParameter('db.username', $Eresus->conf['db']['user']);
-        $this->container->setParameter('db.password', $Eresus->conf['db']['password']);
-        $this->container->setParameter('db.dbname', $Eresus->conf['db']['name']);
-        $this->container->setParameter('db.prefix', $Eresus->conf['db']['prefix']);
+        if (array_key_exists('debug', $params))
+        {
+            $this->setDebug($params['debug']);
+        }
+
+        /*
+         * Драйвер СУБД
+         */
+        if (!array_key_exists('database_driver', $params) || '~' == $params['database_driver'])
+        {
+            $params['database_driver'] = 'pdo_sqlite';
+        }
+        $this->container->setParameter('db.driver', strtolower($params['database_driver']));
+
+        /*
+         * Хост сервера БД
+         */
+        if (!array_key_exists('database_host', $params) || '~' == $params['database_host'])
+        {
+            if (in_array($this->container->getParameter('db.driver'),
+                array('pdo_ibm', 'pdo_informix', 'pdo_mysql', 'pdo_sqlsrv', 'pdo_pgsql')))
+            {
+                $params['database_host'] = 'localhost';
+            }
+            else
+            {
+                $params['database_host'] = '';
+            }
+        }
+        $this->container->setParameter('db.host', $params['database_host']);
+
+        $emptyByDefaultList
+            = array('database_port', 'database_user', 'database_password', 'database_prefix');
+        foreach ($emptyByDefaultList as $property)
+        {
+            if (!array_key_exists($property, $params) || '~' == $params[$property])
+            {
+                $params[$property] = '';
+            }
+        }
+
+        $this->container->setParameter('db.port', $params['database_port']);
+        $this->container->setParameter('db.username', $params['database_user']);
+        $this->container->setParameter('db.password', $params['database_password']);
+        $this->container->setParameter('db.dbname', $params['database_name']);
+        $this->container->setParameter('db.prefix', $params['database_prefix']);
+
+
+        if (array_key_exists('timezone', $params))
+        {
+            date_default_timezone_set($params['timezone']);
+        }
+
+        if (array_key_exists('locale', $params))
+        {
+            $this->container->setParameter('locale', $params['locale']);
+        }
+
+        if (array_key_exists('session_timeout', $params))
+        {
+            $this->container->setParameter('security.session.timeout', $params['session_timeout']);
+        }
+    }
+
+    /**
+     * Устанавливает соединение с БД
+     *
+     * @since x.xx
+     */
+    private function initDB()
+    {
+        $driver = substr($this->container->getParameter('db.driver'), strlen('pdo_'));
+        $host = $this->container->getParameter('db.host');
+        $port = $this->container->getParameter('db.port');
+        $username = $this->container->getParameter('db.username');
+        $password = $this->container->getParameter('db.password');
+        $name = $this->container->getParameter('db.dbname');
+        $prefix = $this->container->getParameter('db.prefix');
+
+        $dsn = $driver . '://';
+        if ($username)
+        {
+            $dsn .= $username;
+            if ($password)
+            {
+                $dsn .= ':' . $password;
+            }
+            $dsn .= '@';
+        }
+
+        if ($host)
+        {
+            $dsn .= $host;
+            if ($port)
+            {
+                $dsn .= ':' . $port;
+            }
+        }
+
+        if ($name)
+        {
+            $dsn .= '/' . $name;
+        }
+
+        if ('mysql' == $driver)
+        {
+            $dsn .= '?charset=utf8';
+        }
+
+        $db = Eresus_DB::connect($dsn);
+        $options = array();
+        if ($prefix)
+        {
+            $options['tableNamePrefix'] = $prefix;
+        }
+        $options = new ezcDbOptions();
+        $db->setOptions($options);
     }
 
     /**
@@ -447,20 +581,6 @@ class Kernel
         /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
         $evd = $this->container->get('events');
         $evd->dispatch('cms.shutdown');
-    }
-
-    /**
-     * Создаёт объект обрабатываемого запроса
-     *
-     * @return Eresus_CMS_Request
-     *
-     * @since x.xx
-     */
-    private function initRequest()
-    {
-        $request = Request::createFromGlobals();
-        $cmsRequest = new Eresus_CMS_Request($request);
-        return $cmsRequest;
     }
 }
 

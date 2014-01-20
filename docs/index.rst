@@ -9,6 +9,7 @@
    :numbered:
 
    overview/index
+   setup/index
    manage/index
    markup/index
    dev/index

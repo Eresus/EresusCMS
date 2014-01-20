@@ -1737,19 +1737,7 @@ class Eresus
 	 */
 	private function initDataSource()
 	{
-        $className = $this->conf['db']['engine'];
-		if (class_exists($className))
-		{
-			$this->db = new $className;
-			$this->db->init($this->conf['db']['host'], $this->conf['db']['user'],
-				$this->conf['db']['password'], $this->conf['db']['name'],
-                $this->conf['db']['prefix']);
-		}
-		else
-		{
-            throw new Eresus_Exception_ComponentCorrupted(
-                sprintf('Library "%s" not found!', $this->conf['db']['engine']));
-		}
+        $this->db = new MySQL();
 	}
 
 	/**

@@ -17,6 +17,7 @@
     "require":
 	{
         "mekras/bedoved": "dev-develop",
+        "symfony/yaml": "2.3.x-dev",
         "symfony/dependency-injection": "2.3.x-dev",
         "symfony/event-dispatcher": "2.3.x-dev",
         "symfony/http-foundation": "2.3.x-dev",
