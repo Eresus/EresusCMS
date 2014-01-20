@@ -27,6 +27,8 @@
  * @subpackage Tests
  */
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 define('TESTS_SRC_DIR', realpath(__DIR__ . '/../../src'));
 define('TESTS_TEST_DIR', __DIR__ );
 define('TESTS_FIXT_DIR', __DIR__ . '/fixtures');
@@ -45,6 +47,11 @@ $loader->add('Eresus\\', __DIR__ . '/../../src');
  */
 class Eresus_TestCase extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Установленные статические свойства
+     *
+     * @var array
+     */
     private $staticProps = array();
 
     /**
@@ -86,6 +93,23 @@ class Eresus_TestCase extends PHPUnit_Framework_TestCase
             $this->staticProps[$className] = array();
         }
         $this->staticProps[$className][$propertyName] = true;
+    }
+
+    /**
+     * Возвращает контейнер
+     *
+     * @param array $services
+     *
+     * @return ContainerBuilder
+     */
+    protected function getContainer(array $services = array())
+    {
+        $container = new ContainerBuilder();
+        foreach ($services as $name => $service)
+        {
+            $container->set($name, $service);
+        }
+        return $container;
     }
 }
 
