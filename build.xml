@@ -48,28 +48,25 @@
     <target name="vendors" description="Fetch 3rd party components">
 
         <if>
-            <available file="vendor" property="." />
-
+            <not>
+                <available file="${project.basedir}/composer.phar" property="."/>
+            </not>
             <then>
-                <property name="composer.command" value="update" />
+                <httpget url="http://getcomposer.org/composer.phar"
+                    dir="${project.basedir}"/>
+                <chmod file="${project.basedir}/composer.phar" mode="0777"/>
             </then>
-
-            <else>
-                <if>
-                    <not>
-                        <available file="${project.basedir}/composer.phar" property="." />
-                    </not>
-                    <then>
-                        <httpget url="http://getcomposer.org/composer.phar"
-                            dir="${project.basedir}" />
-                        <chmod file="${project.basedir}/composer.phar" mode="0777" />
-                    </then>
-                </if>
-                <property name="composer.command" value="install" />
-            </else>
         </if>
 
-        <composer command="${composer.command}" />
+        <if>
+            <available file="vendor" property="."/>
+            <then>
+                <composer command="update"/>
+            </then>
+            <else>
+                <composer command="install"/>
+            </else>
+        </if>
 
     </target>
 
