@@ -57,11 +57,12 @@ class Eresus_Plugin_Controller_Admin_LegacySettingsTest extends Eresus_TestCase
      */
     public function testGet()
     {
-        $kernel = new stdClass();
-        $kernel->request = array('method' => 'GET');
-        $app = $this->getMock('stdClass', array('getLegacyKernel'));
-        $app->expects($this->any())->method('getLegacyKernel')->will($this->returnValue($kernel));
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $oldKernel = new stdClass();
+        $oldKernel->request = array('method' => 'GET');
+        $kernel = $this->getMock('stdClass', array('getLegacyKernel'));
+        $kernel->expects($this->any())->method('getLegacyKernel')
+            ->will($this->returnValue($oldKernel));
+        $GLOBALS['kernel'] = $kernel;
         $plugin = $this->getMockBuilder('Eresus_Plugin')->disableOriginalConstructor()
             ->setMethods(array('settings'))->getMock();
         $plugin->expects($this->once())->method('settings');
