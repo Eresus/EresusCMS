@@ -74,10 +74,10 @@ class Eresus_Plugin_TemplatesTest extends Eresus_TestCase
             'var' => array('cache' => array('templates' => array())),
         ));
 
-        $cms = $this->getMock('stdClass', array('getFsRoot'));
-        $cms->expects($this->any())->method('getFsRoot')
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $kernel->expects($this->any())->method('getFsRoot')
             ->will($this->returnValue(vfsStream::url('site')));
-        $this->setStaticProperty('Eresus_Kernel', $cms, 'app');
+        $GLOBALS['kernel'] = $kernel;
 
         $this->plugin = $this->getMockBuilder('Eresus_Plugin')->disableOriginalConstructor()
             ->setMethods(array('getName'))->getMock();
