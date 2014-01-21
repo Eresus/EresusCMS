@@ -69,7 +69,7 @@ class Eresus_CMS_Request extends Eresus_HTTP_Request
         }
         else
         {
-            $this->httpRequest = new Request($source);
+            $this->httpRequest = new Eresus_HTTP_Request($source);
         }
         parent::__construct($source);
     }
