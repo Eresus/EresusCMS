@@ -518,7 +518,9 @@ class Eresus_Plugin_Registry
 
         if ($this->load($pluginName))
         {
-            $filename = Eresus_Kernel::app()->getFsRoot() . '/ext/' . $pluginName . '/classes/' .
+            /** @var \Eresus\Kernel $kernel */
+            $kernel = $this->container->get('kernel');
+            $filename = $kernel->getAppDir() . '/ext/' . $pluginName . '/classes/' .
                 str_replace('_', '/', substr($className, strlen($pluginName) + 1)) . '.php';
             if (file_exists($filename))
             {
@@ -538,15 +540,16 @@ class Eresus_Plugin_Registry
      */
     private function registerBcEventListeners()
     {
-        $ed = Eresus_Kernel::app()->getEventDispatcher();
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $evd */
+        $evd = $this->container->get('events');
 
-        $ed->addListener('cms.admin.start', array($this, 'adminOnMenuRender'));
+        $evd->addListener('cms.admin.start', array($this, 'adminOnMenuRender'));
 
-        $ed->addListener('cms.client.start', array($this, 'clientOnStart'));
-        $ed->addListener('cms.client.url_section_found', array($this, 'clientOnURLSplit'));
-        $ed->addListener('cms.client.render_content', array($this, 'clientOnContentRender'));
-        $ed->addListener('cms.client.render_page', array($this, 'clientOnPageRender'));
-        $ed->addListener('cms.client.response', array($this, 'clientBeforeSend'));
+        $evd->addListener('cms.client.start', array($this, 'clientOnStart'));
+        $evd->addListener('cms.client.url_section_found', array($this, 'clientOnURLSplit'));
+        $evd->addListener('cms.client.render_content', array($this, 'clientOnContentRender'));
+        $evd->addListener('cms.client.render_page', array($this, 'clientOnPageRender'));
+        $evd->addListener('cms.client.response', array($this, 'clientBeforeSend'));
     }
 }
 
