@@ -53,9 +53,9 @@ class Eresus_Admin_ContentProvider_PluginTest extends Eresus_TestCase
             ->setMethods(array('settings'))->getMock();
 
         $page = $this->getMock('stdClass');
-        $app = $this->getMock('stdClass', array('getPage'));
-        $app->expects($this->any())->method('getPage')->will($this->returnValue($page));
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $kernel = $this->getMock('stdClass', array('getPage'));
+        $kernel->expects($this->any())->method('getPage')->will($this->returnValue($page));
+        $GLOBALS['kernel'] = $kernel;
 
         $provider = new Eresus_Admin_ContentProvider_Plugin($plugin);
         $this->assertInstanceOf('Eresus_Admin_Controller_Content_Interface',
@@ -97,10 +97,9 @@ class Eresus_Admin_ContentProvider_PluginTest extends Eresus_TestCase
         $page->expects($this->once())->method('linkScripts')
             ->with('http://foo/bar/admin/scripts.js');
 
-        $app = $this->getMock('stdClass', array('getPage'));
-        $app->expects($this->any())->method('getPage')->will($this->returnValue($page));
-
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $kernel = $this->getMock('stdClass', array('getPage'));
+        $kernel->expects($this->any())->method('getPage')->will($this->returnValue($page));
+        $GLOBALS['kernel'] = $kernel;
 
         $linkAdminResources->invoke($provider);
     }
