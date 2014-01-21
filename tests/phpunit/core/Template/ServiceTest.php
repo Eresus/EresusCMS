@@ -84,9 +84,9 @@ class Eresus_Template_ServiceTest extends Eresus_TestCase
             }
         }
 
-        $Eresus_CMS = $this->getMock('stdClass', array('getFsRoot'));
-        $Eresus_CMS->expects($this->any())->method('getFsRoot')->will($this->returnValue("$root/"));
-        $this->setStaticProperty('Eresus_Kernel', $Eresus_CMS, 'app');
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $kernel->expects($this->any())->method('getFsRoot')->will($this->returnValue("$root/"));
+        $GLOBALS['kernel'] = $kernel;
 
         $ts = Eresus_Template_Service::getInstance();
         $ts->remove('foo');
