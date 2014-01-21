@@ -52,10 +52,14 @@ class Eresus_Plugin_RegistryTest extends Eresus_TestCase
                 }
             ));
 
-        $app = $this->getMock('stdClass', array('getFsRoot'));
-        $app->expects($this->any())->method('getFsRoot')->
+        $kernel = $this->getMock('stdClass', array('getAppDir'));
+        $kernel->expects($this->any())->method('getAppDir')->
             will($this->returnValue(TESTS_FIXT_DIR . '/core/Plugins/'));
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $GLOBALS['kernel'] = $kernel;
+        $evd = $this->getMock('stdClass', array('addListener'));
+        $container = $this->getContainer(array('events' => $evd, 'kernel' => $kernel));
+        $this->setPrivateProperty($plugins, 'container', $container);
+
 
         /** @var Eresus_Plugin_Registry $plugins */
         // Нет такого файла

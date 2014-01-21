@@ -96,11 +96,36 @@ class Eresus_TestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Устанавливает приватное свойство объекта
+     *
+     * @param object $object
+     * @param string $property
+     * @param mixed  $value
+     *
+     * @return void
+     *
+     * @since x.xx
+     */
+    protected function setPrivateProperty($object, $property, $value)
+    {
+        $class = get_class($object);
+        if (substr($class, 0, 5) == 'Mock_')
+        {
+            $class = preg_replace('/^Mock_(.+)_[^_]+$/', '$1', $class);
+        }
+        $property = new ReflectionProperty($class, $property);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+    }
+
+    /**
      * Возвращает контейнер
      *
      * @param array $services
      *
      * @return ContainerBuilder
+     *
+     * @since x.xx
      */
     protected function getContainer(array $services = array())
     {
