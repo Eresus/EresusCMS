@@ -1,38 +1,38 @@
 <?php
 /**
- * ${product.title}
+ * Тесты класса PaginationHelper
  *
  * @version ${product.version}
- *
- * PhpUnit Tests
- *
- * @copyright 2010, Eresus Project, http://eresus.ru/
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Данная программа является свободным программным обеспечением. Вы
+ * вправе распространять ее и/или модифицировать в соответствии с
+ * условиями версии 3 либо (по вашему выбору) с условиями более поздней
+ * версии Стандартной Общественной Лицензии GNU, опубликованной Free
+ * Software Foundation.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Мы распространяем эту программу в надежде на то, что она будет вам
+ * полезной, однако НЕ ПРЕДОСТАВЛЯЕМ НА НЕЕ НИКАКИХ ГАРАНТИЙ, в том
+ * числе ГАРАНТИИ ТОВАРНОГО СОСТОЯНИЯ ПРИ ПРОДАЖЕ и ПРИГОДНОСТИ ДЛЯ
+ * ИСПОЛЬЗОВАНИЯ В КОНКРЕТНЫХ ЦЕЛЯХ. Для получения более подробной
+ * информации ознакомьтесь со Стандартной Общественной Лицензией GNU.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Вы должны были получить копию Стандартной Общественной Лицензии
+ * GNU с этой программой. Если Вы ее не получили, смотрите документ на
+ * <http://www.gnu.org/licenses/>
  *
- * @package EresusCMS
+ * @package Eresus
  * @subpackage Tests
- * @author Михаил Красильников <mk@eresus.ru>
- *
- * $Id$
  */
 
 require_once __DIR__ . '/../../../bootstrap.php';
 
 /**
- * @package EresusCMS
+ * Тесты класса PaginationHelper
+ *
+ * @package Eresus
  * @subpackage Tests
  */
 class PaginationHelperTest extends Eresus_TestCase
@@ -180,8 +180,10 @@ class PaginationHelperTest extends Eresus_TestCase
      * Обычное использование
      *
      */
-    public function test_commonUse_simple()
+    public function testCommonUseSimple()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
         $test = new PaginationHelper(10, 5);
 
         $data = $test->render();
@@ -208,14 +210,16 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      * Обычное использование
      *
      */
-    public function test_commonUse_begining()
+    public function testCommonUseBeginning()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(100, 1);
 
         $data = $test->render();
@@ -233,12 +237,10 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 11:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i >= 1 && $i < 11:
                     $this->assertEquals($i, $page['title'], 'Ivalid page number');
                     $this->assertEquals('/root/p' . $i . '/', $page['url'], 'Ivalid page url');
                     break;
-
                 case $i == 11:
                     $this->assertEquals('&rarr;', $page['title'], 'Invalid last element');
                     $this->assertEquals('/root/p11/', $page['url'], 'Ivalid last page url');
@@ -248,14 +250,16 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      * Обычное использование
      *
      */
-    public function test_commonUse_ending()
+    public function testCommonUseEnding()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(100, 100);
 
         $data = $test->render();
@@ -273,12 +277,10 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 11:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i == 1:
                     $this->assertEquals('&larr;', $page['title'], 'Invalid first element');
                     $this->assertEquals('/root/p90/', $page['url'], 'Ivalid first page url');
                     break;
-
                 case $i > 1 && $i < 11:
                     $this->assertEquals($i + 89, $page['title'], 'Ivalid page number');
                     $this->assertEquals('/root/p' . ($i + 89) . '/', $page['url'], 'Ivalid page url');
@@ -288,14 +290,16 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      * Обычное использование
      *
      */
-    public function test_commonUse_middle()
+    public function testCommonUseMiddle()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(100, 50);
 
         $data = $test->render();
@@ -313,16 +317,13 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 12:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i == 1:
                     $this->assertEquals('&larr;', $page['title'], 'Invalid first element');
                     $this->assertEquals('/root/p40/', $page['url'], 'Ivalid first page url');
                     break;
-
                 case $i > 1 && $i < 12:
                     $this->assertEquals($i + 43, $page['title'], 'Ivalid page number');
                     break;
-
                 case $i == 12:
                     $this->assertEquals('&rarr;', $page['title'], 'Invalid last element');
                     $this->assertEquals('/root/p60/', $page['url'], 'Ivalid last page url');
@@ -332,13 +333,15 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      *
      */
-    public function test_size2()
+    public function testSize2()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(4, 4);
         $test->setSize(2);
 
@@ -353,12 +356,10 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 3:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i == 1:
                     $this->assertEquals('&larr;', $page['title'], 'Invalid first element');
                     $this->assertEquals('/root/p2/', $page['url'], 'Ivalid first page url');
                     break;
-
                 case $i > 1 && $i < 3:
                     $this->assertEquals($i + 1, $page['title'], 'Ivalid page number');
                     $this->assertEquals('/root/p' . ($i + 1) . '/', $page['url'], 'Ivalid page url');
@@ -369,13 +370,15 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      *
      */
-    public function test_size2_beginning()
+    public function testSize2Beginning()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(4, 1);
         $test->setSize(2);
 
@@ -390,12 +393,10 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 4:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i >= 1 && $i < 3:
                     $this->assertEquals($i, $page['title'], 'Ivalid page number');
                     $this->assertEquals('/root/p' . $i . '/', $page['url'], 'Ivalid last page url');
                     break;
-
                 case $i == 3:
                     $this->assertEquals('&rarr;', $page['title'], 'Invalid last element');
                     $this->assertEquals('/root/p3/', $page['url'], 'Ivalid last page url');
@@ -406,13 +407,15 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
 
     /**
      *
      */
-    public function test_size2_current3()
+    public function testSize2Current3()
     {
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $GLOBALS['kernel'] = $kernel;
+
         $test = new PaginationHelper(4, 3);
         $test->setSize(2);
 
@@ -427,17 +430,14 @@ class PaginationHelperTest extends Eresus_TestCase
                 case $i > 4:
                     $this->fail('Too many iterations');
                     break;
-
                 case $i == 1:
                     $this->assertEquals('&larr;', $page['title'], 'Invalid first element');
                     $this->assertEquals('/root/p1/', $page['url'], 'Ivalid first page url');
                     break;
-
                 case $i > 1 && $i < 4:
                     $this->assertEquals($i, $page['title'], 'Invalid page number');
                     $this->assertEquals('/root/p' . $i . '/', $page['url'], 'Invalid last page url');
                     break;
-
                 case $i == 4:
                     $this->assertEquals('&rarr;', $page['title'], 'Invalid last element');
                     $this->assertEquals('/root/p4/', $page['url'], 'Invalid last page url');
@@ -448,7 +448,5 @@ class PaginationHelperTest extends Eresus_TestCase
             $i++;
         }
     }
-    //-----------------------------------------------------------------------------
-
-    /* */
 }
+
