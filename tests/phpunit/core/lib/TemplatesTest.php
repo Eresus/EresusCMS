@@ -1,51 +1,51 @@
 <?php
 /**
- * ${product.title}
+ * Тесты класса Eresus_Templates
  *
  * @version ${product.version}
- *
- * PhpUnit Tests
- *
- * @copyright 2010, Eresus Project, http://eresus.ru/
+ * @copyright ${product.copyright}
  * @license ${license.uri} ${license.name}
+ * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Данная программа является свободным программным обеспечением. Вы
+ * вправе распространять ее и/или модифицировать в соответствии с
+ * условиями версии 3 либо (по вашему выбору) с условиями более поздней
+ * версии Стандартной Общественной Лицензии GNU, опубликованной Free
+ * Software Foundation.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Мы распространяем эту программу в надежде на то, что она будет вам
+ * полезной, однако НЕ ПРЕДОСТАВЛЯЕМ НА НЕЕ НИКАКИХ ГАРАНТИЙ, в том
+ * числе ГАРАНТИИ ТОВАРНОГО СОСТОЯНИЯ ПРИ ПРОДАЖЕ и ПРИГОДНОСТИ ДЛЯ
+ * ИСПОЛЬЗОВАНИЯ В КОНКРЕТНЫХ ЦЕЛЯХ. Для получения более подробной
+ * информации ознакомьтесь со Стандартной Общественной Лицензией GNU.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Вы должны были получить копию Стандартной Общественной Лицензии
+ * GNU с этой программой. Если Вы ее не получили, смотрите документ на
+ * <http://www.gnu.org/licenses/>
  *
- * @package Eresus_CMS
+ * @package Eresus
  * @subpackage Tests
- * @author Михаил Красильников <mk@eresus.ru>
- *
- * $Id: CMS_Test.php 2187 2012-05-24 17:07:44Z mk $
  */
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 /**
- * @package Eresus_CMS
+ * Тесты класса Eresus_Templates
+ *
+ * @package Eresus
  * @subpackage Tests
  */
-class Eresus_Templates_Test extends Eresus_TestCase
+class Eresus_TemplatesTest extends Eresus_TestCase
 {
     /**
      * @covers Templates::get
      */
     public function testGet()
     {
-        $app = $this->getMock('stdClass', array('getFsRoot'));
-        $app->expects($this->any())->method('getFsRoot')->
+        $kernel = $this->getMock('stdClass', array('getFsRoot'));
+        $kernel->expects($this->any())->method('getFsRoot')->
             will($this->returnValue(TESTS_FIXT_DIR . '/core/lib'));
-        $this->setStaticProperty('Eresus_Kernel', $app, 'app');
+        $GLOBALS['kernel'] = $kernel;
 
         $templates = new Templates();
 
